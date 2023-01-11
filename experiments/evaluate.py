@@ -1,4 +1,4 @@
-print("testing")
+print("importing packages")
 
 import json
 import shutil
@@ -7,10 +7,12 @@ from time import time
 from typing import Tuple, Union
 
 import torch
+print("checkpoint 1")
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
+print("checkpoint 2")
 from baselines.ft import FTHyperParams, apply_ft_to_model
 from baselines.mend import MENDHyperParams, MendRewriteExecutor
+print("checkpoint 3")
 from dsets import (
     AttributeSnippets,
     CounterFactDataset,
@@ -18,12 +20,15 @@ from dsets import (
     MultiCounterFactDataset,
     get_tfidf_vectorizer,
 )
+print("checkpoint 4")
 from experiments.py.eval_utils_counterfact import compute_rewrite_quality_counterfact
 from experiments.py.eval_utils_zsre import compute_rewrite_quality_zsre
+print("checkpoint 5")
 from memit import MEMITHyperParams, apply_memit_to_model
 from rome import ROMEHyperParams, apply_rome_to_model
 from util import nethook
 from util.globals import *
+print("checkpoint 6")
 
 ALG_DICT = {
     "MEMIT": (MEMITHyperParams, apply_memit_to_model),
@@ -38,7 +43,7 @@ DS_DICT = {
     "zsre": (MENDQADataset, compute_rewrite_quality_zsre),
 }
 
-
+print("done with imports")
 def main(
     alg_name: str,
     model_name: Union[str, Tuple],
