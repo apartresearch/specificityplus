@@ -10,7 +10,7 @@ from util.globals import *
 from util.nethook import Trace, set_requires_grad
 from util.runningstats import CombinedStat, Mean, NormMean, SecondMoment, tally
 
-from .tok_dataset import (
+from tok_dataset import (
     TokenizedDataset,
     dict_to_,
     flatten_masked_batch,
@@ -92,7 +92,7 @@ def layer_stats(
     """
     Function to load or compute cached stats.
     """
-
+    print(download)
     def get_ds():
         raw_ds = load_dataset(
             ds_name,
