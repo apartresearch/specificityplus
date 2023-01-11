@@ -5,6 +5,7 @@ from time import time
 from typing import Tuple, Union
 
 import torch
+import seedbank
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from baselines.ft import FTHyperParams, apply_ft_to_model
@@ -142,6 +143,7 @@ def main(
         )
         etc_args = dict(cache_template=cache_template) if any(alg in alg_name for alg in ["ROME", "MEMIT"]) else dict()
 
+        seedbank.initialize(SEED)
         start = time()
         edited_model, weights_copy = apply_algo(
             model,
@@ -163,6 +165,7 @@ def main(
         start = time()
         gen_test_vars = [snips, vec]
         for record in record_chunks:
+            seedbank.initialize(SEED)
             out_file = Path(case_result_template.format(num_edits, record["case_id"]))
             if out_file.exists():
                 print(f"Skipping {out_file}; already exists")
