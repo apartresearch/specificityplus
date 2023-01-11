@@ -69,29 +69,30 @@ def main(
                     )
 
                 # Probability metrics for which true should be lower (better) than new
-                sum_key_discrete = f"{prefix}_neighborhood_success"
-                sum_key_cont = f"{prefix}_neighborhood_diff"
-                key = "neighborhood_prompts_probs"
-                if prefix in data and key in data[prefix]:
-                    cur_sum[sum_key_discrete].append(
-                        np.mean(
-                            [
-                                x["target_true"] < x["target_new"]
-                                for x in data[prefix][key]
-                            ]
+                for key in ["neighborhood_prompts_probs", "distracting_neighborhood_prompts_probs"]:
+                    key_short = key.replace("_probs", "").replace("_prompts", "")
+                    sum_key_discrete = f"{prefix}_{key_short}_success"
+                    sum_key_cont = f"{prefix}_{key_short}_diff"
+                    if prefix in data and key in data[prefix]:
+                        cur_sum[sum_key_discrete].append(
+                            np.mean(
+                                [
+                                    x["target_true"] < x["target_new"]
+                                    for x in data[prefix][key]
+                                ]
+                            )
                         )
-                    )
-                    cur_sum[sum_key_cont].append(
-                        np.mean(
-                            [
-                                np.exp(-x["target_true"]) - np.exp(-x["target_new"])
-                                for x in data[prefix][key]
-                            ]
+                        cur_sum[sum_key_cont].append(
+                            np.mean(
+                                [
+                                    np.exp(-x["target_true"]) - np.exp(-x["target_new"])
+                                    for x in data[prefix][key]
+                                ]
+                            )
                         )
-                    )
 
                 # Accuracy-based evaluation metrics
-                for key in ["rewrite", "paraphrase", "neighborhood"]:
+                for key in ["rewrite", "paraphrase", "neighborhood", "distracting_neighborhood"]:
                     sum_key = f"{prefix}_{key}_acc"
                     key = f"{key}_prompts_correct"
 
@@ -123,23 +124,26 @@ def main(
                 cur_sum[k] = tuple(np.around(z * 100, 2) for z in v)
 
         for prefix in ["pre", "post"]:
-            for k_efficacy, k_generalization, k_specificity in [
+            for k_efficacy, k_generalization, k_specificity, k_specificity_p in [
                 (
                     f"{prefix}_rewrite_success",
                     f"{prefix}_paraphrase_success",
                     f"{prefix}_neighborhood_success",
+                    f"{prefix}_distracting_neighborhood_success",
                 ),
                 # (
                 #     f"{prefix}_rewrite_acc",
                 #     f"{prefix}_paraphrase_acc",
                 #     f"{prefix}_neighborhood_acc",
+                #     f"{prefix}_distracting_neighborhood_acc",
                 # ),
             ]:
-                if all(k in cur_sum for k in [k_efficacy, k_generalization, k_specificity]):
+                if all(k in cur_sum for k in [k_efficacy, k_generalization, k_specificity, k_specificity_p]):
                     hmean_list = [
                         cur_sum[k_efficacy][0],
                         cur_sum[k_generalization][0],
                         cur_sum[k_specificity][0],
+                        cur_sum[k_specificity_p][0],
                     ]
 
                     # if f"{prefix}_ngram_entropy" in cur_sum:

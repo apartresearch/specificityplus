@@ -49,11 +49,15 @@ def compute_rewrite_quality_counterfact(
     neighborhood_prompts = record["neighborhood_prompts"]
     generation_prompts = record["generation_prompts"]
 
+    rewrite_prompt_with_obj = f"{rewrite_prompts[0]} {target_new['str']}. "
+    distracting_neighborhood_prompts = [rewrite_prompt_with_obj + prompt for prompt in neighborhood_prompts]
+
     # Form a list of lists of prefixes to test.
     prob_prompts = [
         rewrite_prompts,
         paraphrase_prompts,
         neighborhood_prompts,
+        distracting_neighborhood_prompts,
     ]
     which_correct = [
         [0 for _ in range(len(rewrite_prompts))],
@@ -83,6 +87,7 @@ def compute_rewrite_quality_counterfact(
                 "rewrite_prompts",
                 "paraphrase_prompts",
                 "neighborhood_prompts",
+                "distracting_neighborhood_prompts",
             ]
         )
     } | {
@@ -92,6 +97,7 @@ def compute_rewrite_quality_counterfact(
                 "rewrite_prompts",
                 "paraphrase_prompts",
                 "neighborhood_prompts",
+                "distracting_neighborhood_prompts",
             ]
         )
     }
