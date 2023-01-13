@@ -1,0 +1,1 @@
+python experiments/evaluate.py --alg_name ROME --model_name gpt2-xl --hparams_fname gpt2-xl.json --skip_generation_tests --dataset_size_limit 5

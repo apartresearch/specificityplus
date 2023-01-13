@@ -99,15 +99,29 @@ export PYTHONPATH=/home/${USER}/memitpp:${PYTHONPATH}
 
 echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 
-# input data directory path on the DFS - change line below if loc different
-
-##Moving data
+#moving data from DFS to scratch
 repo_home=/home/${USER}/memitpp
-src_path=${repo_home}/data/
 
-# input data directory path on the scratch disk of the node
+#Moving data
+src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
 mkdir -p ${dest_path}  # make it if required
+rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+
+#Moving kvs
+src_path=${repo_home}/share/projects/rewriting-knowledge/kvs
+dest_path=${SCRATCH_HOME}/memitpp/data/kvs
+mkdir -p ${dest_path}  # make it if required
+rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+
+##Moving huggingface .cache
+src_path=/home/${USER}/.cache/huggingface/datasets
+dest_path=${SCRATCH_HOME}/memitpp/data/huggingface_datasets
+mkdir -p ${dest_path}  # make it if required
+rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+
+#Set huggingface cache to scratch
+export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface_datasets
 
 # Important notes about rsync:
 # * the --compress option is going to compress the data before transfer to send
@@ -118,19 +132,6 @@ mkdir -p ${dest_path}  # make it if required
 #       ${SCRATCH_HOME}/project_name/data/input/input
 # * for more about the (endless) rsync options, see the docs:
 #       https://download.samba.org/pub/rsync/rsync.html
-
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
-
-##Moving huggingface .cache
-src_path=/home/${USER}/.cache/huggingface/datasets
-dest_path=${SCRATCH_HOME}/memitpp/data/huggingface_datasets
-
-#Set huggingface cache to scratch
-export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface_datasets
-
-#rsync
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
-
 # ==============================
 # Finally, run the experiment!
 # ==============================
