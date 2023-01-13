@@ -38,6 +38,7 @@ def main(
             if first_n_cases is not None and case_id >= first_n_cases:
                 break
 
+            cur_sum["case_id"].append(case_id)
             if "time" in data:
                 cur_sum["time"].append(data["time"])
 
