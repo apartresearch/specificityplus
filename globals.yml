@@ -1,14 +1,14 @@
 ---
   # Result files
-  RESULTS_DIR: "results"
+  RESULTS_DIR: "/~/../../disk/scratch/s1785649/memitpp/results"
 
   # Data files
-  DATA_DIR: "data"
-  STATS_DIR: "data/stats"
-  KV_DIR: "data/kvs"
+  DATA_DIR: "/~/../../disk/scratch/s1785649/memitpp/data"
+  STATS_DIR: "/~/../../disk/scratch/s1785649/memitpp/data/stats"
+  KV_DIR: "/~/../../disk/scratch/s1785649/memitpp/data/kvs"
 
   # Hyperparameters
-  HPARAMS_DIR: "hparams"
+  HPARAMS_DIR: "/~/../../disk/scratch/s1785649/memitpp/hparams"
 
   # Remote URLs
   REMOTE_ROOT_URL: "https://memit.baulab.info"

@@ -164,8 +164,8 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-src_path=${SCRATCH_HOME}/memitpp/results
-dest_path=${repo_home}/memitpp/results
+src_path=${SCRATCH_HOME}/memitpp/data/stats
+dest_path=${repo_home}/data/stats
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
 
