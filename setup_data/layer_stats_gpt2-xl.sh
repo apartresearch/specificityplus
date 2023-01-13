@@ -80,7 +80,7 @@ conda activate ${CONDA_ENV_NAME}
 export MODEL=models--gpt2-xl
 
 #setup python path
-export PYTHONPATH=/home/${USER}/memitpp:${PYTHONPATH}
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
 
 # =================================
 # Move input data to scratch disk

@@ -80,7 +80,7 @@ conda activate ${CONDA_ENV_NAME}
 export MODEL=models--EleutherAI--gpt-j-6B
 
 #setup python path
-export PYTHONPATH=/home/${USER}/memitpp:${PYTHONPATH}
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
 
 # =================================
 # Move input data to scratch disk
