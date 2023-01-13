@@ -14,13 +14,3 @@ for file in files:
         print(f"{loc} does not exist. Downloading from {url}")
         data_dir_path.mkdir(exist_ok=True, parents=True)
         torch.hub.download_url_to_file(url, loc)
-
-#get huggingface data
-ds_names = ["wikipedia"]#["wikitext", "wikipedia"]
-for ds_name in ds_names:
-    load_dataset(ds_name, dict(wikitext="wikitext-103-raw-v1", wikipedia="20200501.en")[ds_name])
-
-models = ["gpt2-xl", "EleutherAI/gpt-j-6B"]
-for model_name in models:
-    AutoModelForCausalLM.from_pretrained(model_name)
-    AutoTokenizer.from_pretrained(model_name)
