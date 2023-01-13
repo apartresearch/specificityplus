@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b slurm_arrayjob.sh -e experiments.txt -m 12
+# run_experiment -b git/memitpp/setup_data/layers_stats.sh -e git/memitpp/setup_data/experiments.txt -m 1
 # ```
 
 #saving for later
