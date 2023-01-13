@@ -79,6 +79,9 @@ CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
 
+#choose model
+export MODEL=models--gpt2-xl
+
 #setup python path
 export PYTHONPATH=/home/${USER}/memitpp:${PYTHONPATH}
 
@@ -110,12 +113,6 @@ dest_path=${SCRATCH_HOME}/memitpp/data
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
-#Moving kvs cache
-src_path=${repo_home}/data/kvs
-dest_path=${SCRATCH_HOME}/memitpp/data/kvs
-mkdir -p ${dest_path}  # make it if required
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
-
 ##Moving huggingface dataset cache
 src_path=/home/${USER}/.cache/huggingface/datasets
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
@@ -123,8 +120,8 @@ mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
 ##Moving huggingface hub cache
-src_path=/home/${USER}/.cache/huggingface/hub
-dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub
+src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
+dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
