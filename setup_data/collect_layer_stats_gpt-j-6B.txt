@@ -1,0 +1,1 @@
+python rome/layer_stats.py --model_name EleutherAI/gpt-j-6B --layers 17--to_collect mom2 --precision float16 --download 0

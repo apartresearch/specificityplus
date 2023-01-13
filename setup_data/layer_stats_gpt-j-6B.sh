@@ -14,9 +14,6 @@
 # run_experiment -b git/memitpp/setup_data/layers_stats.sh -e git/memitpp/setup_data/experiments.txt -m 1
 # ```
 
-#saving for later
-#python rome/layer_stats.py --model_name EleutherAI/gpt-j-6B --layers 17--to_collect mom2 --precision float16 --download 0
-
 # ====================
 # Options for sbatch
 # ====================
