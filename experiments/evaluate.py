@@ -177,6 +177,8 @@ def main(
                 "case_id": record["case_id"],
                 "grouped_case_ids": case_ids,
                 "num_edits": num_edits,
+                "model": model_name,
+                "alg": alg_name,
                 "requested_rewrite": record["requested_rewrite"],
                 "time": exec_time,
                 "post": ds_eval_method(
