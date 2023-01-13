@@ -102,7 +102,7 @@ export PYTHONPATH=/home/${USER}/memitpp:${PYTHONPATH}
 echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 
 #moving data from DFS to scratch
-repo_home=/home/${USER}/memitpp
+repo_home=/home/${USER}/git/memitpp
 
 #Moving data
 src_path=${repo_home}/data/
