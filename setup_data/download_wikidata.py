@@ -1,3 +1,5 @@
+## run on interactive node
+
 from datasets import load_dataset
 
 #get huggingface data

@@ -1,3 +1,5 @@
+##run on headnode
+
 import torch
 from pathlib import Path
 #downloads the data to DFS

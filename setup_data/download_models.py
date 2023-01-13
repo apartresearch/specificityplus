@@ -1,3 +1,5 @@
+## run on interactive node
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 #get models
