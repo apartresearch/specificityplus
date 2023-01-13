@@ -14,6 +14,7 @@ def main(
     first_n_cases=None,
     get_uncompressed=False,
     abs_path=False,
+    export_results=False,
 ):  # runs = None -> all runs
     summaries = []
     uncompressed = []
@@ -114,6 +115,13 @@ def main(
             "run_dir": str(run_dir),
             "num_cases": num_items,
         }
+        if export_results:
+            with (run_dir / "metadata.json").open("w") as f:
+                json.dump(metadata, fp=f, indent=4)
+
+        if export_results and get_uncompressed:
+            with (run_dir / "results_uncompressed.json").open("w") as f:
+                json.dump(cur_sum, fp=f, indent=4)
 
         cur_uncompressed = dict(cur_sum, **metadata)
         uncompressed.append(cur_uncompressed)
@@ -155,8 +163,13 @@ def main(
                     cur_sum[f"{prefix}_score"] = (hmean(hmean_list), np.nan)
                     break
 
+        if export_results and not get_uncompressed:
+            with (run_dir / "results_compressed.json").open("w") as f:
+                json.dump(cur_sum, fp=f, indent=4)
+
         cur_sum.update(metadata)
-        print(json.dumps(cur_uncompressed if get_uncompressed else cur_sum))
+        if not export_results:
+            print(json.dumps(cur_uncompressed if get_uncompressed else cur_sum))
         summaries.append(cur_sum)
 
     return uncompressed if get_uncompressed else summaries
@@ -195,6 +208,12 @@ if __name__ == "__main__":
         action=argparse.BooleanOptionalAction,
         default=False,
     )
+    parser.add_argument(
+        "--export_results",
+        help="Export the results to files inside the run_dir.",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     args = parser.parse_args()
 
     main(
@@ -203,4 +222,5 @@ if __name__ == "__main__":
         args.first_n_cases,
         get_uncompressed=args.get_uncompressed,
         abs_path=args.abs_path,
+        export_results=args.export_results,
     )
