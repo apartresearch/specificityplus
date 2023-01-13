@@ -1,6 +1,5 @@
 import collections
 import json
-from pprint import pprint
 from typing import List, Optional
 
 import numpy as np
@@ -15,11 +14,12 @@ def main(
     first_n_cases=None,
     get_uncompressed=False,
     abs_path=False,
+    export_results=False,
 ):  # runs = None -> all runs
     summaries = []
     uncompressed = []
 
-    for run_dir in (RESULTS_DIR / dir_name if not abs_path else dir_name).iterdir():
+    for run_dir in (RESULTS_DIR / dir_name if not abs_path else Path(dir_name)).iterdir():
         # Skip if we're not interested
         if runs is not None and all(run not in str(run_dir) for run in runs):
             continue
@@ -39,6 +39,7 @@ def main(
             if first_n_cases is not None and case_id >= first_n_cases:
                 break
 
+            cur_sum["case_id"].append(case_id)
             if "time" in data:
                 cur_sum["time"].append(data["time"])
 
@@ -114,8 +115,16 @@ def main(
             "run_dir": str(run_dir),
             "num_cases": num_items,
         }
+        if export_results:
+            with (run_dir / "metadata.json").open("w") as f:
+                json.dump(metadata, fp=f, indent=4)
 
-        uncompressed.append(dict(cur_sum, **metadata))
+        if export_results and get_uncompressed:
+            with (run_dir / "results_uncompressed.json").open("w") as f:
+                json.dump(cur_sum, fp=f, indent=4)
+
+        cur_uncompressed = dict(cur_sum, **metadata)
+        uncompressed.append(cur_uncompressed)
 
         cur_sum = {k: (np.mean(v), np.std(v)) for k, v in cur_sum.items()}
         for k, v in cur_sum.items():
@@ -154,8 +163,13 @@ def main(
                     cur_sum[f"{prefix}_score"] = (hmean(hmean_list), np.nan)
                     break
 
+        if export_results and not get_uncompressed:
+            with (run_dir / "results_compressed.json").open("w") as f:
+                json.dump(cur_sum, fp=f, indent=4)
+
         cur_sum.update(metadata)
-        pprint(cur_sum)
+        if not export_results:
+            print(json.dumps(cur_uncompressed if get_uncompressed else cur_sum))
         summaries.append(cur_sum)
 
     return uncompressed if get_uncompressed else summaries
@@ -182,10 +196,31 @@ if __name__ == "__main__":
         help="Restricts evaluation to first n cases in dataset. "
         "Useful for comparing different in-progress runs on the same slice of data.",
     )
+    parser.add_argument(
+        "--get_uncompressed",
+        help="Show results for each case individually.",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
+        "--abs_path",
+        help="Interpret the '--dir_name' as an absolute path (by default, it's relative to RESULTS_DIR).",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
+        "--export_results",
+        help="Export the results to files inside the run_dir.",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     args = parser.parse_args()
 
     main(
         args.dir_name,
         None if args.runs is None else args.runs.split(","),
         args.first_n_cases,
+        get_uncompressed=args.get_uncompressed,
+        abs_path=args.abs_path,
+        export_results=args.export_results,
     )
