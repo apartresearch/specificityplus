@@ -14,6 +14,8 @@
 # run_experiment -b slurm_arrayjob.sh -e experiments.txt -m 12
 # ```
 
+#saving for later
+#python rome/layer_stats.py --model_name EleutherAI/gpt-j-6B --layers 17--to_collect mom2 --precision float16 --download 0
 
 # ====================
 # Options for sbatch
@@ -108,20 +110,27 @@ dest_path=${SCRATCH_HOME}/memitpp/data
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
-#Moving kvs
-src_path=${repo_home}/share/projects/rewriting-knowledge/kvs
+#Moving kvs cache
+src_path=${repo_home}/data/kvs
 dest_path=${SCRATCH_HOME}/memitpp/data/kvs
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
-##Moving huggingface .cache
+##Moving huggingface dataset cache
 src_path=/home/${USER}/.cache/huggingface/datasets
-dest_path=${SCRATCH_HOME}/memitpp/data/huggingface_datasets
+dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
+mkdir -p ${dest_path}  # make it if required
+rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+
+##Moving huggingface hub cache
+src_path=/home/${USER}/.cache/huggingface/hub
+dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
 #Set huggingface cache to scratch
-export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface_datasets
+export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
+export HUGGINGFACE_HUB_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/hub
 
 # Important notes about rsync:
 # * the --compress option is going to compress the data before transfer to send
