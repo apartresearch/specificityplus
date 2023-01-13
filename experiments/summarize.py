@@ -19,7 +19,7 @@ def main(
     summaries = []
     uncompressed = []
 
-    for run_dir in (RESULTS_DIR / dir_name if not abs_path else dir_name).iterdir():
+    for run_dir in (RESULTS_DIR / dir_name if not abs_path else Path(dir_name)).iterdir():
         # Skip if we're not interested
         if runs is not None and all(run not in str(run_dir) for run in runs):
             continue
@@ -182,10 +182,24 @@ if __name__ == "__main__":
         help="Restricts evaluation to first n cases in dataset. "
         "Useful for comparing different in-progress runs on the same slice of data.",
     )
+    parser.add_argument(
+        "--get_uncompressed",
+        help="Show results for each case individually.",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
+        "--abs_path",
+        help="Interpret the '--dir_name' as an absolute path (by default, it's relative to RESULTS_DIR).",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     args = parser.parse_args()
 
     main(
         args.dir_name,
         None if args.runs is None else args.runs.split(","),
         args.first_n_cases,
+        get_uncompressed=args.get_uncompressed,
+        abs_path=args.abs_path,
     )
