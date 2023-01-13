@@ -1,6 +1,5 @@
 import collections
 import json
-from pprint import pprint
 from typing import List, Optional
 
 import numpy as np
@@ -115,7 +114,8 @@ def main(
             "num_cases": num_items,
         }
 
-        uncompressed.append(dict(cur_sum, **metadata))
+        cur_uncompressed = dict(cur_sum, **metadata)
+        uncompressed.append(cur_uncompressed)
 
         cur_sum = {k: (np.mean(v), np.std(v)) for k, v in cur_sum.items()}
         for k, v in cur_sum.items():
@@ -155,7 +155,7 @@ def main(
                     break
 
         cur_sum.update(metadata)
-        pprint(cur_sum)
+        print(json.dumps(cur_uncompressed if get_uncompressed else cur_sum))
         summaries.append(cur_sum)
 
     return uncompressed if get_uncompressed else summaries
