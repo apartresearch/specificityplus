@@ -1,1 +1,1 @@
-python rome/layer_stats.py --model_name gpt2-xl --layers 5 --to_collect mom2 --precision float16 --download 0
+python git/memitpp/rome/layer_stats.py --model_name gpt2-xl --layers 5 --to_collect mom2 --precision float16 --download 0
