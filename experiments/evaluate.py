@@ -8,6 +8,7 @@ import torch
 import seedbank
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
+from baselines.identity import IDENTITYHyperParams, apply_identity_to_model
 from baselines.ft import FTHyperParams, apply_ft_to_model
 from baselines.mend import MENDHyperParams, MendRewriteExecutor
 from dsets import (
@@ -25,6 +26,7 @@ from util import nethook
 from util.globals import *
 
 ALG_DICT = {
+    "IDENTITY": (IDENTITYHyperParams, apply_identity_to_model),
     "MEMIT": (MEMITHyperParams, apply_memit_to_model),
     "ROME": (ROMEHyperParams, apply_rome_to_model),
     "FT": (FTHyperParams, apply_ft_to_model),
@@ -225,7 +227,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--alg_name",
-        choices=["MEMIT", "ROME", "FT", "MEND"],
+        choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
         help="Editing algorithm to use. Results are saved in results/<alg_name>/<run_id>, "
         "where a new run_id is generated on each run. "
