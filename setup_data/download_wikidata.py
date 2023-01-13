@@ -1,4 +1,4 @@
-## run on interactive node
+## run on headnode
 
 from datasets import load_dataset
 
