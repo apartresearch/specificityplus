@@ -1,11 +1,18 @@
 ---
+  #a bit ugly hack, dunno how to add such that does not have to type in user
+  #SCRATCH_DISK=/disk/scratch
+  #SCRATCH_HOME=${SCRATCH_DISK}/${USER}
+  #mkdir -p ${SCRATCH_HOME}
+  #user = s1785649
+  
+  
   # Result files
-  RESULTS_DIR: "results"
+  RESULTS_DIR: "/../../../disk/scratch/s1785649/results"
 
   # Data files
-  DATA_DIR: "data"
-  STATS_DIR: "data/stats"
-  KV_DIR: "/share/projects/rewriting-knowledge/kvs"
+  DATA_DIR: "/../../../disk/scratch/s1785649/data"
+  STATS_DIR: "/../../../disk/scratch/s1785649/data/stats"
+  KV_DIR: "/../../../disk/scratch/s1785649/share/projects/rewriting-knowledge/kvs"
 
   # Hyperparameters
   HPARAMS_DIR: "hparams"
