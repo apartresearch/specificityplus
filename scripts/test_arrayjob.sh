@@ -77,6 +77,8 @@ CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
 
+#setup python path
+export PYTHONPATH=/home/${USER}/memitpp:${PYTHONPATH}
 
 # =================================
 # Move input data to scratch disk
