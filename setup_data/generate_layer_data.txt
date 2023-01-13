@@ -1,0 +1,20 @@
+export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
+python rome/layer_stats.py
+
+gpt-xl:
+--model_name gpt2-xl --layers 5 --to_collect mom2 --precision float16 --download 0
+
+gpt-j:
+--model_name EleutherAI/gpt-j-6B --layers 17--to_collect mom2 --precision float16 --download 0
+
+
+args:
+aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B"])
+aa("--dataset", default="wikipedia", choices=["wikitext", "wikipedia"])
+aa("--layers", default=[17], type=lambda x: list(map(int, x.split(","))))
+aa("--to_collect", default=["mom2"], type=lambda x: x.split(","))
+aa("--sample_size", default=100000, type=lambda x: None if x == "all" else int(x))
+aa("--batch_tokens", default=None, type=lambda x: None if x == "any" else int(x))
+aa("--precision", default="float32", choices=["float64", "float32", "float16"])
+aa("--stats_dir", default=STATS_DIR)
+aa("--download", default=1, type=int, choices=[0, 1])

@@ -15,18 +15,12 @@ for file in files:
         data_dir_path.mkdir(exist_ok=True, parents=True)
         torch.hub.download_url_to_file(url, loc)
 
-#what is ds_name?
-"wikitext", "wikipedia"
-
 #get huggingface data
 ds_names = ["wikipedia"]#["wikitext", "wikipedia"]
 for ds_name in ds_names:
-    _ = load_dataset(ds_name, dict(wikitext="wikitext-103-raw-v1", wikipedia="20200501.en")[ds_name])
+    load_dataset(ds_name, dict(wikitext="wikitext-103-raw-v1", wikipedia="20200501.en")[ds_name])
 
-models = ["gpt2-medium", "gpt2-large", "gpt2-xl", "EleutherAI/gpt-j-6B"]
+models = ["gpt2-xl", "EleutherAI/gpt-j-6B"]
 for model_name in models:
-    _ = AutoModelForCausalLM.from_pretrained(model_name).cuda()
-    _ = AutoTokenizer.from_pretrained(model_name)
-#model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
-#tok = AutoTokenizer.from_pretrained(model_name)
-#tok.pad_token = tok.eos_token
+    AutoModelForCausalLM.from_pretrained(model_name)
+    AutoTokenizer.from_pretrained(model_name)
