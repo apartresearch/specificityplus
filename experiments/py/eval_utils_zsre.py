@@ -6,6 +6,7 @@ appropriate arguments, which returns a dictionary containing them.
 
 import typing
 from itertools import chain
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -21,6 +22,7 @@ def compute_rewrite_quality_zsre(
     record: typing.Dict,
     snips: AttributeSnippets,
     vec: TfidfVectorizer,
+    out_file: typing.Optional[Path] = None,
 ) -> typing.Dict:
     """
     Given a rewritten model, computes generalization and specificity metrics for
