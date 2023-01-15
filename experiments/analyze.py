@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -7,16 +9,23 @@ import pandas as pd
 import torch
 from torch.nn.functional import kl_div
 
+# TODO: create a proper CLI to replace the following global variables
 MODEL = "gpt2-medium"
-UNEDITED_RUN_DIR = Path("results/IDENTITY/run_008")
+UNEDITED_RUN_DIR = Path("results/IDENTITY/run_009")
 EDITED_RUN_DIRS = {
-    "ROME": Path("results/ROME/run_018"),
+    "ROME": Path("results/ROME/run_019"),
+    "FT": Path("results/FT/run_003"),
 }
+
 CASE_RESULT_FILES = {
     case_id: f"1_edits-case_{case_id}.json"
     for case_id in list(range(10))
 }
+OUTPUT_DIR = Path("results/plots")
+OUTPUT_DIR.mkdir(exist_ok=True)
 
+sns.set_context("talk")
+sns.set_style("darkgrid")
 
 def verify_consistency():
     """Check that the run_dirs contain info about the expected model and test cases."""
@@ -108,6 +117,7 @@ def get_statistics(df) -> dict[str, pd.DataFrame]:
     for key, statistic in [
         ("mean", pd.DataFrame.mean),
         ("std", pd.DataFrame.std),
+        # TODO: compute confidence intervals using bootstrap resampling
     ]:
         dfs[key] = df2.groupby("Prompt Type").apply(statistic).stack().T
         # reorder columns
@@ -124,10 +134,23 @@ def get_statistics(df) -> dict[str, pd.DataFrame]:
 
 def format_statistics(dfs: dict[str, pd.DataFrame]):
     dfs = {
+        # TODO: use scientific notation for KL divergence
         key: df.round(2).astype("str")
         for key, df in dfs.items()
     }
     return dfs["mean"] + " (" + dfs["std"] + ")"
+
+
+def plot_statistics(dfs: dict[str, pd.DataFrame]):
+    # TODO: improve layout
+    for metric in ["S", "M", "KL"]:
+        m = dfs["mean"].filter(like=metric)
+        e = dfs["std"].filter(like=metric)
+        m.plot.barh(xerr=e)
+        if metric == "KL":
+            plt.xscale("log")
+        plt.savefig(OUTPUT_DIR / f"{metric}.png")
+        pass
 
 
 def main():
@@ -135,6 +158,7 @@ def main():
     df = get_full_results()
     dfs = get_statistics(df)
     print(format_statistics(dfs))
+    plot_statistics(dfs)
 
 
 if __name__ == '__main__':
