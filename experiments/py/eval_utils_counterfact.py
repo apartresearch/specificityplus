@@ -177,11 +177,12 @@ def test_batch_prediction(
         probs[i] /= cur_len
 
         # Export full probability distribution for cur_tok to compute specificity++
-        if out_file:
+        if out_file and i % 2 == 0:
+            # note: only export on every second iteration (when the prefix changes)
             prob_dist = -torch.nn.functional.log_softmax(logits[i, prefix_lens[i // 2] - 1, :])
             # note: logits.shape -> (batch_size, sequence_length (padded), vocab_size)
             run_dir = out_file.parent
-            fn = f"{out_file.stem}_log_probs_{i}.pt"
+            fn = f"{out_file.stem}_log_probs_{i // 2}.pt"
             torch.save(prob_dist,  run_dir / fn)
 
         # Compute accuracy on new targets
