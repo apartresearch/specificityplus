@@ -151,9 +151,7 @@ def test_batch_prediction(
             f"{prefix} {suffix}"
             for prefix in prefixes
             for suffix in [target_new, target_true]
-        ],  # NOTE: seems it could be more efficient (avoid doubling the batch size)
-        # can get the logodd for target_new and target_true from the same logits array
-        # NOTE2: this would fail however if the targets are more than a single token...
+        ],
         padding=True,
         return_tensors="pt",
     ).to("cuda")
@@ -167,7 +165,7 @@ def test_batch_prediction(
     probs = np.zeros((logits.size(0),), dtype=np.float32)
     targets_correct = []
 
-    for i in range(logits.size(0)):  # batch dimension
+    for i in range(logits.size(0)):
         cur_len = choice_a_len if i % 2 == 0 else choice_b_len
 
         # Compute suffix probabilities
