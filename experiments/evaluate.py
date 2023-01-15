@@ -190,6 +190,7 @@ def main(
                         if record["case_id"] % generation_test_interval == 0
                         else [None, None]
                     ),  # Only test generation every generation_test_interval cases
+                    out_file=out_file,
                 ),
             }
 

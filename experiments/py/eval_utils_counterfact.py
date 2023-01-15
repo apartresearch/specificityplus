@@ -6,6 +6,7 @@ appropriate arguments, which returns a dictionary containing them.
 
 import typing
 from itertools import chain
+from pathlib import Path
 
 import nltk
 import numpy as np
@@ -25,6 +26,7 @@ def compute_rewrite_quality_counterfact(
     record: typing.Dict,
     snips: AttributeSnippets,
     vec: TfidfVectorizer,
+    out_file: typing.Optional[Path] = None,
 ) -> typing.Dict:
     """
     Given a rewritten model, computes generalization and specificity metrics for
@@ -34,8 +36,9 @@ def compute_rewrite_quality_counterfact(
     :param model: Rewritten model
     :param tok: Tokenizer
     :param record: CounterFact dataset record
-    :paran snips: ???
+    :param snips: ???
     :param vec: ???
+    :param out_file: path used as template for exports (optional)
 
     :return: Dictionary containing rewriting metrics
     """
@@ -73,6 +76,7 @@ def compute_rewrite_quality_counterfact(
         list(chain(*which_correct)),
         target_new["str"],
         target_true["str"],
+        out_file=out_file,
     )
     # Unflatten the results again into a list of lists.
     cutoffs = [0] + np.cumsum(list(map(len, prob_prompts))).tolist()
@@ -135,6 +139,7 @@ def test_batch_prediction(
     which_correct: str,
     target_new: str,
     target_true: str,
+    out_file: typing.Optional[Path] = None,
 ):
     """
     which_correct: Which target to consider correct. Either 0 for "new" or 1 for "true".
@@ -170,6 +175,15 @@ def test_batch_prediction(
                 logits[i, prefix_lens[i // 2] + j - 1, :], dim=0
             )[cur_tok].item()
         probs[i] /= cur_len
+
+        # Export full probability distribution for cur_tok to compute specificity++
+        if out_file and i % 2 == 0:
+            # note: only export on every second iteration (when the prefix changes)
+            prob_dist = -torch.nn.functional.log_softmax(logits[i, prefix_lens[i // 2] - 1, :], dim=0)
+            # note: logits.shape -> (batch_size, sequence_length (padded), vocab_size)
+            run_dir = out_file.parent
+            fn = f"{out_file.stem}_log_probs_{i // 2}.pt"
+            torch.save(prob_dist,  run_dir / fn)
 
         # Compute accuracy on new targets
         if (which_correct[i // 2] == 0 and i % 2 == 0) or (
