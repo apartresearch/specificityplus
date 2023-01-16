@@ -140,6 +140,10 @@ def layer_stats(
         progress = lambda x: x
 
     stat = CombinedStat(**{k: STAT_TYPES[k]() for k in to_collect})
+
+    #debug
+    batch_size = 2
+
     loader = tally(
         stat,
         ds,
@@ -153,7 +157,7 @@ def layer_stats(
     )
     batch_count = -(-(sample_size or len(ds)) // batch_size)
     with torch.no_grad():
-        for batch_group in progress(loader, total=2):
+        for batch_group in progress(loader, total=batch_count):
             for batch in batch_group:
                 batch = dict_to_(batch, "cuda")
                 with Trace(
