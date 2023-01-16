@@ -94,7 +94,6 @@ def layer_stats(
     """
     Function to load or compute cached stats.
     """
-    print(download)
     def get_ds():
         raw_ds = load_dataset(
             ds_name,
@@ -154,7 +153,7 @@ def layer_stats(
     )
     batch_count = -(-(sample_size or len(ds)) // batch_size)
     with torch.no_grad():
-        for batch_group in progress(loader, total=batch_count):
+        for batch_group in progress(loader, total=2):
             for batch in batch_group:
                 batch = dict_to_(batch, "cuda")
                 with Trace(
