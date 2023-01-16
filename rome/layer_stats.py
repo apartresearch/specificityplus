@@ -135,7 +135,8 @@ def layer_stats(
             print(f"Unable to download due to {e}. Computing locally....")
 
     ds = get_ds() if not filename.exists() else None
-
+    print("filename: ", filename)
+    print("ds: ", ds)
     if progress is None:
         progress = lambda x: x
 
@@ -165,6 +166,7 @@ def layer_stats(
                 # feats = flatten_masked_batch(tr.output, batch["attention_mask"])
                 feats = feats.to(dtype=dtype)
                 stat.add(feats)
+    print("done with layer_stats")
     return stat
 
 
