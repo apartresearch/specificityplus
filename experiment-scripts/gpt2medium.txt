@@ -1,1 +1,1 @@
-cd git/memitpp && python experiments/evaluate.py python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --dataset_size_limit 2
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --dataset_size_limit 2
