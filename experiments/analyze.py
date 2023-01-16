@@ -3,6 +3,7 @@ import seaborn as sns
 import json
 from collections import defaultdict
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -181,8 +182,13 @@ def export_statistics(dfs: dict[str, pd.DataFrame]):
 
 
 def main():
-    verify_consistency()
-    df = get_full_results()
+    RESULTS_FILE_TO_LOAD: Optional[Path] = OUTPUT_DIR / "results.csv"
+    if RESULTS_FILE_TO_LOAD and RESULTS_FILE_TO_LOAD.exists():
+        df = pd.read_csv(RESULTS_FILE_TO_LOAD, header=[0, 1], index_col=[0, 1])
+    else:
+        verify_consistency()
+        df = get_full_results()
+        df.to_csv(OUTPUT_DIR / "results.csv")
     dfs = get_statistics(df)
     print(format_statistics(dfs))
     plot_statistics(dfs)
