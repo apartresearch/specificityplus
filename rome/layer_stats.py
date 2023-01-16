@@ -141,9 +141,6 @@ def layer_stats(
 
     stat = CombinedStat(**{k: STAT_TYPES[k]() for k in to_collect})
 
-    #debug
-    batch_size = 2
-
     loader = tally(
         stat,
         ds,
