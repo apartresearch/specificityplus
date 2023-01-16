@@ -147,7 +147,7 @@ def get_ranks_for_outlier_detection(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_statistics(df, n_bootstrap: int = 10) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
@@ -171,32 +171,25 @@ def format_statistics(dfs: dict[str, pd.DataFrame]):
 
 
 def plot_statistics(dfs: dict[str, pd.DataFrame]):
-    # TODO: improve layout
     for metric in ["S", "M", "KL"]:
         m = pd.DataFrame()
         m[metric] = dfs["mean"][("N", metric)]
         m[f"{metric}+"] = dfs["mean"][("N+", metric)]
 
-        # e[metric] = dfs["std"][("N", metric)]
-        # e[f"{metric}+"] = dfs["std"][("N+", metric)]
-        # use bootstrap samples for error bars
         err_low, err_up = pd.DataFrame(), pd.DataFrame()
-        ci = pd.DataFrame([df[("N", metric)] for df in dfs["bootstrap_means"]]).describe([0.025, 0.975])
-        cip = pd.DataFrame([df[("N+", metric)] for df in dfs["bootstrap_means"]]).describe([0.025, 0.975])
-        err_low[metric] = ci.loc["2.5%"]
-        err_low[f"{metric}+"] = cip.loc["2.5%"]
-        err_up[metric] = ci.loc["97.5%"]
-        err_up[f"{metric}+"] = cip.loc["97.5%"]
+        ci = pd.DataFrame([df[("N", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
+        cip = pd.DataFrame([df[("N+", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
+        err_low[metric] = ci.loc["0.5%"]
+        err_low[f"{metric}+"] = cip.loc["0.5%"]
+        err_up[metric] = ci.loc["99.5%"]
+        err_up[f"{metric}+"] = cip.loc["99.5%"]
 
+        # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
         err_ints = []
         for col in m:  # Iterate over bar groups (represented as columns)
             err_ints.append([m[col].values - err_low[col].values, err_up[col].values - m[col].values])
-        # err_ints = np.abs(err_ints)
 
-        # el = pd.DataFrame([df.unstack() for df in dfs["bootstrap_means"]]).describe([0.025, 0.975]).loc["2.5%"]
-        # eu = pd.DataFrame([df.unstack() for df in dfs["bootstrap_means"]]).describe([0.025, 0.975]).loc["97.5%"]
-
-        m.plot.barh(xerr=err_ints)  # xerr=e)
+        m.plot.barh(xerr=err_ints)
         if metric == "KL":
             plt.xscale("log")
         plt.tight_layout()
