@@ -112,7 +112,10 @@ def get_full_results():
 
 
 def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.DataFrame]:
-    df = df.groupby("Prompt Type").apply(statistic).stack().T.copy()
+    # average over all prompts for a given test case and prompt type
+    df = df.groupby(["Case", "Prompt Type"]).mean().copy()
+    # compute statistic across all test cases for a given prompt type
+    df = df.groupby("Prompt Type").apply(statistic).stack().T
     # reorder columns
     df = df[[
         ("N", "S"),
@@ -125,31 +128,32 @@ def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.Dat
     return df
 
 
-def get_statistics(df) -> dict[str, pd.DataFrame]:
+def get_ranks_for_outlier_detection(df: pd.DataFrame) -> pd.DataFrame:
     # average over all prompts for a given test case and prompt type
-    df2 = df.groupby(["Case", "Prompt Type"]).mean()
-    # compute mean and std over all cases for a given prompt type
-    dfs = {
-        "mean":  compute_statistic(df2, pd.Series.mean),
-        "std":  compute_statistic(df2, pd.Series.std),
-    }
-
-    # TODO: compute confidence intervals using bootstrap resampling
-
+    df = df.groupby(["Case", "Prompt Type"]).mean().copy()
     # compute outliers which are detected by KL but not by M or S
     # idea: compute ranks according to KL, M, S
-    out = df2.copy()
-    for (alg, metric) in out.columns:
-        out[(alg, f"{metric} rank")] = out[(alg, metric)].rank()
+    for (alg, metric) in df.columns:
+        df[(alg, f"{metric} rank")] = df[(alg, metric)].rank()
     # ...and compute (rank_M + rank_S)/2 + rank_KL to get test cases which are
-    for alg in out.columns.levels[0]:
+    for alg in df.columns.levels[0]:
         #  higher is better for S and M ==> high rank = not suspicious acc. to S and M
         #  lower is better for KL ==> high rank =  suspicious acc. to KL
         # ==> high rank on all of them = suspicious acc. to KL but not acc. to S and M
-        out[(alg, "rank Σ")] = (out[(alg, "M rank")] + out[(alg, "M rank")]) / 2 + out[(alg, "KL rank")]
+        df[(alg, "rank Σ")] = (df[(alg, "M rank")] + df[(alg, "M rank")]) / 2 + df[(alg, "KL rank")]
         # high rank: "not suspicious" acc. to M and S but suspicious acc. to KL
-    dfs["outliers"] = out
+    return df
 
+
+def get_statistics(df) -> dict[str, pd.DataFrame]:
+    # compute confidence intervals using bootstrap resampling
+    # bootstrap_samples =
+
+    dfs = {
+        "mean": compute_statistic(df, pd.Series.mean),
+        "std": compute_statistic(df, pd.Series.std),
+        "outliers": get_ranks_for_outlier_detection(df)
+    }
     return dfs
 
 
