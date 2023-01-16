@@ -166,8 +166,6 @@ dest_path=${repo_home}/data/stats
 
 echo "Moving data from ${src_path} to ${dest_path}"
 #echo content of src_path to stdout
-ls -l -a ${src_path}
-tree ${src_path}
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 
