@@ -118,13 +118,6 @@ mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
-##Moving huggingface dataset cache
-src_path=/home/${USER}/.cache/huggingface/datasets
-dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
-mkdir -p ${dest_path}  # make it if required
-echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
-
 ##Moving huggingface hub cache
 src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
