@@ -28,6 +28,7 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 sns.set_context("talk")
 sns.set_style("darkgrid")
 
+seedbank.initialize(SEED)
 
 def verify_consistency():
     """Check that the run_dirs contain info about the expected model and test cases."""
@@ -145,14 +146,16 @@ def get_ranks_for_outlier_detection(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_statistics(df) -> dict[str, pd.DataFrame]:
-    # compute confidence intervals using bootstrap resampling
-    # bootstrap_samples =
-
+def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
-        "outliers": get_ranks_for_outlier_detection(df)
+        "outliers": get_ranks_for_outlier_detection(df),
+        # compute confidence intervals using bootstrap resampling
+        "bootstrap_means": [
+            compute_statistic(df.sample(len(df), replace=True), pd.Series.mean)
+            for _ in tqdm(range(n_bootstrap), desc=f"Drawing {n_bootstrap} bootstrap samples.")
+        ],
     }
     return dfs
 
