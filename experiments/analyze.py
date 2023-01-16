@@ -136,9 +136,12 @@ def get_statistics(df) -> dict[str, pd.DataFrame]:
     out = df2.copy()
     for (alg, metric) in out.columns:
         out[(alg, f"{metric} rank")] = out[(alg, metric)].rank()
-    # ...and compute (rank_M + rank_S)/2 - rank_KL to get test cases which are
+    # ...and compute (rank_M + rank_S)/2 + rank_KL to get test cases which are
     for alg in out.columns.levels[0]:
-        out[(alg, "rank Δ")] = (out[(alg, "M rank")] + out[(alg, "M rank")]) / 2 - out[(alg, "KL rank")]
+        #  higher is better for S and M ==> high rank = not suspicious acc. to S and M
+        #  lower is better for KL ==> high rank =  suspicious acc. to KL
+        # ==> high rank on all of them = suspicious acc. to KL but not acc. to S and M
+        out[(alg, "rank Σ")] = (out[(alg, "M rank")] + out[(alg, "M rank")]) / 2 + out[(alg, "KL rank")]
         # high rank: "not suspicious" acc. to M and S but suspicious acc. to KL
     dfs["outliers"] = out
 
