@@ -3,7 +3,7 @@ import seaborn as sns
 import json
 from collections import defaultdict
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Callable
 
 import numpy as np
 import pandas as pd
@@ -111,25 +111,29 @@ def get_full_results():
     return df
 
 
+def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.DataFrame]:
+    df = df.groupby("Prompt Type").apply(statistic).stack().T.copy()
+    # reorder columns
+    df = df[[
+        ("N", "S"),
+        ("N+", "S"),
+        ("N", "M"),
+        ("N+", "M"),
+        ("N", "KL"),
+        ("N+", "KL"),
+    ]]
+    return df
+
+
 def get_statistics(df) -> dict[str, pd.DataFrame]:
     # average over all prompts for a given test case and prompt type
     df2 = df.groupby(["Case", "Prompt Type"]).mean()
     # compute mean and std over all cases for a given prompt type
-    dfs = {}
-    for key, statistic in [
-        ("mean", pd.DataFrame.mean),
-        ("std", pd.DataFrame.std),
-    ]:
-        dfs[key] = df2.groupby("Prompt Type").apply(statistic).stack().T
-        # reorder columns
-        dfs[key] = dfs[key][[
-            ("N", "S"),
-            ("N+", "S"),
-            ("N", "M"),
-            ("N+", "M"),
-            ("N", "KL"),
-            ("N+", "KL"),
-        ]]
+    dfs = {
+        "mean":  compute_statistic(df2, pd.Series.mean),
+        "std":  compute_statistic(df2, pd.Series.std),
+    }
+
     # TODO: compute confidence intervals using bootstrap resampling
 
     # compute outliers which are detected by KL but not by M or S
