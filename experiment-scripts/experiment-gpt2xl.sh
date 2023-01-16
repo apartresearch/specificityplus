@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/experiment-gpt2xlsh -e git/memitpp/experiment-scripts/gpt2xl.txt -m 1
+# run_experiment -b git/memitpp/experiment-scripts/experiment-gpt2xl.sh -e git/memitpp/experiment-scripts/gpt2xl.txt -m 1
 # ```
 
 # ====================
@@ -37,7 +37,7 @@
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=12:00:00
+#SBATCH --time=08:00:00
 
 
 # =====================
@@ -111,6 +111,13 @@ mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
+#Moving hparams
+src_path=${repo_home}/hparams/
+dest_path=${SCRATCH_HOME}/memitpp/hparams
+mkdir -p ${dest_path}  # make it if required
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
+
 ##Moving huggingface dataset cache
 src_path=/home/${USER}/.cache/huggingface/datasets
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
@@ -161,13 +168,17 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
+#move results
 src_path=${SCRATCH_HOME}/memitpp/results
 dest_path=${repo_home}/results
-
 echo "Moving data from ${src_path} to ${dest_path}"
-#echo content of src_path to stdout
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
+#move KVS
+src_path=${SCRATCH_HOME}/memitpp/data/kvs
+dest_path=${repo_home}/data/kvs
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 # =========================
 # Post experiment logging
