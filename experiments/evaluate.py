@@ -7,12 +7,12 @@ from time import time
 from typing import Tuple, Union
 
 import torch
-print("checkpoint 1")
+import seedbank
 from transformers import AutoModelForCausalLM, AutoTokenizer
-print("checkpoint 2")
+
+from baselines.identity import IDENTITYHyperParams, apply_identity_to_model
 from baselines.ft import FTHyperParams, apply_ft_to_model
 from baselines.mend import MENDHyperParams, MendRewriteExecutor
-print("checkpoint 3")
 from dsets import (
     AttributeSnippets,
     CounterFactDataset,
@@ -20,17 +20,15 @@ from dsets import (
     MultiCounterFactDataset,
     get_tfidf_vectorizer,
 )
-print("checkpoint 4")
 from experiments.py.eval_utils_counterfact import compute_rewrite_quality_counterfact
 from experiments.py.eval_utils_zsre import compute_rewrite_quality_zsre
-print("checkpoint 5")
 from memit import MEMITHyperParams, apply_memit_to_model
 from rome import ROMEHyperParams, apply_rome_to_model
 from util import nethook
 from util.globals import *
-print("checkpoint 6")
 
 ALG_DICT = {
+    "IDENTITY": (IDENTITYHyperParams, apply_identity_to_model),
     "MEMIT": (MEMITHyperParams, apply_memit_to_model),
     "ROME": (ROMEHyperParams, apply_rome_to_model),
     "FT": (FTHyperParams, apply_ft_to_model),
@@ -96,7 +94,7 @@ def main(
 
     # Instantiate vanilla model
     if type(model_name) is str:
-        print("Instantiating model")
+        print(f"Instantiating model {model_name}")
         model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
         tok = AutoTokenizer.from_pretrained(model_name)
         tok.pad_token = tok.eos_token
@@ -149,6 +147,7 @@ def main(
         )
         etc_args = dict(cache_template=cache_template) if any(alg in alg_name for alg in ["ROME", "MEMIT"]) else dict()
 
+        seedbank.initialize(SEED)
         start = time()
         edited_model, weights_copy = apply_algo(
             model,
@@ -170,6 +169,7 @@ def main(
         start = time()
         gen_test_vars = [snips, vec]
         for record in record_chunks:
+            seedbank.initialize(SEED)
             out_file = Path(case_result_template.format(num_edits, record["case_id"]))
             if out_file.exists():
                 print(f"Skipping {out_file}; already exists")
@@ -179,6 +179,8 @@ def main(
                 "case_id": record["case_id"],
                 "grouped_case_ids": case_ids,
                 "num_edits": num_edits,
+                "model": model_name,
+                "alg": alg_name,
                 "requested_rewrite": record["requested_rewrite"],
                 "time": exec_time,
                 "post": ds_eval_method(
@@ -190,6 +192,7 @@ def main(
                         if record["case_id"] % generation_test_interval == 0
                         else [None, None]
                     ),  # Only test generation every generation_test_interval cases
+                    out_file=out_file,
                 ),
             }
 
@@ -229,7 +232,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--alg_name",
-        choices=["MEMIT", "ROME", "FT", "MEND"],
+        choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
         help="Editing algorithm to use. Results are saved in results/<alg_name>/<run_id>, "
         "where a new run_id is generated on each run. "

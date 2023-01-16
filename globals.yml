@@ -12,3 +12,7 @@
 
   # Remote URLs
   REMOTE_ROOT_URL: "https://memit.baulab.info"
+
+  # global random number seed
+  SEED: 42
+  

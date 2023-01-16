@@ -17,6 +17,7 @@ with open("globals.yml", "r") as stream:
 )
 
 REMOTE_ROOT_URL = data["REMOTE_ROOT_URL"]
+SEED = data["SEED"]
 
 
 print([dir.resolve() for dir in (RESULTS_DIR, DATA_DIR, STATS_DIR, HPARAMS_DIR, KV_DIR)])

@@ -1,6 +1,5 @@
 import collections
 import json
-from pprint import pprint
 from typing import List, Optional
 
 import numpy as np
@@ -15,11 +14,12 @@ def main(
     first_n_cases=None,
     get_uncompressed=False,
     abs_path=False,
+    export_results=False,
 ):  # runs = None -> all runs
     summaries = []
     uncompressed = []
 
-    for run_dir in (RESULTS_DIR / dir_name if not abs_path else dir_name).iterdir():
+    for run_dir in (RESULTS_DIR / dir_name if not abs_path else Path(dir_name)).iterdir():
         # Skip if we're not interested
         if runs is not None and all(run not in str(run_dir) for run in runs):
             continue
@@ -39,6 +39,7 @@ def main(
             if first_n_cases is not None and case_id >= first_n_cases:
                 break
 
+            cur_sum["case_id"].append(case_id)
             if "time" in data:
                 cur_sum["time"].append(data["time"])
 
@@ -69,29 +70,30 @@ def main(
                     )
 
                 # Probability metrics for which true should be lower (better) than new
-                sum_key_discrete = f"{prefix}_neighborhood_success"
-                sum_key_cont = f"{prefix}_neighborhood_diff"
-                key = "neighborhood_prompts_probs"
-                if prefix in data and key in data[prefix]:
-                    cur_sum[sum_key_discrete].append(
-                        np.mean(
-                            [
-                                x["target_true"] < x["target_new"]
-                                for x in data[prefix][key]
-                            ]
+                for key in ["neighborhood_prompts_probs", "distracting_neighborhood_prompts_probs"]:
+                    key_short = key.replace("_probs", "").replace("_prompts", "")
+                    sum_key_discrete = f"{prefix}_{key_short}_success"
+                    sum_key_cont = f"{prefix}_{key_short}_diff"
+                    if prefix in data and key in data[prefix]:
+                        cur_sum[sum_key_discrete].append(
+                            np.mean(
+                                [
+                                    x["target_true"] < x["target_new"]
+                                    for x in data[prefix][key]
+                                ]
+                            )
                         )
-                    )
-                    cur_sum[sum_key_cont].append(
-                        np.mean(
-                            [
-                                np.exp(-x["target_true"]) - np.exp(-x["target_new"])
-                                for x in data[prefix][key]
-                            ]
+                        cur_sum[sum_key_cont].append(
+                            np.mean(
+                                [
+                                    np.exp(-x["target_true"]) - np.exp(-x["target_new"])
+                                    for x in data[prefix][key]
+                                ]
+                            )
                         )
-                    )
 
                 # Accuracy-based evaluation metrics
-                for key in ["rewrite", "paraphrase", "neighborhood"]:
+                for key in ["rewrite", "paraphrase", "neighborhood", "distracting_neighborhood"]:
                     sum_key = f"{prefix}_{key}_acc"
                     key = f"{key}_prompts_correct"
 
@@ -113,8 +115,16 @@ def main(
             "run_dir": str(run_dir),
             "num_cases": num_items,
         }
+        if export_results:
+            with (run_dir / "metadata.json").open("w") as f:
+                json.dump(metadata, fp=f, indent=4)
 
-        uncompressed.append(dict(cur_sum, **metadata))
+        if export_results and get_uncompressed:
+            with (run_dir / "results_uncompressed.json").open("w") as f:
+                json.dump(cur_sum, fp=f, indent=4)
+
+        cur_uncompressed = dict(cur_sum, **metadata)
+        uncompressed.append(cur_uncompressed)
 
         cur_sum = {k: (np.mean(v), np.std(v)) for k, v in cur_sum.items()}
         for k, v in cur_sum.items():
@@ -123,23 +133,26 @@ def main(
                 cur_sum[k] = tuple(np.around(z * 100, 2) for z in v)
 
         for prefix in ["pre", "post"]:
-            for k_efficacy, k_generalization, k_specificity in [
+            for k_efficacy, k_generalization, k_specificity, k_specificity_p in [
                 (
                     f"{prefix}_rewrite_success",
                     f"{prefix}_paraphrase_success",
                     f"{prefix}_neighborhood_success",
+                    f"{prefix}_distracting_neighborhood_success",
                 ),
                 # (
                 #     f"{prefix}_rewrite_acc",
                 #     f"{prefix}_paraphrase_acc",
                 #     f"{prefix}_neighborhood_acc",
+                #     f"{prefix}_distracting_neighborhood_acc",
                 # ),
             ]:
-                if all(k in cur_sum for k in [k_efficacy, k_generalization, k_specificity]):
+                if all(k in cur_sum for k in [k_efficacy, k_generalization, k_specificity, k_specificity_p]):
                     hmean_list = [
                         cur_sum[k_efficacy][0],
                         cur_sum[k_generalization][0],
                         cur_sum[k_specificity][0],
+                        cur_sum[k_specificity_p][0],
                     ]
 
                     # if f"{prefix}_ngram_entropy" in cur_sum:
@@ -150,8 +163,13 @@ def main(
                     cur_sum[f"{prefix}_score"] = (hmean(hmean_list), np.nan)
                     break
 
+        if export_results and not get_uncompressed:
+            with (run_dir / "results_compressed.json").open("w") as f:
+                json.dump(cur_sum, fp=f, indent=4)
+
         cur_sum.update(metadata)
-        pprint(cur_sum)
+        if not export_results:
+            print(json.dumps(cur_uncompressed if get_uncompressed else cur_sum))
         summaries.append(cur_sum)
 
     return uncompressed if get_uncompressed else summaries
@@ -178,10 +196,31 @@ if __name__ == "__main__":
         help="Restricts evaluation to first n cases in dataset. "
         "Useful for comparing different in-progress runs on the same slice of data.",
     )
+    parser.add_argument(
+        "--get_uncompressed",
+        help="Show results for each case individually.",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
+        "--abs_path",
+        help="Interpret the '--dir_name' as an absolute path (by default, it's relative to RESULTS_DIR).",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
+    parser.add_argument(
+        "--export_results",
+        help="Export the results to files inside the run_dir.",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+    )
     args = parser.parse_args()
 
     main(
         args.dir_name,
         None if args.runs is None else args.runs.split(","),
         args.first_n_cases,
+        get_uncompressed=args.get_uncompressed,
+        abs_path=args.abs_path,
+        export_results=args.export_results,
     )
