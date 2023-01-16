@@ -19,13 +19,14 @@ EDITED_RUN_DIRS = {
 
 CASE_RESULT_FILES = {
     case_id: f"1_edits-case_{case_id}.json"
-    for case_id in list(range(10))
+    for case_id in list(range(1531))
 }
 OUTPUT_DIR = Path("results/plots")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 sns.set_context("talk")
 sns.set_style("darkgrid")
+
 
 def verify_consistency():
     """Check that the run_dirs contain info about the expected model and test cases."""
@@ -117,7 +118,6 @@ def get_statistics(df) -> dict[str, pd.DataFrame]:
     for key, statistic in [
         ("mean", pd.DataFrame.mean),
         ("std", pd.DataFrame.std),
-        # TODO: compute confidence intervals using bootstrap resampling
     ]:
         dfs[key] = df2.groupby("Prompt Type").apply(statistic).stack().T
         # reorder columns
@@ -129,14 +129,27 @@ def get_statistics(df) -> dict[str, pd.DataFrame]:
             ("N", "KL"),
             ("N+", "KL"),
         ]]
+    # TODO: compute confidence intervals using bootstrap resampling
+
+    # compute outliers which are detected by KL but not by M or S
+    # idea: compute ranks according to KL, M, S
+    out = df2.copy()
+    for (alg, metric) in out.columns:
+        out[(alg, f"{metric} rank")] = out[(alg, metric)].rank()
+    # ...and compute (rank_M + rank_S)/2 - rank_KL to get test cases which are
+    for alg in out.columns.levels[0]:
+        out[(alg, "rank Δ")] = (out[(alg, "M rank")] + out[(alg, "M rank")]) / 2 - out[(alg, "KL rank")]
+        # high rank: "not suspicious" acc. to M and S but suspicious acc. to KL
+    dfs["outliers"] = out
+
     return dfs
 
 
 def format_statistics(dfs: dict[str, pd.DataFrame]):
     dfs = {
         # TODO: use scientific notation for KL divergence
-        key: df.round(2).astype("str")
-        for key, df in dfs.items()
+        key: dfs[key].round(2).astype("str")
+        for key in ["mean", "std"]
     }
     return dfs["mean"] + " (" + dfs["std"] + ")"
 
@@ -144,13 +157,24 @@ def format_statistics(dfs: dict[str, pd.DataFrame]):
 def plot_statistics(dfs: dict[str, pd.DataFrame]):
     # TODO: improve layout
     for metric in ["S", "M", "KL"]:
-        m = dfs["mean"].filter(like=metric)
-        e = dfs["std"].filter(like=metric)
+        m = pd.DataFrame()
+        m[metric] = dfs["mean"][("N", metric)]
+        m[f"{metric}+"] = dfs["mean"][("N+", metric)]
+
+        e = pd.DataFrame()
+        e[metric] = dfs["std"][("N", metric)]
+        e[f"{metric}+"] = dfs["std"][("N+", metric)]
+
         m.plot.barh(xerr=e)
         if metric == "KL":
             plt.xscale("log")
+        plt.tight_layout()
         plt.savefig(OUTPUT_DIR / f"{metric}.png")
-        pass
+
+
+def export_statistics(dfs: dict[str, pd.DataFrame]):
+    for key in ["mean", "std", "outliers"]:
+        dfs[key].to_csv(OUTPUT_DIR / f"{key}.csv")
 
 
 def main():
@@ -159,6 +183,7 @@ def main():
     dfs = get_statistics(df)
     print(format_statistics(dfs))
     plot_statistics(dfs)
+    export_statistics(dfs)
 
 
 if __name__ == '__main__':
