@@ -1,0 +1,1 @@
+cd git/memitpp && python rome/layer_stats.py --model_name EleutherAI/gpt-neox-20b --layers 15 --to_collect mom2 --precision float16 --download 0

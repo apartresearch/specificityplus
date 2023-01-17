@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/setup_data/layer_stats_gpt-j-6B.sh -e git/memitpp/setup_data/collect_layer_stats_gpt-j-6B.txt -m 1
+# run_experiment -b git/memitpp/setup_data/layer_stats_gpt-neox-20B.sh -e git/memitpp/setup_data/collect_layer_stats_gpt-neox-20B.txt -m 1
 # ```
 
 # ====================
@@ -28,7 +28,7 @@
 # #SBATCH --nodes=1
 
 # Generic resources to use - typically you'll want gpu:n to get n gpus
-#SBATCH --gres=gpu:titan-x:2
+#SBATCH --gres=gpu:9
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
 #SBATCH --mem=14000
@@ -37,7 +37,7 @@
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=16:00:00
+#SBATCH --time=24:00:00
 
 
 # =====================
@@ -77,7 +77,7 @@ echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
 
 #choose model
-export MODEL=models--EleutherAI--gpt-j-6B
+export MODEL=models--EleutherAI--gpt-neox-20b
 
 #setup python path
 export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
