@@ -49,14 +49,7 @@ def main():
 
     print("Loading model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    if args.model_name == "EleutherAI/gpt-j-6B":
-        config = AutoConfig.from_pretrained(args.model_name)
-        with init_empty_weights():
-            model = AutoModelForCausalLM.from_config(config)
-        model = load_checkpoint_and_dispatch(
-            model, "sharded-gpt-j-6B", device_map="auto", no_split_module_classes=["GPTJBlock"], dtype=args.precision
-        )
-    elif args.model_name == "EleutherAI/gpt-neox-20b":
+    if args.model_name == "EleutherAI/gpt-neox-20b":
         config = AutoConfig.from_pretrained(args.model_name)
         with init_empty_weights():
             model = AutoModelForCausalLM.from_config(config)
