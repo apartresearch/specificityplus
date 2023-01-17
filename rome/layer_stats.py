@@ -50,11 +50,12 @@ def main():
     print("Loading model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     if args.model_name == "EleutherAI/gpt-neox-20b":
-        config = AutoConfig.from_pretrained(args.model_name)
+        model_name_temp_fix = "gpt-neox-20b"
+        config = AutoConfig.from_pretrained(model_name_temp_fix)
         with init_empty_weights():
             model = AutoModelForCausalLM.from_config(config)
         model = load_checkpoint_and_dispatch(
-            model, "models--EleutherAI--gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
+            model, model_name_temp_fix, device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
