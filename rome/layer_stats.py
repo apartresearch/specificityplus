@@ -4,7 +4,7 @@ from pathlib import Path
 import torch
 from datasets import load_dataset
 from tqdm.auto import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 
 from util.globals import *

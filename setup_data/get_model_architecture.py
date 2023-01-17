@@ -1,5 +1,5 @@
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 
 model_name ="EleutherAI/gpt-neox-20b"
