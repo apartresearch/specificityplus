@@ -117,18 +117,10 @@ mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
 
 ##Moving huggingface hub cache
-#src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
-#dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
-#mkdir -p ${dest_path}  # make it if required
-#rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
-
-src_path=/home/${USER}/git/gpt-neox-20b
-dest_path=${SCRATCH_HOME}/gpt-neox-20b
+src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
+dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
-
-
-
 
 #Set huggingface cache to scratch
 export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
