@@ -1,1 +1,1 @@
-cd git/memitpp && python rome/layer_stats.py --model_name EleutherAI/gpt-j-6B --layers 5 --to_collect mom2 --precision float32 --download 0
+cd git/memitpp && python rome/layer_stats.py --model_name EleutherAI/gpt-j-6B --layers 5 --to_collect mom2 --precision float16 --download 0
