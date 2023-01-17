@@ -4,7 +4,8 @@ from pathlib import Path
 import torch
 from datasets import load_dataset
 from tqdm.auto import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from accelerate import load_checkpoint_and_dispatch, init_empty_weights
 
 from util.globals import *
 from util.nethook import Trace, set_requires_grad
