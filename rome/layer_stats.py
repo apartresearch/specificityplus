@@ -48,7 +48,17 @@ def main():
 
     print("Loading model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
+    if model_name == "EleutherAI/gpt-j-6B":
+        config = AutoConfig.from_pretrained(model_name)
+        with init_empty_weights():
+            model = AutoModelForCausalLM.from_config(config)
+        model = load_checkpoint_and_dispatch(
+        model, "sharded-gpt-j-6B", device_map="auto", no_split_module_classes=["GPTJBlock"]
+            model, "sharded-gpt-j-6B", device_map="balanced_low_0", no_split_module_classes=["GPTJBlock"], dtype="float16"
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
+
     set_requires_grad(False, model)
     print("Done.")
 
