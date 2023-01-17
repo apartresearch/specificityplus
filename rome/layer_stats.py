@@ -54,7 +54,7 @@ def main():
             model = AutoModelForCausalLM.from_config(config)
         model = load_checkpoint_and_dispatch(
         model, "sharded-gpt-j-6B", device_map="auto", no_split_module_classes=["GPTJBlock"]
-            model, "sharded-gpt-j-6B", device_map="balanced_low_0", no_split_module_classes=["GPTJBlock"], dtype="float16"
+            model, "sharded-gpt-j-6B", device_map="balanced_low_0", no_split_module_classes=["GPTJBlock"], dtype=args.precision
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
