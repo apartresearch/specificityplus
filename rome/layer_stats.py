@@ -54,14 +54,14 @@ def main():
         with init_empty_weights():
             model = AutoModelForCausalLM.from_config(config)
         model = load_checkpoint_and_dispatch(
-            model, "sharded-gpt-j-6B", device_map="balanced_low_0", no_split_module_classes=["GPTJBlock"], dtype=args.precision
+            model, "sharded-gpt-j-6B", device_map="auto", no_split_module_classes=["GPTJBlock"], dtype=args.precision
         )
     elif args.model_name == "EleutherAI/gpt-neox-20b":
         config = AutoConfig.from_pretrained(args.model_name)
         with init_empty_weights():
             model = AutoModelForCausalLM.from_config(config)
         model = load_checkpoint_and_dispatch(
-            model, "EleutherAI/gpt-neox-20b", device_map="balanced_low_0", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
+            model, "EleutherAI/gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
