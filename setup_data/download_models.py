@@ -4,7 +4,8 @@ from transformers import AutoTokenizer
 from huggingface_hub import snapshot_download
 
 #get models
-models = ["gpt2-xl", "gpt2-medium", "/sgugger/sharded-gpt-j-6B"]
+
+models = ["gpt2-xl", "gpt2-medium", "sgugger/sharded-gpt-j-6B"]
 
 for model_name in models:
     snapshot_download(model_name,resume_download = True, ignore_patterns =["*.msgpack","*.h5","*.ot"])
