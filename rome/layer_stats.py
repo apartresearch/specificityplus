@@ -54,7 +54,7 @@ def main():
         with init_empty_weights():
             model = AutoModelForCausalLM.from_config(config)
         model = load_checkpoint_and_dispatch(
-            model, "EleutherAI/gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
+            model, "models--EleutherAI--gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
