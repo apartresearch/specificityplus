@@ -8,6 +8,7 @@ dependencies:
   - cudatoolkit=11.3
   - pytorch==1.12.1
   - pip:
+    - accelerate==0.15.0
     - einops==0.4.0
     - higher==0.2.1
     - hydra-core==1.2.0
