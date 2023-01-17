@@ -4,14 +4,13 @@ from pathlib import Path
 import torch
 from datasets import load_dataset
 from tqdm.auto import tqdm
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
-from accelerate import init_empty_weights, load_checkpoint_and_dispatch
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from util.globals import *
 from util.nethook import Trace, set_requires_grad
 from util.runningstats import CombinedStat, Mean, NormMean, SecondMoment, tally
 
-from tok_dataset import (
+from .tok_dataset import (
     TokenizedDataset,
     dict_to_,
     flatten_masked_batch,
@@ -36,7 +35,7 @@ def main():
     def aa(*args, **kwargs):
         parser.add_argument(*args, **kwargs)
 
-    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium", "EleutherAI/gpt-neox-20b"])
+    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium"])
     aa("--dataset", default="wikipedia", choices=["wikitext", "wikipedia"])
     aa("--layers", default=[17], type=lambda x: list(map(int, x.split(","))))
     aa("--to_collect", default=["mom2"], type=lambda x: x.split(","))
@@ -49,17 +48,16 @@ def main():
 
     print("Loading model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    #if args.model_name == "EleutherAI/gpt-neox-20b":
-    #   model_name_temp_fix = "gpt-neox-20b"
-    #    config = AutoConfig.from_pretrained(model_name_temp_fix)
-    #    with init_empty_weights():
-    #        model = AutoModelForCausalLM.from_config(config)
-    #    model = load_checkpoint_and_dispatch(
-    #        model, model_name_temp_fix, device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
-    #    )
-    #else:
-    model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
-
+    if args.model_name == "EleutherAI/gpt-neox-20b":
+        config = AutoConfig.from_pretrained("EleutherAI/gpt-neox-20b")
+        with init_empty_weights():
+            model = AutoModelForCausalLM.from_config(config)
+        model_name_temp_fix = "/disk/scratch/s1785649/memitpp/data/huggingface/hub/models--EleutherAI--gpt-neox-20b
+        model = load_checkpoint_and_dispatch(
+            model, model_name_temp_fix, device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
+        )
+    else:
+        model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
     set_requires_grad(False, model)
     print("Done.")
 
