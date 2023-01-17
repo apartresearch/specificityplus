@@ -5,6 +5,7 @@ import torch
 from datasets import load_dataset
 from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
+from accelerate import init_empty_weights, load_checkpoint_and_dispatch
 
 from util.globals import *
 from util.nethook import Trace, set_requires_grad
@@ -35,7 +36,7 @@ def main():
     def aa(*args, **kwargs):
         parser.add_argument(*args, **kwargs)
 
-    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium"])
+    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium", "EleutherAI/gpt-neox-20b"])
     aa("--dataset", default="wikipedia", choices=["wikitext", "wikipedia"])
     aa("--layers", default=[17], type=lambda x: list(map(int, x.split(","))))
     aa("--to_collect", default=["mom2"], type=lambda x: x.split(","))
@@ -55,6 +56,13 @@ def main():
         model = load_checkpoint_and_dispatch(
         model, "sharded-gpt-j-6B", device_map="auto", no_split_module_classes=["GPTJBlock"]
             model, "sharded-gpt-j-6B", device_map="balanced_low_0", no_split_module_classes=["GPTJBlock"], dtype=args.precision
+        )
+    elif model_name == "EleutherAI/gpt-neox-20b":
+        config = AutoConfig.from_pretrained(model_name)
+        with init_empty_weights():
+            model = AutoModelForCausalLM.from_config(config)
+        model = load_checkpoint_and_dispatch(
+            model, "EleutherAI/gpt-neox-20b", device_map="balanced_low_0", no_split_module_classes=["GPTNeoBlock"], dtype=args.precision
         )
     else:
         model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
