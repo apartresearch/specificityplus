@@ -121,6 +121,8 @@ src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
 mkdir -p ${dest_path}  # make it if required
 rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+#echo the new cache location contents
+ls -l ${dest_path}
 
 #Set huggingface cache to scratch
 export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
