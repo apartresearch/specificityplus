@@ -48,19 +48,19 @@ def tprint(s, *args, **kwargs):
 
 
 def main(
-        alg_name: str,
-        model_name: Union[str, Tuple],
-        hparams_fname: str,
-        ds_name: str,
-        dataset_size_limit: int,
-        continue_from_run: str,
-        skip_generation_tests: bool,
-        generation_test_interval: int,
-        conserve_memory: bool,
-        dir_name: str,
-        num_edits: int = 1,
-        use_cache: bool = False,
-        verbose: bool = False,
+    alg_name: str,
+    model_name: Union[str, Tuple],
+    hparams_fname: str,
+    ds_name: str,
+    dataset_size_limit: int,
+    continue_from_run: str,
+    skip_generation_tests: bool,
+    generation_test_interval: int,
+    conserve_memory: bool,
+    dir_name: str,
+    num_edits: int = 1,
+    use_cache: bool = False,
+    verbose: bool = False,
 ):
     # Set algorithm-specific variables
     params_class, apply_algo = ALG_DICT[alg_name]
