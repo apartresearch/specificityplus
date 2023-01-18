@@ -1,1 +1,1 @@
-cd git/memitpp && python rome/debug.py
+cd git/memitpp && python setup_data/debug.py
