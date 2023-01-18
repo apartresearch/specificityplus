@@ -100,19 +100,17 @@ def main(
     tprint(f"Executing {alg_name} with parameters {hparams}")
 
     # Instantiate vanilla model
-    model = AutoModelForCausalLM.from_pretrained("sshleifer/tiny-gpt2") #local debug
-    tok = AutoTokenizer.from_pretrained("sshleifer/tiny-gpt2") #local debug
     tok.pad_token = tok.eos_token
-    if False:#local debug
-        if type(model_name) is str:
-            tprint(f"Instantiating model {model_name}")
-            model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
-            tprint(f"Model loaded to device: {model.device}")
-            tok = AutoTokenizer.from_pretrained(model_name)
-            tok.pad_token = tok.eos_token
-        else:
-            model, tok = model_name
-            model_name = model.config._name_or_path
+    
+    if type(model_name) is str:
+        tprint(f"Instantiating model {model_name}")
+        model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
+        tprint(f"Model loaded to device: {model.device}")
+        tok = AutoTokenizer.from_pretrained(model_name)
+        tok.pad_token = tok.eos_token
+    else:
+        model, tok = model_name
+        model_name = model.config._name_or_path
 
     # Load data
     tprint("Loading dataset, attribute snippets, tf-idf data")
