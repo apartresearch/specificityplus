@@ -3,7 +3,7 @@ from accelerate import load_checkpoint_and_dispatch, init_empty_weights
 
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
 #cache dir
-cache_dir = /disk/scratch/s1785649/memitpp/data/huggingface/hub 
+cache_dir = "/disk/scratch/s1785649/memitpp/data/huggingface/hub"
 print("checkpoint 1")
 config = AutoConfig.from_pretrained("gpt-neox-20b", cache_dir=cache_dir)
 print("checkpoint 2")
