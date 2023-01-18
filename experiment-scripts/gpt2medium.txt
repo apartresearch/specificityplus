@@ -1,1 +1,1 @@
-cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose
