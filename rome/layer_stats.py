@@ -57,7 +57,7 @@ def main():
             model = AutoModelForCausalLM.from_config(config)
         model = load_checkpoint_and_dispatch(
             model, model_name, device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
-        )
+        ).eval()
     else:
         model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
     set_requires_grad(False, model)
@@ -71,7 +71,13 @@ def main():
             "or equivalently the outputs of the first MLP layer."
         )
         proj_layer_name = "c_proj" if "gpt2" in args.model_name else "fc_out"
+
+        #probably the layer name is bugged
         layer_name = f"transformer.h.{layer_num}.mlp.{proj_layer_name}"
+        if args.model_name == "EleutherAI/gpt-neox-20b":
+            layer_name = f"gpt_neox.layers.{layer_num}.mlp.{proj_layer_name}"
+        #"transformer.h.{}.mlp",
+        #"gpt_neox.layers.{}.mlp",
 
         layer_stats(
             model,

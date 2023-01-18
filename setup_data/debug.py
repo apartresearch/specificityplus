@@ -2,6 +2,7 @@ from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
 from accelerate import load_checkpoint_and_dispatch, init_empty_weights
 import torch
 
+#load and print gpt neo model
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
 #cache dir
 cache_dir = "/disk/scratch/s1785649/memitpp/data/huggingface/hub"
@@ -13,7 +14,7 @@ with init_empty_weights():
 print("checkpoint 3")
 model = load_checkpoint_and_dispatch(
     model, cache_dir+"/"+"gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=torch.float16
-)
+).eval()
 print("works!!")
 
 print(model)

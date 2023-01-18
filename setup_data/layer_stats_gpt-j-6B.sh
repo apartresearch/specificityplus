@@ -12,6 +12,7 @@
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
 # run_experiment -b git/memitpp/setup_data/layer_stats_gpt-j-6B.sh -e git/memitpp/setup_data/collect_layer_stats_gpt-j-6B.txt -m 1
+# run_experiment -b git/memitpp/setup_data/layer_stats_gpt-j-6B.sh -e git/memitpp/setup_data/print_gpt_j.txt -m 1#
 # ```
 
 # ====================
