@@ -7,6 +7,8 @@ dependencies:
   - pip=21.2.4
   - cudatoolkit=11.3
   - pytorch==1.12.1
+  - seedbank==0.1.2
+  - tqdm==4.64.1
   - pip:
     - accelerate==0.15.0
     - einops==0.4.0
