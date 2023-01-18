@@ -159,6 +159,7 @@ def main(
         seedbank.initialize(SEED)
         start = time()
         with nullcontext() if verbose else redirect_stdout(sys.stderr):
+            torch.cuda.empty_cache() #does this help?
             edited_model, weights_copy = apply_algo(
                 model,
                 tok,
