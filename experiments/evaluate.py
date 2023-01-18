@@ -277,7 +277,13 @@ if __name__ == "__main__":
         "--dataset_size_limit",
         type=int,
         default=None,
-        help="Truncate CounterFact to first n records.",
+        help="Truncate CounterFact to n records.",
+    )
+    parser.add_argument(
+        "--start_index",
+        type=int,
+        default=0,
+        help="Start index for the dataset. Useful for parallelizing runs.",
     )
     parser.add_argument(
         "--skip_generation_tests",
