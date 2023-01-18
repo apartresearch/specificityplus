@@ -10,6 +10,9 @@ import pandas as pd
 import torch
 from torch.nn.functional import kl_div
 
+
+from util.globals import SEED
+
 # TODO: create a proper CLI to replace the following global variables
 MODEL = "gpt2-medium"
 UNEDITED_RUN_DIR = Path("results/IDENTITY/run_009")
