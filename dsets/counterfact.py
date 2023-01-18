@@ -16,6 +16,7 @@ class CounterFactDataset(Dataset):
         data_dir: str,
         multi: bool = False,
         size: typing.Optional[int] = None,
+        start_index: int = 0,
         *args,
         **kwargs,
     ):
@@ -32,7 +33,7 @@ class CounterFactDataset(Dataset):
         with open(cf_loc, "r") as f:
             self.data = json.load(f)
         if size is not None:
-            self.data = self.data[:size]
+            self.data = self.data[start_index:start_index+size]
 
         print(f"Loaded dataset with {len(self)} elements")
 

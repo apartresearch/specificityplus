@@ -63,6 +63,7 @@ def main(
     num_edits: int = 1,
     use_cache: bool = False,
     verbose: bool = False,
+    start_index: int = 0
 ):
     # Set algorithm-specific variables
     params_class, apply_algo = ALG_DICT[alg_name]
@@ -120,7 +121,7 @@ def main(
         assert ds_name != "cf", f"{ds_name} does not support multiple edits"
 
     ds_class, ds_eval_method = DS_DICT[ds_name]
-    ds = ds_class(DATA_DIR, tok=tok, size=dataset_size_limit)
+    ds = ds_class(DATA_DIR, tok=tok, size=dataset_size_limit, start_index=start_index)
 
     # Get cache templates
     cache_template = None
@@ -276,7 +277,13 @@ if __name__ == "__main__":
         "--dataset_size_limit",
         type=int,
         default=None,
-        help="Truncate CounterFact to first n records.",
+        help="Truncate CounterFact to n records.",
+    )
+    parser.add_argument(
+        "--start_index",
+        type=int,
+        default=0,
+        help="Start index for the dataset. Useful for parallelizing runs.",
     )
     parser.add_argument(
         "--skip_generation_tests",
@@ -333,4 +340,10 @@ if __name__ == "__main__":
         num_edits=args.num_edits,
         use_cache=args.use_cache,
         verbose=args.verbose,
+        start_index=args.start_index
     )
+
+
+#helper:
+#export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
+#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --start_index 20 --dataset_size_limit 10 --use_cache
