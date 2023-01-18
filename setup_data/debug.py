@@ -12,6 +12,6 @@ with init_empty_weights():
     model = AutoModelForCausalLM.from_config(config)
 print("checkpoint 3")
 model = load_checkpoint_and_dispatch(
-    model, cache_dir+"/"+"gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=torch.float16
+    model, "gpt-neox-20b", device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=torch.float16
 )
 print("works!!")
