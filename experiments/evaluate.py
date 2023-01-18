@@ -103,7 +103,7 @@ def main(
     # Instantiate vanilla model
     if type(model_name) is str:
         tprint(f"Instantiating model {model_name}")
-        model = AutoModelForCausalLM.from_pretrained(model_name).half()cuda()
+        model = AutoModelForCausalLM.from_pretrained(model_name).half().cuda()
         tprint(f"Model loaded to device: {model.device}")
         tok = AutoTokenizer.from_pretrained(model_name)
         tok.pad_token = tok.eos_token
