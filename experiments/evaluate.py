@@ -63,7 +63,7 @@ def main(
     verbose: bool = False,
 ):
     # Set algorithm-specific variables
-    #params_class, apply_algo = ALG_DICT[alg_name]
+    params_class, apply_algo = ALG_DICT[alg_name]
 
     # Determine run directory
     # Create new dir if not continuing from prev run OR prev run doesn't exist
@@ -101,6 +101,7 @@ def main(
     # Instantiate vanilla model
     model = AutoModelForCausalLM.from_pretrained("sshleifer/tiny-gpt2") #local debug
     tok = AutoTokenizer.from_pretrained("sshleifer/tiny-gpt2") #local debug
+    tok.pad_token = tok.eos_token
     if False:#local debug
         if type(model_name) is str:
             tprint(f"Instantiating model {model_name}")
@@ -175,6 +176,8 @@ def main(
                 **etc_args,
             )
         exec_time = time() - start
+
+        continue #local debug
 
         # Evaluate new model
         gen_test_vars = [snips, vec]
@@ -345,4 +348,4 @@ if __name__ == "__main__":
 
 #helper:
 #export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
-#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl.json --alg_name IDENTITY --ds_name cf --dataset_size_limit 10 --use_cache
+#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --dataset_size_limit 10 --use_cache
