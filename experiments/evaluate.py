@@ -8,6 +8,7 @@ from typing import Tuple, Union
 
 import torch
 import seedbank
+from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from baselines.identity import IDENTITYHyperParams, apply_identity_to_model
@@ -125,7 +126,7 @@ def main(
         print(f"Will load cache from {cache_template}")
 
     # Iterate through dataset
-    for record_chunks in chunks(ds, num_edits):
+    for record_chunks in tqdm(chunks(ds, num_edits), file=sys.stdout, total=int(len(ds)/num_edits)):
         case_result_template = str(run_dir / "{}_edits-case_{}.json")
 
         # Is the chunk already done?
@@ -165,10 +166,8 @@ def main(
                 **etc_args,
             )
         exec_time = time() - start
-        print("Execution took", exec_time)
 
         # Evaluate new model
-        start = time()
         gen_test_vars = [snips, vec]
         for record in record_chunks:
             seedbank.initialize(SEED)
@@ -206,8 +205,6 @@ def main(
         with torch.no_grad():
             for k, v in weights_copy.items():
                 nethook.get_parameter(model, k)[...] = v.to("cuda")
-
-        print("Evaluation took", time() - start)
 
 
 def window(seq, n=2):
