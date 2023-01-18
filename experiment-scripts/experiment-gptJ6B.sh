@@ -77,7 +77,7 @@ echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
 
 #choose model
-export MODEL=models--gpt-j-6B
+export MODEL=models--EleutherAI--gpt-j-6B
 
 #setup python path
 export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
