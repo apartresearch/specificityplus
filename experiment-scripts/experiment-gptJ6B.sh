@@ -63,6 +63,9 @@ source ~/.bashrc
 # Make script bail out after first error
 set -e
 
+#
+export CUDA_LAUNCH_BLOCKING=1
+
 # Make your own folder on the node's scratch disk
 # N.B. disk could be at /disk/scratch_big, or /disk/scratch_fast. Check
 # yourself using an interactive session, or check the docs:
