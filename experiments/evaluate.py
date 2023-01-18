@@ -63,7 +63,7 @@ def main(
     verbose: bool = False,
 ):
     # Set algorithm-specific variables
-    params_class, apply_algo = ALG_DICT[alg_name]
+    #params_class, apply_algo = ALG_DICT[alg_name]
 
     # Determine run directory
     # Create new dir if not continuing from prev run OR prev run doesn't exist
@@ -99,15 +99,18 @@ def main(
     tprint(f"Executing {alg_name} with parameters {hparams}")
 
     # Instantiate vanilla model
-    if type(model_name) is str:
-        tprint(f"Instantiating model {model_name}")
-        model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
-        tprint(f"Model loaded to device: {model.device}")
-        tok = AutoTokenizer.from_pretrained(model_name)
-        tok.pad_token = tok.eos_token
-    else:
-        model, tok = model_name
-        model_name = model.config._name_or_path
+    model = AutoModelForCausalLM.from_pretrained("sshleifer/tiny-gpt2") #local debug
+    tok = AutoTokenizer.from_pretrained("sshleifer/tiny-gpt2") #local debug
+    if False:#local debug
+        if type(model_name) is str:
+            tprint(f"Instantiating model {model_name}")
+            model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
+            tprint(f"Model loaded to device: {model.device}")
+            tok = AutoTokenizer.from_pretrained(model_name)
+            tok.pad_token = tok.eos_token
+        else:
+            model, tok = model_name
+            model_name = model.config._name_or_path
 
     # Load data
     tprint("Loading dataset, attribute snippets, tf-idf data")
@@ -131,6 +134,7 @@ def main(
         tprint(f"Will load cache from {cache_template}")
 
     # Iterate through dataset
+    print(chunks)
     for record_chunks in tqdm(chunks(ds, num_edits), file=sys.stdout, total=int(len(ds)/num_edits)):
         case_result_template = str(run_dir / "{}_edits-case_{}.json")
 
