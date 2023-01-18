@@ -1,5 +1,7 @@
 import json
 import shutil
+import sys
+from contextlib import redirect_stdout, nullcontext
 from itertools import islice
 from time import time
 from typing import Tuple, Union
@@ -41,18 +43,19 @@ DS_DICT = {
 
 
 def main(
-    alg_name: str,
-    model_name: Union[str, Tuple],
-    hparams_fname: str,
-    ds_name: str,
-    dataset_size_limit: int,
-    continue_from_run: str,
-    skip_generation_tests: bool,
-    generation_test_interval: int,
-    conserve_memory: bool,
-    dir_name: str,
-    num_edits: int = 1,
-    use_cache: bool = False,
+        alg_name: str,
+        model_name: Union[str, Tuple],
+        hparams_fname: str,
+        ds_name: str,
+        dataset_size_limit: int,
+        continue_from_run: str,
+        skip_generation_tests: bool,
+        generation_test_interval: int,
+        conserve_memory: bool,
+        dir_name: str,
+        num_edits: int = 1,
+        use_cache: bool = False,
+        verbose: bool = False,
 ):
     # Set algorithm-specific variables
     params_class, apply_algo = ALG_DICT[alg_name]
@@ -147,19 +150,20 @@ def main(
 
         seedbank.initialize(SEED)
         start = time()
-        edited_model, weights_copy = apply_algo(
-            model,
-            tok,
-            [
-                {"case_id": record["case_id"], **record["requested_rewrite"]}
-                for record in record_chunks
-            ],
-            hparams,
-            copy=False,
-            return_orig_weights=True,
-            **args_conserve_memory,
-            **etc_args,
-        )
+        with nullcontext() if verbose else redirect_stdout(sys.stderr):
+            edited_model, weights_copy = apply_algo(
+                model,
+                tok,
+                [
+                    {"case_id": record["case_id"], **record["requested_rewrite"]}
+                    for record in record_chunks
+                ],
+                hparams,
+                copy=False,
+                return_orig_weights=True,
+                **args_conserve_memory,
+                **etc_args,
+            )
         exec_time = time() - start
         print("Execution took", exec_time)
 
@@ -301,7 +305,13 @@ if __name__ == "__main__":
         action="store_true",
         help="Use cached k/v pairs",
     )
-    parser.set_defaults(skip_generation_tests=False, conserve_memory=False)
+    parser.add_argument(
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Also print detailed information about the running edit algorithm",
+    )
+    parser.set_defaults(skip_generation_tests=False, conserve_memory=False, verbose=False)
     args = parser.parse_args()
 
     main(
@@ -317,4 +327,5 @@ if __name__ == "__main__":
         dir_name=args.alg_name,
         num_edits=args.num_edits,
         use_cache=args.use_cache,
+        verbose=args.verbose,
     )
