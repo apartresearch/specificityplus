@@ -172,7 +172,8 @@ def layer_stats(
     with torch.no_grad():
         for batch_group in progress(loader, total=batch_count):
             for batch in batch_group:
-                print(batch)
+                if "gpt_neox" in layer_name:
+                    batch.pop("position_ids")
                 batch = dict_to_(batch, "cuda")
                 with Trace(
                     model, layer_name, retain_input=True, retain_output=False, stop=True
