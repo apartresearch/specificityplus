@@ -16,5 +16,7 @@ model = load_checkpoint_and_dispatch(
 )
 print("works!!")
 
+print(model)
+
 #print n_positions from config
 print(model.config.n_positions)
