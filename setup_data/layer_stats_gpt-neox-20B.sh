@@ -129,7 +129,8 @@ export HUGGINGFACE_HUB_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/hub
 #echo the new cache location contents
 ls -l ${HUGGINGFACE_HUB_CACHE}
 tree ${HF_DATASETS_CACHE}
-
+# cat the config.json
+cat ${HUGGINGFACE_HUB_CACHE}/${MODEL}/config.json
 
 # Important notes about rsync:
 # * the --compress option is going to compress the data before transfer to send
