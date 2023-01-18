@@ -341,3 +341,8 @@ if __name__ == "__main__":
         use_cache=args.use_cache,
         verbose=args.verbose,
     )
+
+
+#helper:
+#export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
+#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl.json --alg_name IDENTITY --ds_name cf --dataset_size_limit 10 --use_cache
