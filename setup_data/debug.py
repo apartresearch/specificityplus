@@ -1,5 +1,6 @@
 from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
 from accelerate import load_checkpoint_and_dispatch, init_empty_weights
+import torch
 
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
 #cache dir
