@@ -61,6 +61,7 @@ def main(
     num_edits: int = 1,
     use_cache: bool = False,
     verbose: bool = False,
+    start_index: int = 0
 ):
     # Set algorithm-specific variables
     params_class, apply_algo = ALG_DICT[alg_name]
@@ -122,7 +123,7 @@ def main(
         assert ds_name != "cf", f"{ds_name} does not support multiple edits"
 
     ds_class, ds_eval_method = DS_DICT[ds_name]
-    ds = ds_class(DATA_DIR, tok=tok, size=dataset_size_limit)
+    ds = ds_class(DATA_DIR, tok=tok, size=dataset_size_limit, start_index=start_index)
 
     # Get cache templates
     cache_template = None
@@ -135,7 +136,6 @@ def main(
         tprint(f"Will load cache from {cache_template}")
 
     # Iterate through dataset
-    print(chunks)
     for record_chunks in tqdm(chunks(ds, num_edits), file=sys.stdout, total=int(len(ds)/num_edits)):
         case_result_template = str(run_dir / "{}_edits-case_{}.json")
 
@@ -176,8 +176,6 @@ def main(
                 **etc_args,
             )
         exec_time = time() - start
-
-        continue #local debug
 
         # Evaluate new model
         gen_test_vars = [snips, vec]
@@ -343,9 +341,10 @@ if __name__ == "__main__":
         num_edits=args.num_edits,
         use_cache=args.use_cache,
         verbose=args.verbose,
+        start_index=args.start_index
     )
 
 
 #helper:
 #export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
-#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --dataset_size_limit 10 --use_cache
+#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --start_index 20 --dataset_size_limit 10 --use_cache
