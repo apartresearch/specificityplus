@@ -75,9 +75,7 @@ def main():
         #probably the layer name is bugged
         layer_name = f"transformer.h.{layer_num}.mlp.{proj_layer_name}"
         if args.model_name == "EleutherAI/gpt-neox-20b":
-            layer_name = f"gpt_neox.layers.{layer_num}.mlp.{proj_layer_name}"
-        #"transformer.h.{}.mlp",
-        #"gpt_neox.layers.{}.mlp",
+            layer_name = f"gpt_neox.layers.{layer_num}.mlp.dense_4h_to_h"
 
         layer_stats(
             model,
