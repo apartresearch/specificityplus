@@ -50,7 +50,10 @@ def get_inv_cov(
         )
         inv_mom2_cache[key] = torch.inverse(
             stat.mom2.moment().float().to("cuda")
-        ).half()  # Cast back to float32
+        ).half()  # Cast back to float
+        print("Is cuda=", inv_mom2_cache[key].is_cuda)
+        print("dtype=", inv_mom2_cache[key].dtype)
+        
 
     return inv_mom2_cache[key]
 
