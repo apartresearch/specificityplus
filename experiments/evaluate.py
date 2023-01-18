@@ -100,8 +100,6 @@ def main(
     tprint(f"Executing {alg_name} with parameters {hparams}")
 
     # Instantiate vanilla model
-    tok.pad_token = tok.eos_token
-    
     if type(model_name) is str:
         tprint(f"Instantiating model {model_name}")
         model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
