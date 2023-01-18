@@ -3,7 +3,7 @@ import shutil
 import sys
 from contextlib import redirect_stdout, nullcontext
 from itertools import islice
-from time import time
+from time import time, strftime
 from typing import Tuple, Union
 
 import torch
@@ -41,6 +41,10 @@ DS_DICT = {
     "cf": (CounterFactDataset, compute_rewrite_quality_counterfact),
     "zsre": (MENDQADataset, compute_rewrite_quality_zsre),
 }
+
+
+def tprint(s, *args, **kwargs):
+    print(strftime("%X %x") + " " + s, *args, **kwargs)
 
 
 def main(
@@ -81,7 +85,7 @@ def main(
             run_id = 0
         run_dir = RESULTS_DIR / dir_name / f"run_{str(run_id).zfill(3)}"
         run_dir.mkdir(parents=True, exist_ok=True)
-    print(f"Results will be stored at {run_dir}")
+    tprint(f"Results will be stored at {run_dir}")
 
     # Get run hyperparameters
     params_path = (
@@ -92,11 +96,11 @@ def main(
     hparams = params_class.from_json(params_path)
     if not (run_dir / "params.json").exists():
         shutil.copyfile(params_path, run_dir / "params.json")
-    print(f"Executing {alg_name} with parameters {hparams}")
+    tprint(f"Executing {alg_name} with parameters {hparams}")
 
     # Instantiate vanilla model
     if type(model_name) is str:
-        print(f"Instantiating model {model_name}")
+        tprint(f"Instantiating model {model_name}")
         model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
         tok = AutoTokenizer.from_pretrained(model_name)
         tok.pad_token = tok.eos_token
@@ -105,7 +109,7 @@ def main(
         model_name = model.config._name_or_path
 
     # Load data
-    print("Loading dataset, attribute snippets, tf-idf data")
+    tprint("Loading dataset, attribute snippets, tf-idf data")
     snips = AttributeSnippets(DATA_DIR) if not skip_generation_tests else None
     vec = get_tfidf_vectorizer(DATA_DIR) if not skip_generation_tests else None
 
@@ -123,7 +127,7 @@ def main(
             / f"{model_name.replace('/', '_')}_{alg_name}"
             / f"{ds_name}_layer_{{}}_clamp_{{}}_case_{{}}.npz"
         )
-        print(f"Will load cache from {cache_template}")
+        tprint(f"Will load cache from {cache_template}")
 
     # Iterate through dataset
     for record_chunks in tqdm(chunks(ds, num_edits), file=sys.stdout, total=int(len(ds)/num_edits)):
@@ -173,7 +177,7 @@ def main(
             seedbank.initialize(SEED)
             out_file = Path(case_result_template.format(num_edits, record["case_id"]))
             if out_file.exists():
-                print(f"Skipping {out_file}; already exists")
+                tprint(f"Skipping {out_file}; already exists")
                 continue
 
             metrics = {
