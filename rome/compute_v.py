@@ -187,7 +187,11 @@ def compute_v(
     print(f"Right vector norm: {right_vector.norm()}")
 
     #convert right vector to dtype specified by hparams mom2 dtype
-    right_vector = right_vector.to(dtype=hparams.mom2_dtype)
+    if hparams.mom2_dtype != "float32":
+        if hparams.mom2_dtype == "float16":
+            right_vector = right_vector.to(dtype=torch.float16)
+        elif hparams.mom2_dtype == "float64":
+            right_vector = right_vector.to(dtype=torch.float64)
     #print dtype of right vector
     print(f"Right vector dtype: {right_vector.dtype}")
     return right_vector
