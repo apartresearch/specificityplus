@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/experiment-gpt2medium.sh -e git/memitpp/experiment-scripts/gpt2medium.txt -m 1
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium.txt -m 10
 # ```
 
 # ====================
@@ -25,10 +25,11 @@
 #SBATCH --error=/home/%u/slurm_logs/slurm-%A_%a.out
 
 # Maximum number of nodes to use for the job
-# #SBATCH --nodes=1
+# #SBATCH --nodes=10
 
 # Generic resources to use - typically you'll want gpu:n to get n gpus
-#SBATCH --gres=gpu:1
+#SBATCH --gpus-per-task=1
+#SBATCH --gpu-bind=single:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
 #SBATCH --mem=14000

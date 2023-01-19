@@ -1,0 +1,10 @@
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 0 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 10 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 20 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 30 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 40 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 50 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 60 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 70 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 80 
+cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name gpt2-medium --hparams_fname gpt2-medium.json --ds_name cf --use_cache --verbose --dataset_size 10 --continue_from_run 1 --start_index 90 
