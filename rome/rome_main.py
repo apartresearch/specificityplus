@@ -147,18 +147,6 @@ def execute_rome(
         )
         print("Left vector shape:", left_vector.shape)
 
-
-        
-        #print right and left vector dtypes
-        ###SUPER UGLY HACK
-        #convert to float32
-        if left_vector is not None and left_vector.dtype == torch.float16:
-            print("cached left vector is float16")
-            left_vector = left_vector.float()
-        if right_vector is not None and right_vector.dtype == torch.float16:
-            print("cached right vector is float16")
-            right_vector = right_vector.float()
-
         right_vector: torch.Tensor = (
             right_vector
             if right_vector is not None
@@ -174,6 +162,13 @@ def execute_rome(
                 ),
             )
         )
+
+        #log dtypes
+        print("computed if not cached")
+        print("left vector dtype:", left_vector.dtype)
+        print("right vector dtype:", right_vector.dtype)
+
+
         print("Right vector shape:", right_vector.shape)
 
         # Cache vectors for future use
