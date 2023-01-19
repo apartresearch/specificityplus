@@ -147,13 +147,16 @@ def execute_rome(
         )
         print("Left vector shape:", left_vector.shape)
 
+
         
         #print right and left vector dtypes
         ###SUPER UGLY HACK
         #convert to float32
         if left_vector is not None and left_vector.dtype == torch.float16:
+            print("cached left vector is float16")
             left_vector = left_vector.float()
         if right_vector is not None and right_vector.dtype == torch.float16:
+            print("cached right vector is float16")
             right_vector = right_vector.float()
 
         right_vector: torch.Tensor = (
@@ -191,6 +194,11 @@ def execute_rome(
         
         print("time to do the computation which fails")
         with torch.no_grad():
+
+            #dtypes
+            print("left vector dtype:", left_vector.dtype)
+            print("right vector dtype:", right_vector.dtype)
+
             # Determine correct transposition of delta matrix
             weight_name = f"{hparams.rewrite_module_tmp.format(layer)}.weight"
             upd_matrix = left_vector.unsqueeze(1) @ right_vector.unsqueeze(0)
