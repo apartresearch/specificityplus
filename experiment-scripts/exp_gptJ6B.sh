@@ -30,7 +30,7 @@
 # Generic resources to use - typically you'll want gpu:n to get n gpus
 ##SBATCH --gpus-per-task=1
 ##SBATCH --gpu-bind=single:1
-#SBATCH --gres=a6000:1
+#SBATCH --gres:a6000:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
 #SBATCH --mem=40000
