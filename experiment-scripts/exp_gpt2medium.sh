@@ -110,7 +110,7 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 repo_home=/home/${USER}/git/memitpp
 
 #TEMPORARY ONE TIME
-rm -r ${SCRATCH_HOME}/memitpp/data
+rm -r -f ${SCRATCH_HOME}/memitpp/data
 
 
 #Moving data
