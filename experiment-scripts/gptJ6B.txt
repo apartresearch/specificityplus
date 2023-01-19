@@ -1,1 +1,0 @@
-cd git/memitpp && python experiments/evaluate.py --alg_name ROME --model_name EleutherAI/gpt-j-6B --hparams_fname EleutherAI_gpt-j-6B.json --ds_name cf --use_cache --verbose

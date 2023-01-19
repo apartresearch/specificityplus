@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/experiment-gptJ6B.sh -e git/memitpp/experiment-scripts/gptJ6B.txt -m 1
+# run_experiment -b git/memitpp/experiment-scripts/exp_gptJ6B.sh -e git/memitpp/experiment-scripts/exp_gptJ6B.txt -m 1
 # ```
 
 # ====================
@@ -112,21 +112,21 @@ src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
+rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 #Moving hparams
 src_path=${repo_home}/hparams/
 dest_path=${SCRATCH_HOME}/memitpp/hparams
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
+rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 ##Moving huggingface hub cache
 src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
+rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 #Set huggingface cache to scratch
 export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
@@ -168,13 +168,13 @@ echo "Moving output data back to DFS"
 src_path=${SCRATCH_HOME}/memitpp/results
 dest_path=${repo_home}/results
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
+rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 #move KVS
 src_path=${SCRATCH_HOME}/memitpp/data/kvs
 dest_path=${repo_home}/data/kvs
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
+rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 # =========================
 # Post experiment logging
