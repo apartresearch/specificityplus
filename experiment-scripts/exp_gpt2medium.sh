@@ -47,6 +47,7 @@
 export ALGO=ROME
 export RUN_ID=000
 export MODEL=models--gpt2-medium
+export MODEL_NAME=gpt2-medium
 
 # =====================
 # Logging information
