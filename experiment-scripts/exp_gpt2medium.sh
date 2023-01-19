@@ -109,6 +109,10 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 #moving data from DFS to scratch
 repo_home=/home/${USER}/git/memitpp
 
+#TEMPORARY ONE TIME
+rm -r ${SCRATCH_HOME}/memitpp/data
+
+
 #Moving data
 src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
