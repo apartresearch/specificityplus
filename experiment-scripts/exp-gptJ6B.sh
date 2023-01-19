@@ -74,6 +74,10 @@ SCRATCH_DISK=/disk/scratch
 SCRATCH_HOME=${SCRATCH_DISK}/${USER}
 mkdir -p ${SCRATCH_HOME}
 
+
+#TEMPORARY ONE TIME
+rm -r -f ${SCRATCH_HOME}/memitpp/data
+
 # Activate your conda environment
 CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"

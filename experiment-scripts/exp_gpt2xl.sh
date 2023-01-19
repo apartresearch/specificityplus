@@ -71,6 +71,10 @@ SCRATCH_DISK=/disk/scratch
 SCRATCH_HOME=${SCRATCH_DISK}/${USER}
 mkdir -p ${SCRATCH_HOME}
 
+
+#TEMPORARY ONE TIME
+rm -r -f ${SCRATCH_HOME}/memitpp/data
+
 # Activate your conda environment
 CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"
@@ -103,6 +107,7 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 
 #moving data from DFS to scratch
 repo_home=/home/${USER}/git/memitpp
+
 
 #Moving data
 src_path=${repo_home}/data/
