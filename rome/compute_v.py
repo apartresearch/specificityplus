@@ -188,7 +188,8 @@ def compute_v(
 
     #convert right vector to dtype specified by hparams mom2 dtype
     right_vector = right_vector.to(dtype=hparams.mom2_dtype)
-    
+    #print dtype of right vector
+    print(f"Right vector dtype: {right_vector.dtype}")
     return right_vector
 
 
