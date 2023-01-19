@@ -45,7 +45,7 @@
 
 ##parameters
 export ALGO=ROME
-export RUN_ID=001
+export RUN_ID=000
 export MODEL=models--gpt2-medium
 
 # =====================
