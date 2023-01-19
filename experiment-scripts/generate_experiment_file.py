@@ -8,7 +8,6 @@ USER = os.getenv('USER')
 model = "gpt2-medium"
 hparams_fname = "gpt2-medium.json"
 alg_name = "ROME"
-run_id = 1
 
 filename = "exp_gpt2medium.txt"
 file_path = "experiment-scripts/" + filename
@@ -20,7 +19,7 @@ if dataset_size * split_into != examples:
     raise ValueError("Dataset size must be divisible by split_into")
 
 base_call = (f"cd git/memitpp && python experiments/evaluate.py --alg_name {alg_name} --model_name {model} \
---hparams_fname {hparams_fname} --ds_name cf --use_cache --verbose --dataset_size {dataset_size} --continue_from_run {run_id}")
+--hparams_fname {hparams_fname} --ds_name cf --use_cache --verbose --dataset_size {dataset_size}")
 
 #get starting indexes
 start_indexes = [i * examples // split_into for i in range(split_into)]
