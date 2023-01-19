@@ -117,8 +117,5 @@ def compute_u(
         u = u.squeeze()
 
     u = u / u.norm()
-    #if not float16 cast to float16
-    if not u.dtype == torch.float16:
-        u = u.half()
 
     return u

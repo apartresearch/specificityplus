@@ -186,10 +186,6 @@ def compute_v(
     print(f"Division Factor: {torch.dot(cur_input, left_vector).item()}")
     print(f"Right vector norm: {right_vector.norm()}")
 
-    #if not float16 cast to float16
-    if not right_vector.dtype == torch.float16:
-        right_vector = right_vector.half()
-        
     return right_vector
 
 
