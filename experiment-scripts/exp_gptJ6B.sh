@@ -46,7 +46,7 @@
 ##parameters
 export ALGO=ROME
 export RUN_ID=000
-export MODEL=models--EleutherAI-gpt-j-6B
+export MODEL=models--EleutherAI--gpt-j-6B
 export MODEL_NAME=EleutherAI/gpt-j-6B
 
 # =====================
