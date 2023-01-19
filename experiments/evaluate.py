@@ -77,7 +77,9 @@ def main(
         continue_from_run = None
     if continue_from_run is None:
         alg_dir = RESULTS_DIR / dir_name
-        if alg_dir.exists():
+
+        #if alg_dir.exists(): #temp fix
+        if False:
             id_list = [
                 int(str(x).split("_")[-1])
                 for x in alg_dir.iterdir()
