@@ -167,8 +167,8 @@ echo "Command ran successfully!"
 echo "Moving output data back to DFS"
 
 #move results
-src_path=${SCRATCH_HOME}/memitpp/results/run_${RUN_ID}
-dest_path=${repo_home}/results/run_${RUN_ID}
+src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/run_${RUN_ID}
+dest_path=${repo_home}/results/${ALGO}/run_${RUN_ID}
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
