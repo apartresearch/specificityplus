@@ -50,7 +50,7 @@ def get_inv_cov(
         )
         inv_mom2_cache[key] = torch.inverse(
             stat.mom2.moment().float().to("cuda")
-        ).half()  # Cast back to float
+        ).half()  # Cast back to half
     return inv_mom2_cache[key]
 
 
@@ -116,4 +116,9 @@ def compute_u(
         ) @ u.unsqueeze(1)
         u = u.squeeze()
 
-    return u / u.norm()
+    u = u / u.norm()
+    #if not float16 cast to float16
+    if not u.dtype == torch.float16:
+        u = u.half()
+
+    return u
