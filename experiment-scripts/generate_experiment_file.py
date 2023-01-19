@@ -5,15 +5,15 @@ import os
 # The home dir on the node's scratch disk
 USER = os.getenv('USER')   
 
-model = "gpt2-medium"
-hparams_fname = "gpt2-medium.json"
+model = "EleutherAI/gpt-j-6B"
+hparams_fname = "EleutherAI_gpt-j-6B.json"
 alg_name = "ROME"
 
-filename = "exp_gpt2medium.txt"
+filename = "exp_gptJ6B.txt"
 file_path = "experiment-scripts/" + filename
 
-examples = 100
-split_into = 10
+examples = 22000
+split_into = 40
 dataset_size = examples // split_into
 if dataset_size * split_into != examples:
     raise ValueError("Dataset size must be divisible by split_into")
@@ -26,7 +26,6 @@ start_indexes = [i * examples // split_into for i in range(split_into)]
 
 nr_expts = split_into
 
-nr_servers = 10
 print(f'Total experiments = {nr_expts}')
 
 output_file = open(file_path, "w")

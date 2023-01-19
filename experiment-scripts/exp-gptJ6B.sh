@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/exp_gptJ6B.sh -e git/memitpp/experiment-scripts/exp_gptJ6B.txt -m 1
+# run_experiment -b git/memitpp/experiment-scripts/exp_gptJ6B.sh -e git/memitpp/experiment-scripts/exp_gptJ6B.txt -m 40
 # ```
 
 # ====================
@@ -25,13 +25,15 @@
 #SBATCH --error=/home/%u/slurm_logs/slurm-%A_%a.out
 
 # Maximum number of nodes to use for the job
-# #SBATCH --nodes=1
+# #SBATCH --nodes=10
 
 # Generic resources to use - typically you'll want gpu:n to get n gpus
-#SBATCH --gres=gpu:a6000
+##SBATCH --gpus-per-task=1
+##SBATCH --gpu-bind=single:1
+#SBATCH --gres=a6000:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=60000
+#SBATCH --mem=40000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
@@ -39,6 +41,13 @@
 # Maximum time for the job to run, format: days-hours:minutes:seconds
 #SBATCH --time=2-16:00:00
 
+
+
+##parameters
+export ALGO=ROME
+export RUN_ID=000
+export MODEL=models--EleutherAI-gpt-j-6B
+export MODEL_NAME=EleutherAI/gpt-j-6B
 
 # =====================
 # Logging information
@@ -63,9 +72,6 @@ source ~/.bashrc
 # Make script bail out after first error
 set -e
 
-#
-export CUDA_LAUNCH_BLOCKING=1
-
 # Make your own folder on the node's scratch disk
 # N.B. disk could be at /disk/scratch_big, or /disk/scratch_fast. Check
 # yourself using an interactive session, or check the docs:
@@ -74,17 +80,10 @@ SCRATCH_DISK=/disk/scratch
 SCRATCH_HOME=${SCRATCH_DISK}/${USER}
 mkdir -p ${SCRATCH_HOME}
 
-
-#TEMPORARY ONE TIME
-rm -r -f ${SCRATCH_HOME}/memitpp/data
-
 # Activate your conda environment
 CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
-
-#choose model
-export MODEL=models--EleutherAI--gpt-j-6B
 
 #setup python path
 export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
@@ -111,26 +110,27 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 #moving data from DFS to scratch
 repo_home=/home/${USER}/git/memitpp
 
+
 #Moving data
 src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path}
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 #Moving hparams
 src_path=${repo_home}/hparams/
 dest_path=${SCRATCH_HOME}/memitpp/hparams
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path}
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 ##Moving huggingface hub cache
 src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path}
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 #Set huggingface cache to scratch
 export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
@@ -169,16 +169,18 @@ echo "Command ran successfully!"
 echo "Moving output data back to DFS"
 
 #move results
-src_path=${SCRATCH_HOME}/memitpp/results
-dest_path=${repo_home}/results
+src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}
+dest_path=${repo_home}/results/${ALGO}/${MODEL}/run_${RUN_ID}
+mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path} 
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 #move KVS
 src_path=${SCRATCH_HOME}/memitpp/data/kvs
 dest_path=${repo_home}/data/kvs
+mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --ignore-existing --log-file=/dev/stdout ${src_path}/ ${dest_path} 
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 # =========================
 # Post experiment logging
