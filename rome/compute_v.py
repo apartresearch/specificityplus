@@ -186,6 +186,9 @@ def compute_v(
     print(f"Division Factor: {torch.dot(cur_input, left_vector).item()}")
     print(f"Right vector norm: {right_vector.norm()}")
 
+    #convert right vector to dtype specified by hparams mom2 dtype
+    right_vector = right_vector.to(dtype=hparams.mom2_dtype)
+    
     return right_vector
 
 
