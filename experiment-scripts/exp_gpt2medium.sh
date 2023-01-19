@@ -42,6 +42,12 @@
 #SBATCH --time=2-16:00:00
 
 
+
+##parameters
+export ALGO=ROME
+export RUN_ID=001
+export MODEL=models--gpt2-medium
+
 # =====================
 # Logging information
 # =====================
@@ -77,9 +83,6 @@ mkdir -p ${SCRATCH_HOME}
 CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
-
-#choose model
-export MODEL=models--gpt2-medium
 
 #setup python path
 export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
@@ -164,14 +167,16 @@ echo "Command ran successfully!"
 echo "Moving output data back to DFS"
 
 #move results
-src_path=${SCRATCH_HOME}/memitpp/results
-dest_path=${repo_home}/results
+src_path=${SCRATCH_HOME}/memitpp/results/run_${RUN_ID}
+dest_path=${repo_home}/results/run_${RUN_ID}
+mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
 #move KVS
 src_path=${SCRATCH_HOME}/memitpp/data/kvs
 dest_path=${repo_home}/data/kvs
+mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
 
