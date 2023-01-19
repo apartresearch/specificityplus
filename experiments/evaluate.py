@@ -90,7 +90,7 @@ def main(
             run_id = 0 if not id_list else max(id_list) + 1
         else:
             run_id = 0
-        run_dir = RESULTS_DIR / dir_name / f"run_{str(run_id).zfill(3)}"
+        run_dir = RESULTS_DIR / dir_name / f"run_{str(start_index).sfill(5)}_{str(dataset_size_limit).zfill(5)}"
         run_dir.mkdir(parents=True, exist_ok=True)
     tprint(f"Results will be stored at {run_dir}")
 
