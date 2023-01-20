@@ -15,10 +15,11 @@ Step 2: precompute layer stats
 
 Step 3: Run experiments
 1) switch to experiments branch
-2) find lines to run in experiment-scripts/exp_gpt2medium.txt
-3) can edit (to run less parallel) by changing "split_into" variable in experiment-scripts/generate_experiment_file.py, and running the file to generate a new experiment txt
-4) Results for gpt2-medium are stored in results/
-
+2) change PATH_TO_REPO variable (to whatever your path is) in experiment-scripts/generate_experiment_file.py
+3) python experiment-scripts/generate_experiment_file.py 
+4) can edit (to run less parallel) by changing "split_into" variable in experiment-scripts/generate_experiment_file.py, and running the file to generate a new experiment txt
+5) find lines to run in experiment-scripts/exp_gpt2medium.txt
+6) Results for gpt2-medium are stored in results/
 
 IF everything works for gpt2-medium, can run gpt2-xl, gpt-J, gpt-neox
 1) go into setup_data/download_models.py and add the models to the "models" variable
