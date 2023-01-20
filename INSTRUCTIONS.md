@@ -1,3 +1,6 @@
+Note: Some of the python commands might need to be prepended by `PYTHONPATH=$PYTHONPATH:/path/to/the/repo/for/memitpp`
+(since memitpp is currently not easily installable)
+
 Step 0: download git and setup enviroment
 1) git clone this repo https://github.com/jas-ho/memitpp
 2) Setup conda enviroment: conda env create -f scripts/environment.yml
