@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Script for generating experiments.txt""" 
 
+PATH_TO_REPO = "/home/${USER}/git/memitpp"
+
 examples = 22000
 split_into = 8
 
@@ -41,5 +43,7 @@ for model in models:
                 f"--alg_name {alg_name} "
                 f"--hparams_fname {hparams_fname}"
             )
-            print(expt_call, file=output_file)
+            call = f"export PYTHONPATH={PATH_TO_REPO}:${{PYTHONPATH}}" + " && " + expt_call
+
+            print(call, file=output_file)
     output_file.close()

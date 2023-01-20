@@ -1,32 +1,32 @@
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name ROME --hparams_fname gpt2-xl.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name FT --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name MEND --hparams_fname gpt2-xl_CF.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
-python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name ROME --hparams_fname gpt2-xl.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name FT --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name MEND --hparams_fname gpt2-xl_CF.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 0 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 2750 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 5500 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 8250 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 11000 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 13750 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 16500 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
+export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH} && python experiments/evaluate.py --model_name gpt2-xl  --ds_name cf --dataset_size 2750 --start_index 19250 --alg_name IDENTITY --hparams_fname gpt2-xl_constr.json
