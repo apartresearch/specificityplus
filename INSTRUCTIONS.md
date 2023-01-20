@@ -31,10 +31,10 @@ IF everything works for gpt2-medium, can run gpt2-xl, gpt-J, gpt-neox
 8) switch to collect_layers_stats branch
 9) cd git/memitpp && python rome/layer_stats.py --model_name EleutherAI/gpt-j-6B --layers 5 --to_collect mom2 --precision float32 --download 1
 10) switch to experiments branch
-11) find lines to run in experiment-scripts/exp_gptJ.txt (can modify like previously if needed)
+11) find lines to run in experiment-scripts/exp_gptJ6B.txt (can modify like previously if needed)
 12) Results for gpt-J are stored in results/
 13) switch to collect_layers_stats branch
 14) cd git/memitpp && python rome/layer_stats.py --model_name EleutherAI/gpt-neox-20b --layers 15 --to_collect mom2 --precision float32 --download 1
 15) switch to experiments branch
-16) find lines to run in experiment-scripts/exp_gptNEOX.txt (can modify like previously if needed)
+16) find lines to run in experiment-scripts/exp_gptneox20b.txt (can modify like previously if needed)
 17) Results for gpt-NEOX are stored in results/
