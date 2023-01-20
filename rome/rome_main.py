@@ -162,10 +162,6 @@ def execute_rome(
         # Cache vectors for future use
         if cache_fname is not None and require_recompute:
             cache_fname.parent.mkdir(exist_ok=True, parents=True)
-            #print dtypes
-            print("time to cache")
-            print("left vector dtype:", left_vector.dtype)
-            print("right vector dtype:", right_vector.dtype)
             np.savez(
                 cache_fname,
                 **{
@@ -176,10 +172,6 @@ def execute_rome(
             print(f"Cached k/v pair at {cache_fname}")
         
         with torch.no_grad():
-
-            #dtypes
-            print("left vector dtype:", left_vector.dtype)
-            print("right vector dtype:", right_vector.dtype)
 
             # Determine correct transposition of delta matrix
             weight_name = f"{hparams.rewrite_module_tmp.format(layer)}.weight"
