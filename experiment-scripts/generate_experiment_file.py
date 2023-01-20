@@ -5,10 +5,10 @@ import os
 # The home dir on the node's scratch disk
 USER = os.getenv('USER')   
 
-model = "gpt2-medium"
-hparams_fname = "gpt2-medium.json"
+model = "EleutherAI/gpt-neox-20b"
+hparams_fname = "EleutherAI_gpt-neox-20b.json"
 alg_name = "ROME"
-filename = "exp_gpt2medium.txt"
+filename = "exp_gptNEOX.txt"
 
 file_path = "experiment-scripts/" + filename
 
