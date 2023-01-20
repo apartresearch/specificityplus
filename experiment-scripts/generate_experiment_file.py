@@ -5,15 +5,16 @@ import os
 # The home dir on the node's scratch disk
 USER = os.getenv('USER')   
 
-model = "gpt2-xl"
-hparams_fname = "gpt2-xl.json"
+model = "gpt2-medium"
+hparams_fname = "gpt2-medium.json"
 alg_name = "ROME"
-filename = "exp_gpt2xl.txt"
+filename = "exp_gpt2medium.txt"
 
 file_path = "experiment-scripts/" + filename
 
-examples = 20
+examples = 22000
 split_into = 2
+
 dataset_size = examples // split_into
 if dataset_size * split_into != examples:
     raise ValueError("Dataset size must be divisible by split_into")
