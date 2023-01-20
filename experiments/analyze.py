@@ -119,11 +119,11 @@ def get_full_results():
 
 def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.DataFrame]:
     # average over all prompts for a given test case and prompt type
-    df = df.groupby(["Case", "Prompt Type"]).mean().copy()
+    df2 = df.groupby(["Case", "Prompt Type"]).mean().copy()
     # compute statistic across all test cases for a given prompt type
-    df = df.groupby("Prompt Type").apply(statistic).stack().T
+    df2 = df2.groupby("Prompt Type").apply(statistic).stack().T
     # reorder columns
-    df = df[[
+    df2 = df2[[
         ("N", "S"),
         ("N+", "S"),
         ("N", "M"),
@@ -131,7 +131,7 @@ def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.Dat
         ("N", "KL"),
         ("N+", "KL"),
     ]]
-    return df
+    return df2
 
 
 def get_ranks_for_outlier_detection(df: pd.DataFrame) -> pd.DataFrame:
@@ -152,16 +152,21 @@ def get_ranks_for_outlier_detection(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
-    """Draw a bootstrap sample by first resampling the test cases and then individual test prompts given a test case."""
-    # draw cases
-    df_by_cases = df.unstack(["Prompt Type", "Prompt Index"])
+    """
+    Draw a hierarchical bootstrap sample (same number of observations=rows as input dataframe) by
+    1) resampling (with replacement) the test cases
+    2) resampling (with replacement) individual test prompts for each selected test case
+    """
+    df_by_cases = df.unstack(["Prompt Type", "Prompt Index"]).copy()
     df_by_cases = df_by_cases.sample(len(df_by_cases), replace=True)
     df_by_prompt_type_and_index = df_by_cases.stack(["Prompt Type", "Prompt Index"])
     df_by_prompt_type_and_index = df_by_prompt_type_and_index.sample(len(df_by_prompt_type_and_index), replace=True)
+    df_by_prompt_type_and_index = df_by_prompt_type_and_index[df.columns]  # reorder columns to match input
+    df_by_prompt_type_and_index = df_by_prompt_type_and_index.astype(df.dtypes.to_dict())  # reset dtypes to match input
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 10) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
