@@ -19,7 +19,7 @@ if dataset_size * split_into != examples:
     raise ValueError("Dataset size must be divisible by split_into")
 
 base_call = (f"cd git/memitpp && python experiments/evaluate.py --alg_name {alg_name} --model_name {model} \
---hparams_fname {hparams_fname} --ds_name cf --use_cache --verbose --dataset_size {dataset_size}")
+--hparams_fname {hparams_fname} --ds_name cf --verbose --dataset_size {dataset_size}")
 
 #get starting indexes
 start_indexes = [i * examples // split_into for i in range(split_into)]

@@ -168,6 +168,11 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
+export START_INDEX = $COMMAND | grep -o '--start_index [0-9]*' | awk '{print $2}'
+export START_INDEX=$(printf "%05d" $START_  INDEX)
+export DATASET_SIZE = $COMMAND | grep -o '--dataset_size [0-9]*' | awk '{print $2}'
+export DATASET_SIZE =$(printf "%05d" $START_INDEX)
+
 #move results
 src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}
 dest_path=${repo_home}/results/${ALGO}/${MODEL}/run_${RUN_ID}
