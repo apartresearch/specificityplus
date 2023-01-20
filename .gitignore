@@ -1,6 +1,7 @@
 # Pipeline dumps, data directory
 results
-data
+data/stats/EleutherAI_gpt-j-6B
+data/stats/_disk_scratch_s1785649_memitpp_data_huggingface_hub_gpt-neox-20b
 !notebooks/data
 *_tmp_*_.json
 *_kmeng01g1gn*
