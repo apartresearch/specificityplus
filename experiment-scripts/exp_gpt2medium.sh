@@ -174,7 +174,7 @@ export ALGO=$(echo $COMMAND | awk -F'--alg_name ' '{print $2}' | awk '{print $1}
 #move results
 
 src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}/run_${START_INDEX}_${DATASET_SIZE}
-dest_path=${repo_home}/results/${ALGO}/${MODEL}/run_${START_INDEX}_${DATASET_SIZE}
+dest_path=${repo_home}/results/${MODEL}/${ALGO}/run_${START_INDEX}_${DATASET_SIZE}
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
