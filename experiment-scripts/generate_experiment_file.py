@@ -2,7 +2,7 @@
 """Script for generating experiments.txt""" 
 
 examples = 22000
-split_into = 10
+split_into = 16
 
 models = ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-J-6B", "EleutherAI/gpt-neox-20b"]
 
