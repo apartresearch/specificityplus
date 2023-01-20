@@ -166,7 +166,7 @@ def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 10) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
@@ -190,10 +190,13 @@ def format_statistics(dfs: dict[str, pd.DataFrame]):
 
 
 def plot_statistics(dfs: dict[str, pd.DataFrame]):
+    models = list(dfs["mean"].index)
     for metric in ["S", "M", "KL"]:
+        if metric == "KL":
+            models = [m for m in models if not m.lower().startswith("gpt")]
         m = pd.DataFrame()
-        m[metric] = dfs["mean"][("N", metric)]
         m[f"{metric}+"] = dfs["mean"][("N+", metric)]
+        m[metric] = dfs["mean"][("N", metric)]
 
         err_low, err_up = pd.DataFrame(), pd.DataFrame()
         ci = pd.DataFrame([df[("N", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
@@ -206,11 +209,18 @@ def plot_statistics(dfs: dict[str, pd.DataFrame]):
         # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
         err_ints = []
         for col in m:  # Iterate over bar groups (represented as columns)
-            err_ints.append([m[col].values - err_low[col].values, err_up[col].values - m[col].values])
+            err_ints.append([
+                m.loc[models, col].values - err_low.loc[models, col].values,
+                err_up.loc[models, col].values - m.loc[models, col].values,
+            ])
 
-        m.plot.barh(xerr=err_ints)
+        m.loc[models].plot.barh(xerr=err_ints)
         if metric == "KL":
             plt.xscale("log")
+            plt.xlim([0.9*1E-7, 5*1E-5])
+        ax = plt.gca()
+        handles, labels = ax.get_legend_handles_labels()
+        ax.legend(handles[::-1], labels[::-1])
         plt.tight_layout()
         plt.savefig(OUTPUT_DIR / f"{metric}.png")
 
