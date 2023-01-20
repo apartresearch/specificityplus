@@ -42,5 +42,7 @@ for model in models:
                 f"--hparams_fname {hparams_fname}"
             )
 
-            print(expt_call, file=output_file)
+            call = "cd git/memitpp" + " && " + expt_call
+
+            print(call, file=output_file)
     output_file.close()
