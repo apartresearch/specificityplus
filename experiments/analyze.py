@@ -113,7 +113,7 @@ def get_case_df(case_id: int) -> pd.DataFrame:
 
 
 def get_full_results():
-    df = pd.concat(get_case_df(case_id) for case_id in CASE_RESULT_FILES)
+    df = pd.concat(get_case_df(case_id) for case_id in tqdm(CASE_RESULT_FILES))
     return df
 
 
@@ -151,6 +151,16 @@ def get_ranks_for_outlier_detection(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
+    """Draw a bootstrap sample by first resampling the test cases and then individual test prompts given a test case."""
+    # draw cases
+    df_by_cases = df.unstack(["Prompt Type", "Prompt Index"])
+    df_by_cases = df_by_cases.sample(len(df_by_cases), replace=True)
+    df_by_prompt_type_and_index = df_by_cases.stack(["Prompt Type", "Prompt Index"])
+    df_by_prompt_type_and_index = df_by_prompt_type_and_index.sample(len(df_by_prompt_type_and_index), replace=True)
+    return df_by_prompt_type_and_index
+
+
 def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
@@ -158,7 +168,7 @@ def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list
         "outliers": get_ranks_for_outlier_detection(df),
         # compute confidence intervals using bootstrap resampling
         "bootstrap_means": [
-            compute_statistic(df.sample(len(df), replace=True), pd.Series.mean)
+            compute_statistic(get_bootstrap_sample(df), pd.Series.mean)
             for _ in tqdm(range(n_bootstrap), desc=f"Drawing {n_bootstrap} bootstrap samples.")
         ],
     }
