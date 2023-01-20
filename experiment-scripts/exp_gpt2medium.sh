@@ -41,11 +41,7 @@
 # Maximum time for the job to run, format: days-hours:minutes:seconds
 #SBATCH --time=2-16:00:00
 
-
-
 ##parameters
-export ALGO=ROME
-export RUN_ID=000
 export MODEL=models--gpt2-medium
 export MODEL_NAME=gpt2-medium
 
@@ -168,21 +164,15 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-export START_INDEX = $COMMAND | grep -o '--start_index [0-9]*' | awk '{print $2}'
+export START_INDEX=$COMMAND | grep -o '--start_index [0-9]*' | awk '{print $2}'
 export START_INDEX=$(printf "%05d" $START_  INDEX)
-export DATASET_SIZE = $COMMAND | grep -o '--dataset_size [0-9]*' | awk '{print $2}'
-export DATASET_SIZE =$(printf "%05d" $START_INDEX)
+export DATASET_SIZE=$COMMAND | grep -o '--dataset_size [0-9]*' | awk '{print $2}'
+export DATASET_SIZE=$(printf "%05d" $START_INDEX)
+export ALGO=$COMMAND | grep -o '--alg_name [a-zA-Z]*' | awk '{print $2}'
 
 #move results
-src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}
-dest_path=${repo_home}/results/${ALGO}/${MODEL}/run_${RUN_ID}
-mkdir -p ${dest_path}  # make it if required
-echo "Moving data from ${src_path} to ${dest_path}"
-rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
-
-#move KVS
-src_path=${SCRATCH_HOME}/memitpp/data/kvs
-dest_path=${repo_home}/data/kvs
+src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}/run_${START_INDEX}_${DATASET_SIZE}
+dest_path=${repo_home}/results/${ALGO}/${MODEL}/run_${START_INDEX}_${DATASET_SIZE}
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
