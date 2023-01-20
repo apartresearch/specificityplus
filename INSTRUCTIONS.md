@@ -1,3 +1,6 @@
+Note: Some of the python commands might need to be prepended by `PYTHONPATH=$PYTHONPATH:/path/to/the/repo/for/memitpp`
+(since memitpp is currently not easily installable)
+
 Step 0: download git and setup enviroment
 1) git clone this repo https://github.com/jas-ho/memitpp
 2) Setup conda enviroment: conda env create -f scripts/environment.yml
@@ -13,7 +16,7 @@ Step 1: downoad models + data
 Step 2: precompute layer stats
 1) switch to collect_layers_stats branch
 2) set ROOT_DIR in globals.yml
-3) rome/layer_stats.py --model_name gpt2-medium --layers 8 --to_collect mom2 --precision float32 --download 1
+3) python rome/layer_stats.py --model_name gpt2-medium --layers 8 --to_collect mom2 --precision float32 --download 1
 
 Step 3: Run experiments
 1) switch to experiments branch
