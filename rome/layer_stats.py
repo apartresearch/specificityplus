@@ -59,7 +59,7 @@ def main():
             model, model_name, device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
         ).eval()
     else:
-        model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
+        model = AutoModelForCausalLM.from_pretrained(args.model_name, low_cpu_mem_usage = True).eval().cuda()
     set_requires_grad(False, model)
     print("Done.")
 
