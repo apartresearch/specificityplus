@@ -124,12 +124,6 @@ def execute_rome(
                     require_recompute = False
                 except Exception as e:
                     print(f"Error reading cache file due to {e}. Recomputing...")
-        if right_vector is not None:
-            print("Using cached right_vector")
-            print("Right vector dtype:", right_vector.dtype)
-        if left_vector is not None:
-            print("Using cached left_vector")
-            print("Left vector dtype:", left_vector.dtype)
         # Compute rank-1 update matrix
         left_vector: torch.Tensor = (
             left_vector
@@ -163,12 +157,6 @@ def execute_rome(
             )
         )
 
-        #log dtypes
-        print("computed if not cached")
-        print("left vector dtype:", left_vector.dtype)
-        print("right vector dtype:", right_vector.dtype)
-
-
         print("Right vector shape:", right_vector.shape)
 
         # Cache vectors for future use
@@ -187,7 +175,6 @@ def execute_rome(
             )
             print(f"Cached k/v pair at {cache_fname}")
         
-        print("time to do the computation which fails")
         with torch.no_grad():
 
             #dtypes
