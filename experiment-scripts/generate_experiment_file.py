@@ -13,7 +13,7 @@ filename = "exp_gpt2medium.txt"
 file_path = "experiment-scripts/" + filename
 
 examples = 22000
-split_into = 2
+split_into = 40
 
 dataset_size = examples // split_into
 if dataset_size * split_into != examples:
