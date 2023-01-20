@@ -33,7 +33,7 @@
 #SBATCH --gres=gpu:a6000:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=40000
+#SBATCH --mem=35000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
