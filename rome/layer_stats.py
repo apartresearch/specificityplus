@@ -49,7 +49,7 @@ def main():
 
     print("Loading model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    if args.model_name == "EleutherAI/gpt-neox-20b":
+    if False:#args.model_name == "EleutherAI/gpt-neox-20b":
         cache_dir = "/disk/scratch/s1785649/memitpp/data/huggingface/hub"
         model_name = cache_dir+"/"+"gpt-neox-20b"
         config = AutoConfig.from_pretrained(model_name)
