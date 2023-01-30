@@ -47,7 +47,7 @@ def main():
     aa("--download", default=1, type=int, choices=[0, 1])
     args = parser.parse_args()
 
-    print("Loading model and tokenizer...")
+    print(f"Loading {args.model_name} model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     if False:#args.model_name == "EleutherAI/gpt-neox-20b":
         cache_dir = "/disk/scratch/s1785649/memitpp/data/huggingface/hub"

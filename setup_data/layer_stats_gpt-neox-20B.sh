@@ -94,7 +94,7 @@ export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
 # results in much network traffic and waiting time for you!
 #
 # This example assumes you have a folder containing all your input data on the
-# DFS, and it copies all that data  file to the scratch space, and unzips it. 
+# DFS, and it copies all that data  file to the scratch space, and unzips it.
 #
 # For more guidelines about moving files between the distributed filesystem and
 # the scratch space on the nodes, see:

@@ -9,6 +9,7 @@ dependencies:
   - pytorch==1.12.1
   - pip:
     - accelerate==0.15.0
+    - tqdm==4.64.1
     - einops==0.4.0
     - higher==0.2.1
     - hydra-core==1.2.0

@@ -1,13 +1,14 @@
-print("importing packages")
-
 import json
 import shutil
+import sys
+from contextlib import redirect_stdout, nullcontext
 from itertools import islice
-from time import time
+from time import time, strftime
 from typing import Tuple, Union
 
 import torch
 import seedbank
+from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from baselines.identity import IDENTITYHyperParams, apply_identity_to_model
@@ -41,61 +42,47 @@ DS_DICT = {
     "zsre": (MENDQADataset, compute_rewrite_quality_zsre),
 }
 
-print("done with imports")
+
+def tprint(s, *args, **kwargs):
+    print(strftime("%X %x") + " " + s, *args, **kwargs)
+
+
 def main(
     alg_name: str,
     model_name: Union[str, Tuple],
     hparams_fname: str,
     ds_name: str,
     dataset_size_limit: int,
-    continue_from_run: str,
     skip_generation_tests: bool,
     generation_test_interval: int,
     conserve_memory: bool,
     dir_name: str,
     num_edits: int = 1,
     use_cache: bool = False,
+    verbose: bool = False,
+    start_index: int = 0
 ):
     # Set algorithm-specific variables
     params_class, apply_algo = ALG_DICT[alg_name]
 
     # Determine run directory
     # Create new dir if not continuing from prev run OR prev run doesn't exist
-    if (
-        continue_from_run is None
-        or not (run_dir := RESULTS_DIR / dir_name / continue_from_run).exists()
-    ):
-        continue_from_run = None
-    if continue_from_run is None:
-        alg_dir = RESULTS_DIR / dir_name
-        if alg_dir.exists():
-            id_list = [
-                int(str(x).split("_")[-1])
-                for x in alg_dir.iterdir()
-                if str(x).split("_")[-1].isnumeric()
-            ]
-            run_id = 0 if not id_list else max(id_list) + 1
-        else:
-            run_id = 0
-        run_dir = RESULTS_DIR / dir_name / f"run_{str(run_id).zfill(3)}"
-        run_dir.mkdir(parents=True, exist_ok=True)
-    print(f"Results will be stored at {run_dir}")
+    alg_dir = RESULTS_DIR / dir_name
+    run_dir = alg_dir / model_name / f"run_{str(start_index).zfill(5)}_{str(dataset_size_limit).zfill(5)}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    tprint(f"Results will be stored at {run_dir}")
 
     # Get run hyperparameters
-    params_path = (
-        run_dir / "params.json"
-        if continue_from_run is not None
-        else HPARAMS_DIR / alg_name / hparams_fname
-    )
+    params_path = HPARAMS_DIR / alg_name / hparams_fname
+    shutil.copyfile(params_path, run_dir / "params.json")
     hparams = params_class.from_json(params_path)
-    if not (run_dir / "params.json").exists():
-        shutil.copyfile(params_path, run_dir / "params.json")
-    print(f"Executing {alg_name} with parameters {hparams}")
+    tprint(f"Executing {alg_name} with parameters {hparams}")
 
     # Instantiate vanilla model
     if type(model_name) is str:
-        print(f"Instantiating model {model_name}")
+        tprint(f"Instantiating model {model_name}")
         model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
+        tprint(f"Model loaded to device: {model.device}")
         tok = AutoTokenizer.from_pretrained(model_name)
         tok.pad_token = tok.eos_token
     else:
@@ -103,7 +90,7 @@ def main(
         model_name = model.config._name_or_path
 
     # Load data
-    print("Loading dataset, attribute snippets, tf-idf data")
+    tprint("Loading dataset, attribute snippets, tf-idf data")
     snips = AttributeSnippets(DATA_DIR) if not skip_generation_tests else None
     vec = get_tfidf_vectorizer(DATA_DIR) if not skip_generation_tests else None
 
@@ -111,7 +98,7 @@ def main(
         assert ds_name != "cf", f"{ds_name} does not support multiple edits"
 
     ds_class, ds_eval_method = DS_DICT[ds_name]
-    ds = ds_class(DATA_DIR, tok=tok, size=dataset_size_limit)
+    ds = ds_class(DATA_DIR, tok=tok, size=dataset_size_limit, start_index=start_index)
 
     # Get cache templates
     cache_template = None
@@ -121,10 +108,10 @@ def main(
             / f"{model_name.replace('/', '_')}_{alg_name}"
             / f"{ds_name}_layer_{{}}_clamp_{{}}_case_{{}}.npz"
         )
-        print(f"Will load cache from {cache_template}")
+        tprint(f"Will load cache from {cache_template}")
 
     # Iterate through dataset
-    for record_chunks in chunks(ds, num_edits):
+    for record_chunks in tqdm(chunks(ds, num_edits), file=sys.stdout, total=int(len(ds)/num_edits)):
         case_result_template = str(run_dir / "{}_edits-case_{}.json")
 
         # Is the chunk already done?
@@ -149,30 +136,29 @@ def main(
 
         seedbank.initialize(SEED)
         start = time()
-        edited_model, weights_copy = apply_algo(
-            model,
-            tok,
-            [
-                {"case_id": record["case_id"], **record["requested_rewrite"]}
-                for record in record_chunks
-            ],
-            hparams,
-            copy=False,
-            return_orig_weights=True,
-            **args_conserve_memory,
-            **etc_args,
-        )
+        with nullcontext() if verbose else redirect_stdout(sys.stderr):
+            edited_model, weights_copy = apply_algo(
+                model,
+                tok,
+                [
+                    {"case_id": record["case_id"], **record["requested_rewrite"]}
+                    for record in record_chunks
+                ],
+                hparams,
+                copy=False,
+                return_orig_weights=True,
+                **args_conserve_memory,
+                **etc_args,
+            )
         exec_time = time() - start
-        print("Execution took", exec_time)
 
         # Evaluate new model
-        start = time()
         gen_test_vars = [snips, vec]
         for record in record_chunks:
             seedbank.initialize(SEED)
             out_file = Path(case_result_template.format(num_edits, record["case_id"]))
             if out_file.exists():
-                print(f"Skipping {out_file}; already exists")
+                tprint(f"Skipping {out_file}; already exists")
                 continue
 
             metrics = {
@@ -205,8 +191,6 @@ def main(
             for k, v in weights_copy.items():
                 nethook.get_parameter(model, k)[...] = v.to("cuda")
 
-        print("Evaluation took", time() - start)
-
 
 def window(seq, n=2):
     "Returns a sliding window (of width n) over data from the iterable"
@@ -234,14 +218,13 @@ if __name__ == "__main__":
         "--alg_name",
         choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
-        help="Editing algorithm to use. Results are saved in results/<alg_name>/<run_id>, "
-        "where a new run_id is generated on each run. "
-        "If continuing from previous run, specify the run_id in --continue_from_run.",
+        help="Editing algorithm to use. Results are saved in results/<alg_name>/<model_name>/<run_id>, "
+        "where the run_id is of the form 'run_<start_index>_<dataset_size_limit>'. ",
         required=True,
     )
     parser.add_argument(
         "--model_name",
-        choices=["gpt2-medium", "gpt2-large", "gpt2-xl", "EleutherAI/gpt-j-6B"],
+        choices=["gpt2-medium", "gpt2-large", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"],
         default="gpt2-xl",
         help="Model to edit.",
         required=True,
@@ -260,16 +243,16 @@ if __name__ == "__main__":
         help="Dataset to perform evaluations on. Either CounterFact (cf), MultiCounterFact (mcf), or zsRE (zsre).",
     )
     parser.add_argument(
-        "--continue_from_run",
-        type=str,
-        default=None,
-        help="If continuing from previous run, set to run_id. Otherwise, leave as None.",
-    )
-    parser.add_argument(
         "--dataset_size_limit",
         type=int,
         default=None,
-        help="Truncate CounterFact to first n records.",
+        help="Truncate CounterFact to n records.",
+    )
+    parser.add_argument(
+        "--start_index",
+        type=int,
+        default=0,
+        help="Start index for the dataset. Useful for parallelizing runs.",
     )
     parser.add_argument(
         "--skip_generation_tests",
@@ -303,20 +286,32 @@ if __name__ == "__main__":
         action="store_true",
         help="Use cached k/v pairs",
     )
-    parser.set_defaults(skip_generation_tests=False, conserve_memory=False)
+    parser.add_argument(
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Also print detailed information about the running edit algorithm",
+    )
+    parser.set_defaults(skip_generation_tests=False, conserve_memory=False, verbose=False)
     args = parser.parse_args()
 
     main(
-        args.alg_name,
-        args.model_name,
-        args.hparams_fname,
-        args.ds_name,
-        args.dataset_size_limit,
-        args.continue_from_run,
-        args.skip_generation_tests,
-        args.generation_test_interval,
-        args.conserve_memory,
+        alg_name=args.alg_name,
+        model_name=args.model_name,
+        hparams_fname=args.hparams_fname,
+        ds_name=args.ds_name,
+        dataset_size_limit=args.dataset_size_limit,
+        skip_generation_tests=args.skip_generation_tests,
+        generation_test_interval=args.generation_test_interval,
+        conserve_memory=args.conserve_memory,
         dir_name=args.alg_name,
         num_edits=args.num_edits,
         use_cache=args.use_cache,
+        verbose=args.verbose,
+        start_index=args.start_index
     )
+
+
+# helper:
+# export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
+# python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --start_index 20 --dataset_size_limit 10 --use_cache
