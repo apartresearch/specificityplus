@@ -156,7 +156,6 @@ def execute_rome(
                 ),
             )
         )
-
         print("Right vector shape:", right_vector.shape)
 
         # Cache vectors for future use
