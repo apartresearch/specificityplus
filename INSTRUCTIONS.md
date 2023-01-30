@@ -12,13 +12,13 @@ Note: Some of the python commands might need to be prepended by `PYTHONPATH=$PYT
 3) conda activate memit
 
 ## Step 1: downoad models + data
-1) set ROOT_DIR in gloabls.yml
+1) set ROOT_DIR by exporting an environment variable: export ROOT_DIR="/disk/scratch/s1785649/memitpp/" or similar
 2) python setup_data/download_data.py
 3) python setup_data/download_hfdata.py
 4) python setup_data/download_models.py
 
 ## Step 2: precompute layer stats
-1) set ROOT_DIR in globals.yml
+1) set ROOT_DIR by exporting an environment variable: export ROOT_DIR="/disk/scratch/s1785649/memitpp/" or similar
 2) python rome/layer_stats.py --model_name gpt2-medium --layers 8 --to_collect mom2 --precision float32 --download 1
 
 ## Step 3: Run experiments
