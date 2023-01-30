@@ -49,17 +49,7 @@ def main():
 
     print(f"Loading {args.model_name} model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    if False:#args.model_name == "EleutherAI/gpt-neox-20b":
-        cache_dir = "/disk/scratch/s1785649/memitpp/data/huggingface/hub"
-        model_name = cache_dir+"/"+"gpt-neox-20b"
-        config = AutoConfig.from_pretrained(model_name)
-        with init_empty_weights():
-            model = AutoModelForCausalLM.from_config(config)
-        model = load_checkpoint_and_dispatch(
-            model, model_name, device_map="auto", no_split_module_classes=["GPTNeoXLayer"], dtype=args.precision
-        ).eval()
-    else:
-        model = AutoModelForCausalLM.from_pretrained(args.model_name, low_cpu_mem_usage = True).eval().cuda()
+    model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
     set_requires_grad(False, model)
     print("Done.")
 
