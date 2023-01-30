@@ -62,9 +62,9 @@ def main():
         )
         proj_layer_name = "c_proj" if "gpt2" in args.model_name else "fc_out"
 
-        #probably the layer name is bugged
         layer_name = f"transformer.h.{layer_num}.mlp.{proj_layer_name}"
         if args.model_name == "EleutherAI/gpt-neox-20b":
+            # probably the layer name is bugged
             layer_name = f"gpt_neox.layers.{layer_num}.mlp.dense_4h_to_h"
 
         layer_stats(
