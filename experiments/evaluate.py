@@ -53,7 +53,6 @@ def main(
     hparams_fname: str,
     ds_name: str,
     dataset_size_limit: int,
-    continue_from_run: str,
     skip_generation_tests: bool,
     generation_test_interval: int,
     conserve_memory: bool,
@@ -68,37 +67,15 @@ def main(
 
     # Determine run directory
     # Create new dir if not continuing from prev run OR prev run doesn't exist
-    if (
-        continue_from_run is None
-        or not (run_dir := RESULTS_DIR / dir_name / continue_from_run).exists()
-    ):
-        continue_from_run = None
-    if continue_from_run is None:
-        alg_dir = RESULTS_DIR / dir_name
-
-        #if alg_dir.exists(): #temp fix
-        if False:
-            id_list = [
-                int(str(x).split("_")[-1])
-                for x in alg_dir.iterdir()
-                if str(x).split("_")[-1].isnumeric()
-            ]
-            run_id = 0 if not id_list else max(id_list) + 1
-        else:
-            run_id = 0
-        run_dir = RESULTS_DIR / dir_name / model_name / f"run_{str(start_index).zfill(5)}_{str(dataset_size_limit).zfill(5)}"
-        run_dir.mkdir(parents=True, exist_ok=True)
+    alg_dir = RESULTS_DIR / dir_name
+    run_dir = alg_dir / model_name / f"run_{str(start_index).zfill(5)}_{str(dataset_size_limit).zfill(5)}"
+    run_dir.mkdir(parents=True, exist_ok=True)
     tprint(f"Results will be stored at {run_dir}")
 
     # Get run hyperparameters
-    params_path = (
-        run_dir / "params.json"
-        if continue_from_run is not None
-        else HPARAMS_DIR / alg_name / hparams_fname
-    )
+    params_path = HPARAMS_DIR / alg_name / hparams_fname
+    shutil.copyfile(params_path, run_dir / "params.json")
     hparams = params_class.from_json(params_path)
-    if not (run_dir / "params.json").exists():
-        shutil.copyfile(params_path, run_dir / "params.json")
     tprint(f"Executing {alg_name} with parameters {hparams}")
 
     # Instantiate vanilla model
@@ -241,7 +218,7 @@ if __name__ == "__main__":
         "--alg_name",
         choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
-        help="Editing algorithm to use. Results are saved in results/<alg_name>/<run_id>, "
+        help="Editing algorithm to use. Results are saved in results/<alg_name>/<model_name>/<run_id>, "
         "where a new run_id is generated on each run. "
         "If continuing from previous run, specify the run_id in --continue_from_run.",
         required=True,
@@ -265,12 +242,6 @@ if __name__ == "__main__":
         choices=["mcf", "cf", "zsre"],
         default="mcf",
         help="Dataset to perform evaluations on. Either CounterFact (cf), MultiCounterFact (mcf), or zsRE (zsre).",
-    )
-    parser.add_argument(
-        "--continue_from_run",
-        type=str,
-        default=None,
-        help="If continuing from previous run, set to run_id. Otherwise, leave as None.",
     )
     parser.add_argument(
         "--dataset_size_limit",
@@ -326,15 +297,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(
-        args.alg_name,
-        args.model_name,
-        args.hparams_fname,
-        args.ds_name,
-        args.dataset_size_limit,
-        args.continue_from_run,
-        args.skip_generation_tests,
-        args.generation_test_interval,
-        args.conserve_memory,
+        alg_name=args.alg_name,
+        model_name=args.model_name,
+        hparams_fname=args.hparams_fname,
+        ds_name=args.ds_name,
+        dataset_size_limit=args.dataset_size_limit,
+        skip_generation_tests=args.skip_generation_tests,
+        generation_test_interval=args.generation_test_interval,
+        conserve_memory=args.conserve_memory,
         dir_name=args.alg_name,
         num_edits=args.num_edits,
         use_cache=args.use_cache,
@@ -343,6 +313,6 @@ if __name__ == "__main__":
     )
 
 
-#helper:
-#export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
-#python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --start_index 20 --dataset_size_limit 10 --use_cache
+# helper:
+# export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
+# python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --start_index 20 --dataset_size_limit 10 --use_cache
