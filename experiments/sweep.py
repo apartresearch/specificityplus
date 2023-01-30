@@ -10,7 +10,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from experiments.evaluate import HPARAMS_DIR
 from experiments.evaluate import main as eval_main
-from util.globals import MODELS, DATASETS
+from util.globals import MODELS, DATASETS, ALGOS
 
 TMP_PARAMS_TEMPLATE = "sweep_params_tmp_{}_.json"
 
@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--alg_name", choices=["MEMIT", "FT", "ROME", "MEND"], required=True
+        "--alg_name", choices=ALGOS, required=True
     )
     parser.add_argument(
         "--model_name", choices=MODELS, required=True

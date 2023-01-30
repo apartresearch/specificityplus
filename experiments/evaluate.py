@@ -27,7 +27,7 @@ from memit import MEMITHyperParams, apply_memit_to_model
 from rome import ROMEHyperParams, apply_rome_to_model
 from util import nethook
 from util.globals import *
-from util.globals import DATASETS
+from util.globals import DATASETS, ALGOS
 
 ALG_DICT = {
     "IDENTITY": (IDENTITYHyperParams, apply_identity_to_model),
@@ -217,7 +217,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--alg_name",
-        choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
+        choices=ALGOS,
         default="ROME",
         help="Editing algorithm to use. Results are saved in results/<alg_name>/<model_name>/<run_id>, "
         "where the run_id is of the form 'run_<start_index>_<dataset_size_limit>'. ",
