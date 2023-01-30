@@ -19,5 +19,11 @@ with open("globals.yml", "r") as stream:
 REMOTE_ROOT_URL = data["REMOTE_ROOT_URL"]
 SEED = data["SEED"]
 
-
-print([dir.resolve() for dir in (RESULTS_DIR, DATA_DIR, STATS_DIR, HPARAMS_DIR, KV_DIR)])
+for var, path in (
+        ("RESULTS_DIR", RESULTS_DIR),
+        ("DATA_DIR", DATA_DIR),
+        ("STATS_DIR", STATS_DIR),
+        ("HPARAMS_DIR", HPARAMS_DIR),
+        ("KV_DIR", KV_DIR),
+):
+    print(f"{var}: {path.resolve()}")

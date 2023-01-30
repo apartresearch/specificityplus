@@ -9,7 +9,6 @@ dependencies:
   - pytorch==1.12.1
   - pip:
     - accelerate==0.15.0
-    - seedbank==0.1.2
     - tqdm==4.64.1
     - einops==0.4.0
     - higher==0.2.1

@@ -116,6 +116,4 @@ def compute_u(
         ) @ u.unsqueeze(1)
         u = u.squeeze()
 
-    u = u / u.norm()
-
-    return u
+    return u / u.norm()
