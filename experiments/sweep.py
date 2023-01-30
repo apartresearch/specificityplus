@@ -10,6 +10,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from experiments.evaluate import HPARAMS_DIR
 from experiments.evaluate import main as eval_main
+from util.globals import MODELS
 
 TMP_PARAMS_TEMPLATE = "sweep_params_tmp_{}_.json"
 
@@ -95,7 +96,7 @@ if __name__ == "__main__":
         "--alg_name", choices=["MEMIT", "FT", "ROME", "MEND"], required=True
     )
     parser.add_argument(
-        "--model_name", choices=["gpt2-xl", "EleutherAI/gpt-j-6B"], required=True
+        "--model_name", choices=MODELS, required=True
     )
     parser.add_argument("--hparams_fname", type=str, required=True)
     parser.add_argument(

@@ -34,3 +34,6 @@ for var, path in (
         ("KV_DIR", KV_DIR),
 ):
     print(f"{var}: {path.resolve()}")
+
+# model choices available as CLI args across different scripts
+MODELS = ["gpt2-medium", "gpt2-large", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"]
