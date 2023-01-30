@@ -1,7 +1,3 @@
-print("importing packages")
-
-###TODO: MAKE UNIQUE RUN-ID BASED ON START INDEX AND NUM EDITS
-
 import json
 import shutil
 import sys
@@ -108,7 +104,7 @@ def main(
     # Instantiate vanilla model
     if type(model_name) is str:
         tprint(f"Instantiating model {model_name}")
-        model = AutoModelForCausalLM.from_pretrained(model_name, low_cpu_mem_usage = True).cuda()
+        model = AutoModelForCausalLM.from_pretrained(model_name).cuda()
         tprint(f"Model loaded to device: {model.device}")
         tok = AutoTokenizer.from_pretrained(model_name)
         tok.pad_token = tok.eos_token
@@ -164,7 +160,6 @@ def main(
         seedbank.initialize(SEED)
         start = time()
         with nullcontext() if verbose else redirect_stdout(sys.stderr):
-            torch.cuda.empty_cache() #does this help?
             edited_model, weights_copy = apply_algo(
                 model,
                 tok,
