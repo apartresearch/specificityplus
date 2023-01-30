@@ -3,7 +3,7 @@
   # set ROOT_DIR: "" for local runs
   # set ROOT_DIR: "/disk/scratch/s1785649/memitpp/" or similar for runs on cluster
   # all paths below are assumed to be relative to ROOT_DIR
-  ROOT_DIR: "/disk/scratch/s1785649/memitpp/"
+  ROOT_DIR: ""
 
   # Result files
   RESULTS_DIR: "results"
