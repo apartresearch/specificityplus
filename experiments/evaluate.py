@@ -219,8 +219,7 @@ if __name__ == "__main__":
         choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
         help="Editing algorithm to use. Results are saved in results/<alg_name>/<model_name>/<run_id>, "
-        "where a new run_id is generated on each run. "
-        "If continuing from previous run, specify the run_id in --continue_from_run.",
+        "where the run_id is of the form 'run_<start_index>_<dataset_size_limit>'. ",
         required=True,
     )
     parser.add_argument(
