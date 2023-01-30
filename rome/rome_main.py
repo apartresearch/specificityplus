@@ -124,7 +124,7 @@ def execute_rome(
                     require_recompute = False
                 except Exception as e:
                     print(f"Error reading cache file due to {e}. Recomputing...")
-            
+
         # Compute rank-1 update matrix
         left_vector: torch.Tensor = (
             left_vector
@@ -141,7 +141,6 @@ def execute_rome(
             )
         )
         print("Left vector shape:", left_vector.shape)
-
         right_vector: torch.Tensor = (
             right_vector
             if right_vector is not None
@@ -157,13 +156,11 @@ def execute_rome(
                 ),
             )
         )
-
         print("Right vector shape:", right_vector.shape)
 
         # Cache vectors for future use
         if cache_fname is not None and require_recompute:
             cache_fname.parent.mkdir(exist_ok=True, parents=True)
-            #print dtypes
             np.savez(
                 cache_fname,
                 **{
@@ -172,9 +169,8 @@ def execute_rome(
                 },
             )
             print(f"Cached k/v pair at {cache_fname}")
-        
-        with torch.no_grad():
 
+        with torch.no_grad():
             # Determine correct transposition of delta matrix
             weight_name = f"{hparams.rewrite_module_tmp.format(layer)}.weight"
             upd_matrix = left_vector.unsqueeze(1) @ right_vector.unsqueeze(0)
