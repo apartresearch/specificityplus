@@ -109,28 +109,26 @@ repo_home=/home/${USER}/git/memitpp
 src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
 mkdir -p ${dest_path}  # make it if required
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
-##Moving huggingface dataset cache
-src_path=/home/${USER}/.cache/huggingface/datasets
-dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
+#Moving hparams
+src_path=${repo_home}/hparams/
+dest_path=${SCRATCH_HOME}/memitpp/hparams
 mkdir -p ${dest_path}  # make it if required
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 ##Moving huggingface hub cache
 src_path=/home/${USER}/.cache/huggingface/hub/${MODEL}
 dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/hub/${MODEL}
 mkdir -p ${dest_path}  # make it if required
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 #Set huggingface cache to scratch
 export HF_DATASETS_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
 export HUGGINGFACE_HUB_CACHE=${SCRATCH_HOME}/memitpp/data/huggingface/hub
-#echo the new cache location contents
-ls -l ${HUGGINGFACE_HUB_CACHE}
-tree ${HF_DATASETS_CACHE}
-# cat the config.json
-cat ${HUGGINGFACE_HUB_CACHE}/${MODEL}/config.json
 
 # Important notes about rsync:
 # * the --compress option is going to compress the data before transfer to send
@@ -164,10 +162,19 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-src_path=${SCRATCH_HOME}/memitpp/data/stats
-dest_path=${repo_home}/data/stats
-rsync --archive --update --compress --progress ${src_path}/ ${dest_path}
+#move results
+src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL}
+dest_path=${repo_home}/results/${ALGO}/${MODEL}/run_${RUN_ID}
+mkdir -p ${dest_path}  # make it if required
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
+#move KVS
+src_path=${SCRATCH_HOME}/memitpp/data/kvs
+dest_path=${repo_home}/data/kvs
+mkdir -p ${dest_path}  # make it if required
+echo "Moving data from ${src_path} to ${dest_path}"
+rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
 # =========================
 # Post experiment logging
