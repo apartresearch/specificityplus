@@ -8,7 +8,7 @@ dependencies:
   - cudatoolkit=11.3
   - pytorch==1.12.1
   - pip:
-    - seedbank==0.1.2
+    - accelerate==0.15.0
     - tqdm==4.64.1
     - einops==0.4.0
     - higher==0.2.1
@@ -21,3 +21,4 @@ dependencies:
     - scikit-learn==1.0.2
     - nltk==3.7
     - jupyter==1.0.0
+    - seedbank==0.1.2

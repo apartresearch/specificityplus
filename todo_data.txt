@@ -1,0 +1,9 @@
+data needs to exist on DFS:
+
+- [X] data (generate with downloaddata.py)
+- [X] huggingface wikipedia (generate with downloaddata.py)
+- [ ] compute stats via layer_name
+    - [ ] use their command line interface for this
+- [ ] kv-pairs cache (ask JASON how to handle this)
+    - [ ] see what it names the files
+    - [ ] handle dynamically automatically

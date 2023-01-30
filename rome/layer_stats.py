@@ -35,7 +35,7 @@ def main():
     def aa(*args, **kwargs):
         parser.add_argument(*args, **kwargs)
 
-    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B"])
+    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium"])
     aa("--dataset", default="wikipedia", choices=["wikitext", "wikipedia"])
     aa("--layers", default=[17], type=lambda x: list(map(int, x.split(","))))
     aa("--to_collect", default=["mom2"], type=lambda x: x.split(","))
@@ -46,9 +46,11 @@ def main():
     aa("--download", default=1, type=int, choices=[0, 1])
     args = parser.parse_args()
 
+    print(f"Loading {args.model_name} model and tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     model = AutoModelForCausalLM.from_pretrained(args.model_name).eval().cuda()
     set_requires_grad(False, model)
+    print("Done.")
 
     for layer_num in args.layers:
         print(
@@ -92,7 +94,6 @@ def layer_stats(
     """
     Function to load or compute cached stats.
     """
-
     def get_ds():
         raw_ds = load_dataset(
             ds_name,
@@ -134,11 +135,13 @@ def layer_stats(
             print(f"Unable to download due to {e}. Computing locally....")
 
     ds = get_ds() if not filename.exists() else None
-
+    print("filename: ", filename)
+    print("ds: ", ds)
     if progress is None:
         progress = lambda x: x
 
     stat = CombinedStat(**{k: STAT_TYPES[k]() for k in to_collect})
+
     loader = tally(
         stat,
         ds,
@@ -163,6 +166,7 @@ def layer_stats(
                 # feats = flatten_masked_batch(tr.output, batch["attention_mask"])
                 feats = feats.to(dtype=dtype)
                 stat.add(feats)
+    print("done with layer_stats")
     return stat
 
 
