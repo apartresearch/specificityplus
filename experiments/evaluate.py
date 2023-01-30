@@ -27,6 +27,7 @@ from memit import MEMITHyperParams, apply_memit_to_model
 from rome import ROMEHyperParams, apply_rome_to_model
 from util import nethook
 from util.globals import *
+from util.globals import DATASETS
 
 ALG_DICT = {
     "IDENTITY": (IDENTITYHyperParams, apply_identity_to_model),
@@ -238,7 +239,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--ds_name",
-        choices=["mcf", "cf", "zsre"],
+        choices=DATASETS,
         default="mcf",
         help="Dataset to perform evaluations on. Either CounterFact (cf), MultiCounterFact (mcf), or zsRE (zsre).",
     )

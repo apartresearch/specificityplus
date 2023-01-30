@@ -35,5 +35,6 @@ for var, path in (
 ):
     print(f"{var}: {path.resolve()}")
 
-# model choices available as CLI args across different scripts
+# model and dataset choices available as CLI args across different scripts
 MODELS = ["gpt2-medium", "gpt2-large", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"]
+DATASETS = ["cf", "mcf", "zsre"]
