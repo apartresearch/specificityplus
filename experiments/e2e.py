@@ -15,15 +15,42 @@ What it does:
         - collect scores
     - store results for all models (incl. unedited model) in csv files on hard disk
 """
+import pandas as pd
 from typing import Union
 
+from datasets import tqdm
 
-from experiments.evaluate import main as run
+from experiments.evaluate import main as run, get_run_dir
+from experiments.analyze import get_case_df
 
 
-def score():
-    # TODO: implement
-    pass
+def score(
+        alg_names: list[str],
+        model_name: Union[str, tuple],
+        start_index: int,
+        dataset_size_limit: int,
+):
+    def rename_algo(algo):
+        if algo=="IDENTITY":
+            return model_name
+        return algo
+    algo_to_run_dir = {
+        rename_algo(algo): get_run_dir(
+            dir_name=algo,
+            model_name=model_name,
+            start_index=start_index,
+            dataset_size_limit=dataset_size_limit,
+        )
+        for algo in alg_names
+    }
+    full_df = pd.concat(
+            get_case_df(case_id, algo_to_run_dir=algo_to_run_dir)
+            for case_id in tqdm(range(start_index, start_index+dataset_size_limit))
+        )
+
+    # store to disk
+
+    return full_df
 
 
 def main(
@@ -60,8 +87,13 @@ def main(
             start_index=start_index,
         )
 
-    for alg_name, hparams_fname in zip(alg_names, hparams_fnames):
-        score()
+    results_df = score(
+        alg_names=alg_names,
+        model_name=model_name,
+        dataset_size_limit=dataset_size_limit,
+        start_index=start_index,
+    )
+    return results_df
 
 
 if __name__ == '__main__':
