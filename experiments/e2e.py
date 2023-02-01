@@ -29,11 +29,12 @@ def score(
         model_name: Union[str, tuple],
         start_index: int,
         dataset_size_limit: int,
-):
+) -> None:
     def rename_algo(algo):
-        if algo=="IDENTITY":
+        if algo == "IDENTITY":
             return model_name
         return algo
+
     algo_to_run_dir = {
         rename_algo(algo): get_run_dir(
             dir_name=algo,
@@ -44,13 +45,20 @@ def score(
         for algo in alg_names
     }
     full_df = pd.concat(
-            get_case_df(case_id, algo_to_run_dir=algo_to_run_dir)
-            for case_id in tqdm(range(start_index, start_index+dataset_size_limit))
-        )
+        get_case_df(case_id, algo_to_run_dir=algo_to_run_dir)
+        for case_id in tqdm(range(start_index, start_index + dataset_size_limit))
+    )
 
     # store to disk
-
-    return full_df
+    combined_run_dir = get_run_dir(
+            dir_name="combined",
+            model_name=model_name,
+            start_index=start_index,
+            dataset_size_limit=dataset_size_limit,
+        )
+    combined_run_dir.mkdir(exist_ok=True)
+    full_df.to_csv(full_df / "results.csv")
+    print(f"Results exported to {full_df / 'results.csv'}.")
 
 
 def main(
@@ -87,13 +95,12 @@ def main(
             start_index=start_index,
         )
 
-    results_df = score(
+    score(
         alg_names=alg_names,
         model_name=model_name,
         dataset_size_limit=dataset_size_limit,
         start_index=start_index,
     )
-    return results_df
 
 
 if __name__ == '__main__':
@@ -102,7 +109,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--alg_names", # todo: fix CLI arg
+        "--alg_names",  # todo: fix CLI arg
         choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
         help="Editing algorithm to use. Results are saved in results/<alg_name>/<model_name>/<run_id>, "
@@ -117,7 +124,7 @@ if __name__ == '__main__':
         required=True,
     )
     parser.add_argument(
-        "--hparams_fnames", # todo: fix CLI arg
+        "--hparams_fnames",  # todo: fix CLI arg
         type=str,
         default="gpt2-xl.json",
         help="Name of hyperparameters file, located in the hparams/<alg_name> folder.",
