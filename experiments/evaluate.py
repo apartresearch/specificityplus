@@ -191,7 +191,7 @@ def main(
                 nethook.get_parameter(model, k)[...] = v.to("cuda")
 
 
-def get_run_dir(dir_name: str, model_name: str, start_index: int, dataset_size_limit: int) -> str:
+def get_run_dir(dir_name: str, model_name: str, start_index: int, dataset_size_limit: int) -> Path:
     run_id = f"run_{str(start_index).zfill(5)}_{str(dataset_size_limit).zfill(5)}"
     return RESULTS_DIR / dir_name / model_name / run_id
 
