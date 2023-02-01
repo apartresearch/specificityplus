@@ -56,9 +56,9 @@ def score(
             start_index=start_index,
             dataset_size_limit=dataset_size_limit,
         )
-    combined_run_dir.mkdir(exist_ok=True)
-    full_df.to_csv(full_df / "results.csv")
-    print(f"Results exported to {full_df / 'results.csv'}.")
+    combined_run_dir.mkdir(exist_ok=True, parents=True)
+    full_df.to_csv(combined_run_dir / "results.csv")
+    print(f"Results exported to {combined_run_dir / 'results.csv'}.")
 
 
 def main(
