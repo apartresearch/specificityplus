@@ -46,7 +46,10 @@ def verify_consistency():
             assert MODEL == json_dict["model"]
 
 
-def get_case_df(case_id: int) -> pd.DataFrame:
+def get_case_df(
+        case_id: int,
+        algo_to_run_dir: dict[str, str | Path],
+) -> pd.DataFrame:
     """
     Return a dataframe summarizing the information about the given test case across all editing algos.
 
@@ -64,7 +67,7 @@ def get_case_df(case_id: int) -> pd.DataFrame:
     case_results = {}
     case_metadata = {}
     case_probdists = {}
-    for alg, run_dir in {MODEL: UNEDITED_RUN_DIR, **EDITED_RUN_DIRS}.items():
+    for alg, run_dir in algo_to_run_dir.items():
         json_dict = json.load((run_dir / CASE_RESULT_FILES[case_id]).open())
         case_results[alg] = json_dict.pop("post")
         case_metadata[alg] = json_dict
@@ -84,7 +87,7 @@ def get_case_df(case_id: int) -> pd.DataFrame:
 
     # extract info
     df_data_dict = defaultdict(dict)
-    for alg, run_dir in {MODEL: UNEDITED_RUN_DIR, **EDITED_RUN_DIRS}.items():
+    for alg, run_dir in algo_to_run_dir.items():
         idx = 0
         # note: to correctly associate the index at the second level in the case_probdists dict
         # with its corresponding test prompt, make sure to iterate over the following keys in the correct order:
@@ -113,7 +116,10 @@ def get_case_df(case_id: int) -> pd.DataFrame:
 
 
 def get_full_results():
-    df = pd.concat(get_case_df(case_id) for case_id in tqdm(CASE_RESULT_FILES))
+    df = pd.concat(
+        get_case_df(case_id, algo_to_run_dir={MODEL: UNEDITED_RUN_DIR, **EDITED_RUN_DIRS})
+        for case_id in tqdm(CASE_RESULT_FILES)
+    )
     return df
 
 

@@ -67,8 +67,7 @@ def main(
 
     # Determine run directory
     # Create new dir if not continuing from prev run OR prev run doesn't exist
-    alg_dir = RESULTS_DIR / dir_name
-    run_dir = alg_dir / model_name / f"run_{str(start_index).zfill(5)}_{str(dataset_size_limit).zfill(5)}"
+    run_dir = get_run_dir(dir_name, model_name, start_index, dataset_size_limit)
     run_dir.mkdir(parents=True, exist_ok=True)
     tprint(f"Results will be stored at {run_dir}")
 
@@ -190,6 +189,11 @@ def main(
         with torch.no_grad():
             for k, v in weights_copy.items():
                 nethook.get_parameter(model, k)[...] = v.to("cuda")
+
+
+def get_run_dir(dir_name: str, model_name: str, start_index: int, dataset_size_limit: int) -> Path:
+    run_id = f"run_{str(start_index).zfill(5)}_{str(dataset_size_limit).zfill(5)}"
+    return RESULTS_DIR / dir_name / model_name / run_id
 
 
 def window(seq, n=2):
