@@ -12,7 +12,6 @@
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
 # run_experiment -b git/memitpp/setup_data/layer_stats_gpt-j-6B.sh -e git/memitpp/setup_data/collect_layer_stats_gpt-j-6B.txt -m 1
-# run_experiment -b git/memitpp/setup_data/layer_stats_gpt-j-6B.sh -e git/memitpp/setup_data/print-gptJ.txt -m 1
 # ```
 
 # ====================
@@ -29,16 +28,16 @@
 # #SBATCH --nodes=1
 
 # Generic resources to use - typically you'll want gpu:n to get n gpus
-#SBATCH --gres=gpu:a6000
+#SBATCH --gres=gpu:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=60000
+#SBATCH --mem=14000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=16:00:00
+#SBATCH --time=08:00:00
 
 
 # =====================

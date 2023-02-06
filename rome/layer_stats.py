@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import torch
 from datasets import load_dataset
 from tqdm.auto import tqdm
@@ -6,7 +9,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from util.globals import *
 from util.nethook import Trace, set_requires_grad
 from util.runningstats import CombinedStat, Mean, NormMean, SecondMoment, tally
-from rome.tok_dataset import (
+
+from .tok_dataset import (
     TokenizedDataset,
     dict_to_,
     flatten_masked_batch,
@@ -31,7 +35,7 @@ def main():
     def aa(*args, **kwargs):
         parser.add_argument(*args, **kwargs)
 
-    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium", "EleutherAI/gpt-neox-20b"])
+    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium"])
     aa("--dataset", default="wikipedia", choices=["wikitext", "wikipedia"])
     aa("--layers", default=[17], type=lambda x: list(map(int, x.split(","))))
     aa("--to_collect", default=["mom2"], type=lambda x: x.split(","))
@@ -56,11 +60,7 @@ def main():
             "or equivalently the outputs of the first MLP layer."
         )
         proj_layer_name = "c_proj" if "gpt2" in args.model_name else "fc_out"
-
         layer_name = f"transformer.h.{layer_num}.mlp.{proj_layer_name}"
-        if args.model_name == "EleutherAI/gpt-neox-20b":
-            # probably the layer name is bugged
-            layer_name = f"gpt_neox.layers.{layer_num}.mlp.dense_4h_to_h"
 
         layer_stats(
             model,
@@ -157,8 +157,6 @@ def layer_stats(
     with torch.no_grad():
         for batch_group in progress(loader, total=batch_count):
             for batch in batch_group:
-                if "gpt_neox" in layer_name:
-                    batch.pop("position_ids")
                 batch = dict_to_(batch, "cuda")
                 with Trace(
                     model, layer_name, retain_input=True, retain_output=False, stop=True

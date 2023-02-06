@@ -11,7 +11,8 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/setup_data/layer_stats_gpt2-xl.sh -e git/memitpp/setup_data/collect_layer_stats_gpt2xl.txt -m 1
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium.txt -m 110
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/testexp.txt -m 20
 # ```
 
 # ====================
@@ -25,9 +26,11 @@
 #SBATCH --error=/home/%u/slurm_logs/slurm-%A_%a.out
 
 # Maximum number of nodes to use for the job
-# #SBATCH --nodes=1
+# #SBATCH --nodes=10
 
 # Generic resources to use - typically you'll want gpu:n to get n gpus
+##SBATCH --gpus-per-task=1
+##SBATCH --gpu-bind=single:1
 #SBATCH --gres=gpu:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
@@ -37,8 +40,11 @@
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=04:00:00
+#SBATCH --time=2-16:00:00
 
+##parameters
+export MODEL=models--gpt2-medium
+export MODEL_NAME=gpt2-medium
 
 # =====================
 # Logging information
@@ -76,9 +82,6 @@ CONDA_ENV_NAME=memit
 echo "Activating conda environment: ${CONDA_ENV_NAME}"
 conda activate ${CONDA_ENV_NAME}
 
-#choose model
-export MODEL=models--gpt2-xl
-
 #setup python path
 export PYTHONPATH=/home/${USER}/git/memitpp:${PYTHONPATH}
 
@@ -104,6 +107,7 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 #moving data from DFS to scratch
 repo_home=/home/${USER}/git/memitpp
 
+
 #Moving data
 src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
@@ -111,9 +115,9 @@ mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
 
-##Moving huggingface dataset cache
-src_path=/home/${USER}/.cache/huggingface/datasets
-dest_path=${SCRATCH_HOME}/memitpp/data/huggingface/datasets
+#Moving hparams
+src_path=${repo_home}/hparams/
+dest_path=${SCRATCH_HOME}/memitpp/hparams
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path}
@@ -161,13 +165,19 @@ echo "Command ran successfully!"
 
 echo "Moving output data back to DFS"
 
-src_path=${SCRATCH_HOME}/memitpp/data/stats
-dest_path=${repo_home}/data/stats
+export START_INDEX=$(echo $COMMAND | awk -F'--start_index ' '{print $2}' | awk '{print $1}')
+export START_INDEX=$(printf "%05d" $START_INDEX)
+export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size ' '{print $2}' | awk '{print $1}')
+export DATASET_SIZE=$(printf "%05d" $DATASET_SIZE)
+export ALGO=$(echo $COMMAND | awk -F'--alg_name ' '{print $2}' | awk '{print $1}')
 
+#move results
+
+src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}/run_${START_INDEX}_${DATASET_SIZE}
+dest_path=${repo_home}/results/${MODEL}/${ALGO}/run_${START_INDEX}_${DATASET_SIZE}
+mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
-#echo content of src_path to stdout
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
-
 
 # =========================
 # Post experiment logging
