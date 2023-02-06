@@ -1,4 +1,0 @@
-cd git/memitpp && python experiments/evaluate.py --model_name gpt2-medium  --ds_name cf --dataset_size 15 --start_index 0 --alg_name ROME --hparams_fname gpt2-medium.json
-cd git/memitpp && python experiments/evaluate.py --model_name gpt2-medium  --ds_name cf --dataset_size 15 --start_index 0 --alg_name FT --hparams_fname gpt2-medium_constr.json
-cd git/memitpp && python experiments/evaluate.py --model_name gpt2-medium  --ds_name cf --dataset_size 15 --start_index 0 --alg_name MEND --hparams_fname gpt2-medium_CF.json
-cd git/memitpp && python experiments/evaluate.py --model_name gpt2-medium  --ds_name cf --dataset_size 15 --start_index 0 --alg_name IDENTITY --hparams_fname gpt2-medium_constr.json
