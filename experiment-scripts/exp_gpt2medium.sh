@@ -34,7 +34,7 @@
 #SBATCH --gres=gpu:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=14000
+#SBATCH --mem=10000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
@@ -107,7 +107,6 @@ echo "Moving input data to the compute node's scratch space: $SCRATCH_DISK"
 #moving data from DFS to scratch
 repo_home=/home/${USER}/git/memitpp
 
-
 #Moving data
 src_path=${repo_home}/data/
 dest_path=${SCRATCH_HOME}/memitpp/data
@@ -169,12 +168,10 @@ export START_INDEX=$(echo $COMMAND | awk -F'--start_index ' '{print $2}' | awk '
 export START_INDEX=$(printf "%05d" $START_INDEX)
 export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size ' '{print $2}' | awk '{print $1}')
 export DATASET_SIZE=$(printf "%05d" $DATASET_SIZE)
-export ALGO=$(echo $COMMAND | awk -F'--alg_name ' '{print $2}' | awk '{print $1}')
 
 #move results
-
-src_path=${SCRATCH_HOME}/memitpp/results/${ALGO}/${MODEL_NAME}/run_${START_INDEX}_${DATASET_SIZE}
-dest_path=${repo_home}/results/${MODEL}/${ALGO}/run_${START_INDEX}_${DATASET_SIZE}
+src_path=${SCRATCH_HOME}/memitpp/results/combined/${MODEL_NAME}/run_${START_INDEX}_${DATASET_SIZE}
+dest_path=${repo_home}/results/combined/${MODEL_NAME}/run_${START_INDEX}_${DATASET_SIZE}
 mkdir -p ${dest_path}  # make it if required
 echo "Moving data from ${src_path} to ${dest_path}"
 rsync --archive --update --compress --progress --verbose --log-file=/dev/stdout ${src_path}/ ${dest_path} 
