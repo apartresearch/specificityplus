@@ -1,1 +1,0 @@
-cd git/memitpp && python setup_data/print_gpt_j.py

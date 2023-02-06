@@ -1,1 +1,1 @@
-cd git/memitpp && python rome/layer_stats.py --model_name gpt2-medium --layers 8 --to_collect mom2 --precision float32 --download 1
+cd git/memitpp && python rome/layer_stats.py --model_name gpt2-medium --layers 8 --to_collect mom2 --precision float32 --download 0
