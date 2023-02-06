@@ -109,12 +109,13 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--alg_names",  # todo: fix CLI arg
+        "--alg_names",
         choices=["MEMIT", "ROME", "FT", "MEND", "IDENTITY"],
         default="ROME",
         help="Editing algorithm to use. Results are saved in results/<alg_name>/<model_name>/<run_id>, "
              "where the run_id is of the form 'run_<start_index>_<dataset_size_limit>'. ",
         required=True,
+        nargs='+',
     )
     parser.add_argument(
         "--model_name",
@@ -124,11 +125,12 @@ if __name__ == '__main__':
         required=True,
     )
     parser.add_argument(
-        "--hparams_fnames",  # todo: fix CLI arg
+        "--hparams_fnames",
         type=str,
         default="gpt2-xl.json",
         help="Name of hyperparameters file, located in the hparams/<alg_name> folder.",
         required=True,
+        nargs='+',
     )
     parser.add_argument(
         "--ds_name",
