@@ -172,7 +172,7 @@ def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 1000):# -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
