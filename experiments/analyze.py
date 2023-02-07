@@ -48,7 +48,7 @@ def verify_consistency():
 
 def get_case_df(
         case_id: int,
-        algo_to_run_dir: dict[str, str | Path],
+        algo_to_run_dir#: dict[str, str | Path],
 ) -> pd.DataFrame:
     """
     Return a dataframe summarizing the information about the given test case across all editing algos.
