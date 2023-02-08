@@ -21,7 +21,7 @@ from typing import Union
 from datasets import tqdm
 
 from experiments.evaluate import main as run, get_run_dir
-from experiments.analyze import get_case_df
+from experiments.e2e_analyze import get_case_df
 
 
 def score(
@@ -45,7 +45,7 @@ def score(
         for algo in alg_names
     }
     full_df = pd.concat(
-        get_case_df(case_id, algo_to_run_dir=algo_to_run_dir)
+        get_case_df(case_id, algo_to_run_dir=algo_to_run_dir, model_name=model_name)
         for case_id in tqdm(range(start_index, start_index + dataset_size_limit))
     )
 
