@@ -17,7 +17,7 @@ from util.globals import *
 
 # TODO: create a proper CLI to replace the following global variables
 OUTPUT_DIR = Path(ROOT_DIR / RESULTS_DIR / "plots")
-OUTPUT_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 sns.set_context("talk")
 sns.set_style("darkgrid")
