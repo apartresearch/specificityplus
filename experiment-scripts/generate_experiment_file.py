@@ -34,7 +34,7 @@ for model in models:
 
     base_call = (f"python experiments/e2e.py --model_name {model} \
 --alg_names {alg_names} --hparams_fnames {hparams_fnames}\
---ds_name cf --dataset_size_limit {dataset_size}")
+--ds_name cf --verbose --dataset_size_limit {dataset_size}")
 
     for start_i in start_indexes:
         # Note that we don't set a seed for rep - a seed is selected at random
