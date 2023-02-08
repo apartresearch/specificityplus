@@ -11,22 +11,12 @@ import seedbank
 import torch
 from torch.nn.functional import kl_div
 from tqdm import tqdm
+import argparse
 
-from util.globals import SEED
+from util.globals import *
 
 # TODO: create a proper CLI to replace the following global variables
-MODEL = "gpt2-medium"
-UNEDITED_RUN_DIR = Path("results/IDENTITY/run_009")
-EDITED_RUN_DIRS = {
-    "ROME": Path("results/ROME/run_019"),
-    "FT": Path("results/FT/run_003"),
-}
-
-CASE_RESULT_FILES = {
-    case_id: f"1_edits-case_{case_id}.json"
-    for case_id in list(range(1531))
-}
-OUTPUT_DIR = Path("results/plots")
+OUTPUT_DIR = Path(ROOT_DIR / RESULTS_DIR / "plots")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 sns.set_context("talk")
@@ -35,20 +25,10 @@ sns.set_style("darkgrid")
 seedbank.initialize(SEED)
 
 
-def verify_consistency():
-    """Check that the run_dirs contain info about the expected model and test cases."""
-    for alg, run_dir in {"IDENTITY": UNEDITED_RUN_DIR, **EDITED_RUN_DIRS}.items():
-        assert run_dir.exists()
-        for case_id, file in CASE_RESULT_FILES.items():
-            json_dict = json.load((run_dir / file).open())
-            assert case_id == json_dict["case_id"]
-            assert alg == json_dict["alg"]
-            assert MODEL == json_dict["model"]
-
-
 def get_case_df(
         case_id: int,
-        algo_to_run_dir: dict[str, str | Path],
+        algo_to_run_dir,  #: dict[str, Path],
+        model_name: str
 ) -> pd.DataFrame:
     """
     Return a dataframe summarizing the information about the given test case across all editing algos.
@@ -67,13 +47,15 @@ def get_case_df(
     case_results = {}
     case_metadata = {}
     case_probdists = {}
+
+    case_path = f"1_edits-case_{case_id}.json"
     for alg, run_dir in algo_to_run_dir.items():
-        json_dict = json.load((run_dir / CASE_RESULT_FILES[case_id]).open())
+        json_dict = json.load((run_dir / case_path).open())
         case_results[alg] = json_dict.pop("post")
         case_metadata[alg] = json_dict
 
         # load log probs for first token after test prompts
-        f_prefix = f"{Path(CASE_RESULT_FILES[case_id]).stem}_log_probs_"
+        f_prefix = f"{Path(case_path).stem}_log_probs_"
         case_probdists[alg] = {
             int(prob_file.stem[len(f_prefix):]): torch.load(prob_file)
             for prob_file in sorted(run_dir.glob(f"{f_prefix}*.pt"))
@@ -81,7 +63,7 @@ def get_case_df(
 
     # sanity check on the metadata; metadata is not used currently, except for this sanity check
     assert all(
-        case_metadata[MODEL]["requested_rewrite"] == md["requested_rewrite"]
+        case_metadata[model_name]["requested_rewrite"] == md["requested_rewrite"]
         for md in case_metadata.values()
     )
 
@@ -105,21 +87,14 @@ def get_case_df(
                     (alg, "S"): x["target_true"] < x["target_new"],  # S: success (true object likelier)
                     (alg, "M"): np.exp(-x["target_true"]) - np.exp(-x["target_new"]),  # M: magnitude of pob. diff.
                     (alg, "KL"): kl_div(
-                        -case_probdists[MODEL][idx], -case_probdists[alg][idx], log_target=True, reduction="batchmean"
+                        -case_probdists[model_name][idx], -case_probdists[alg][idx], log_target=True,
+                        reduction="batchmean"
                     ).cpu().numpy()
                 })
                 idx += 1
     df = pd.DataFrame.from_dict(df_data_dict).T
     df.columns.names = ["Algorithm", "Metric"]
     df.index.names = ["Case", "Prompt Type", "Prompt Index"]
-    return df
-
-
-def get_full_results():
-    df = pd.concat(
-        get_case_df(case_id, algo_to_run_dir={MODEL: UNEDITED_RUN_DIR, **EDITED_RUN_DIRS})
-        for case_id in tqdm(CASE_RESULT_FILES)
-    )
     return df
 
 
@@ -172,7 +147,7 @@ def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 1000) -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 1000):# -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
@@ -223,7 +198,7 @@ def plot_statistics(dfs: dict[str, pd.DataFrame]):
         m.loc[models].plot.barh(xerr=err_ints)
         if metric == "KL":
             plt.xscale("log")
-            plt.xlim([0.9*1E-7, 5*1E-5])
+            plt.xlim([0.9 * 1E-7, 5 * 1E-5])
         ax = plt.gca()
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles[::-1], labels[::-1])
@@ -236,19 +211,40 @@ def export_statistics(dfs: dict[str, pd.DataFrame]):
         dfs[key].to_csv(OUTPUT_DIR / f"{key}.csv")
 
 
+def concat_results(path) -> pd.DataFrame:
+    # loops over all the directories in the path, which each contains a results.csv
+    # and concatenates them into one df
+    dfs = []
+    for p in path.iterdir():
+        df = pd.read_csv(p / "results.csv", header=[0, 1], index_col=[0, 1, 2])
+        dfs.append(df)
+    return pd.concat(dfs)
+
+
 def main():
-    RESULTS_FILE_TO_LOAD: Optional[Path] = OUTPUT_DIR / "results.csv"
-    if RESULTS_FILE_TO_LOAD and RESULTS_FILE_TO_LOAD.exists():
-        df = pd.read_csv(RESULTS_FILE_TO_LOAD, header=[0, 1], index_col=[0, 1, 2])
-    else:
-        verify_consistency()
-        df = get_full_results()
-        df.to_csv(OUTPUT_DIR / "results.csv")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--model_name",
+        choices=["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"],
+        default="gpt2-medium",
+        help="Model to edit.",
+        required=True,
+    )
+    args = parser.parse_args()
+
+    # if combined results file exists, load it, otherwise, concatenate the results
+    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" /args.model_name)
+    results_file_name = results_dir / "results_combined.csv"
+    if not results_file_name.exists():
+        print("results_combined.csv does not exist, concatenating results.csv files...")
+        df = concat_results(results_dir)
+        df.to_csv(results_file_name)
+    df = pd.read_csv(results_file_name, header=[0, 1], index_col=[0, 1, 2])
     dfs = get_statistics(df)
     print(format_statistics(dfs))
     plot_statistics(dfs)
     export_statistics(dfs)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
