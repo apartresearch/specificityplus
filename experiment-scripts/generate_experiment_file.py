@@ -33,7 +33,7 @@ for model in models:
     hparams_fnames = " ".join(hparams_fnames)
 
     base_call = (f"python experiments/e2e.py --model_name {model} \
---alg_names {alg_names} --hparams_fnames {hparams_fnames}\
+--alg_names {alg_names} --hparams_fnames {hparams_fnames} \
 --ds_name cf --verbose --dataset_size_limit {dataset_size}")
 
     for start_i in start_indexes:
