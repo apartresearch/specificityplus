@@ -44,9 +44,15 @@ def score(
         )
         for algo in alg_names
     }
+    #full_df = pd.concat(
+    #    get_case_df(case_id, algo_to_run_dir=algo_to_run_dir, model_name=model_name)
+    #    for case_id in tqdm(range(start_index, start_index + dataset_size_limit))
+    #)
+    #rewrite the above to ignore case ids which dont exist
     full_df = pd.concat(
         get_case_df(case_id, algo_to_run_dir=algo_to_run_dir, model_name=model_name)
         for case_id in tqdm(range(start_index, start_index + dataset_size_limit))
+        if (algo_to_run_dir[model_name] / f"1_edits-case_{case_id}.json").exists()
     )
 
     # store to disk
