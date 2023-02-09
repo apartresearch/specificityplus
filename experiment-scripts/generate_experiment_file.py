@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Script for generating experiments.txt""" 
 
-examples = 24000
+examples = 22000
 split_into = 40
 
 models = ["gpt2-medium"]  # ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-J-6B", "EleutherAI/gpt-neox-20b"]
