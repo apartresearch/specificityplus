@@ -12,6 +12,7 @@
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
 # run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium.txt -m 40
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium_rerun.txt -m 40
 # run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/testexp.txt -m 20
 # ```
 
@@ -30,7 +31,7 @@
 
 # Generic resources to use - typically you'll want gpu:n to get n gpus
 ##SBATCH --gpus-per-task=1
-##SBATCH --gpu-bind=single:1
+#SBATCH --gpu-bind=single:1
 #SBATCH --gres=gpu:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
