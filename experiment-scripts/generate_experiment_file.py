@@ -4,7 +4,7 @@
 examples = 22000
 split_into = 40
 
-models = ["gpt2-medium"]  # ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-J-6B", "EleutherAI/gpt-neox-20b"]
+models = ["EleutherAI/gpt-J-6B"]  # ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-J-6B", "EleutherAI/gpt-neox-20b"]
 ALGS = ["ROME","FT","IDENTITY"]  # ["ROME","FT", "MEND", "MEMIT", "IDENTITY"]
 
 hparams_ROME = {"gpt2-medium":"gpt2-medium.json", "gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-J-6B":"EleutherAI_gpt-j-6B.json", "EleutherAI/gpt-neox-20b":"EleutherAI_gpt-neox-20b.json"}
