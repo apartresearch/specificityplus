@@ -15,7 +15,7 @@ hparams_MEMIT = {"gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-J-6B":"EleutherAI_gpt
 
 hparams_dict = {"ROME":hparams_ROME, "MEND":hparams_MEND, "IDENTITY":hparams_IDENTITY, "FT":hparams_FT}
 
-filename = {"gpt2-medium":"exp_gpt2medium.txt", "gpt2-xl":"exp_gpt2xl.txt", "EleutherAI/gpt-J-6B":"exp_gptJ6b.txt", "EleutherAI/gpt-neox-20b":"exp_gptneox20b.txt"}
+filename = {"gpt2-medium":"exp_gpt2medium.txt", "gpt2-xl":"exp_gpt2xl.txt", "EleutherAI/gpt-J-6B":"exp_gptJ6B.txt", "EleutherAI/gpt-neox-20B":"exp_gptneox20b.txt"}
 
 dataset_size = examples // split_into
 if dataset_size * split_into != examples:
