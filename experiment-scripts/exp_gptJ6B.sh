@@ -167,7 +167,7 @@ echo "Moving output data back to DFS"
 
 export START_INDEX=$(echo $COMMAND | awk -F'--start_index ' '{print $2}' | awk '{print $1}')
 export START_INDEX=$(printf "%05d" $START_INDEX)
-export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size ' '{print $2}' | awk '{print $1}')
+export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size_limit ' '{print $2}' | awk '{print $1}')
 export DATASET_SIZE=$(printf "%05d" $DATASET_SIZE)
 
 #move results
