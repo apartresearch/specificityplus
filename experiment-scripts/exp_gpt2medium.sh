@@ -32,16 +32,16 @@
 # Generic resources to use - typically you'll want gpu:n to get n gpus
 ##SBATCH --gpus-per-task=1
 #SBATCH --gpu-bind=single:1
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:a6000
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=10000
+#SBATCH --mem=20000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=2-16:00:00
+#SBATCH --time=4:00:00
 
 ##parameters
 export MODEL=models--gpt2-medium
