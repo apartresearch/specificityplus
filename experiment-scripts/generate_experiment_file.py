@@ -2,7 +2,7 @@
 """Script for generating experiments.txt""" 
 
 examples = 22000
-split_into = 40
+split_into = 125
 
 models = ["gpt2-xl"]  # ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-J-6B", "EleutherAI/gpt-neox-20b"]
 ALGS = ["ROME","FT", "MEMIT", "IDENTITY"]  # ["ROME","FT", "MEND", "MEMIT", "IDENTITY"]

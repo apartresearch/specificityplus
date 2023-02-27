@@ -40,7 +40,7 @@
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 
 
 
