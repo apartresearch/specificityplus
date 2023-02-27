@@ -1,0 +1,1 @@
+cd git/memitpp && python experiments/e2e.py --model_name EleutherAI/gpt-j-6B --alg_names ROME FT MEMIT IDENTITY --hparams_fnames EleutherAI_gpt-j-6B.json EleutherAI_gpt-j-6B_constr.json EleutherAI_gpt-j-6B_CF.json identity_hparams.json --ds_name cf --verbose --dataset_size_limit 176 --start_index 0
