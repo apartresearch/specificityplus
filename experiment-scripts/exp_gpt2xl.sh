@@ -11,8 +11,8 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl.txt -m 40
-# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl_memit.txt -m 40
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl.txt -m 125
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl_memit.txt -m 80
 # ```
 
 # ====================

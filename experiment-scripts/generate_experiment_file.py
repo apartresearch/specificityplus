@@ -4,18 +4,18 @@
 examples = 22000
 split_into = 125
 
-models = ["gpt2-xl"]  # ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-J-6B", "EleutherAI/gpt-neox-20b"]
+models = ["EleutherAI/gpt-j-6B"]  # ["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"]
 ALGS = ["ROME","FT", "MEMIT", "IDENTITY"]  # ["ROME","FT", "MEND", "MEMIT", "IDENTITY"]
 
-hparams_ROME = {"gpt2-medium":"gpt2-medium.json", "gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-J-6B":"EleutherAI_gpt-j-6B.json", "EleutherAI/gpt-neox-20b":"EleutherAI_gpt-neox-20b.json"}
-hparams_MEND = {"gpt2-xl":"gpt2-xl_CF.json", "EleutherAI/gpt-J-6B":"EleutherAI_gpt-j-6B_CF.json"}
-hparams_IDENTITY = {"gpt2-medium":"identity_hparams.json", "gpt2-xl": "identity_hparams.json", "EleutherAI/gpt-J-6B":"identity_hparams.json", "EleutherAI/gpt-neox-20b":"identity_hparams.json"}
-hparams_FT = {"gpt2-medium":"gpt2-medium_constr.json", "gpt2-xl":"gpt2-xl_constr.json", "EleutherAI/gpt-J-6B":"EleutherAI_gpt-j-6B_constr.json", "EleutherAI/gpt-neox-20b":"EleutherAI_gpt-neox-20b_constr.json"}
-hparams_MEMIT = {"gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-J-6B":"EleutherAI_gpt-j-6B_CF.json"}
+hparams_ROME = {"gpt2-medium":"gpt2-medium.json", "gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B.json", "EleutherAI/gpt-neox-20b":"EleutherAI_gpt-neox-20b.json"}
+hparams_MEND = {"gpt2-xl":"gpt2-xl_CF.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B_CF.json"}
+hparams_IDENTITY = {"gpt2-medium":"identity_hparams.json", "gpt2-xl": "identity_hparams.json", "EleutherAI/gpt-j-6B":"identity_hparams.json", "EleutherAI/gpt-neox-20b":"identity_hparams.json"}
+hparams_FT = {"gpt2-medium":"gpt2-medium_constr.json", "gpt2-xl":"gpt2-xl_constr.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B_constr.json", "EleutherAI/gpt-neox-20b":"EleutherAI_gpt-neox-20b_constr.json"}
+hparams_MEMIT = {"gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B_CF.json"}
 
 hparams_dict = {"ROME":hparams_ROME, "MEND":hparams_MEND, "IDENTITY":hparams_IDENTITY, "FT":hparams_FT, "MEMIT":hparams_MEMIT}
 
-filename = {"gpt2-medium":"exp_gpt2medium.txt", "gpt2-xl":"exp_gpt2xl.txt", "EleutherAI/gpt-J-6B":"exp_gptJ6B.txt", "EleutherAI/gpt-neox-20B":"exp_gptneox20b.txt"}
+filename = {"gpt2-medium":"exp_gpt2medium.txt", "gpt2-xl":"exp_gpt2xl.txt", "EleutherAI/gpt-j-6B":"exp_gptJ6B.txt", "EleutherAI/gpt-neox-20B":"exp_gptneox20b.txt"}
 
 dataset_size = examples // split_into
 if dataset_size * split_into != examples:
