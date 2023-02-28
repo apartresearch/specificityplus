@@ -11,7 +11,7 @@ hparams_ROME = {"gpt2-medium":"gpt2-medium.json", "gpt2-xl":"gpt2-xl.json", "Ele
 hparams_MEND = {"gpt2-xl":"gpt2-xl_CF.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B_CF.json"}
 hparams_IDENTITY = {"gpt2-medium":"identity_hparams.json", "gpt2-xl": "identity_hparams.json", "EleutherAI/gpt-j-6B":"identity_hparams.json", "EleutherAI/gpt-neox-20b":"identity_hparams.json"}
 hparams_FT = {"gpt2-medium":"gpt2-medium_constr.json", "gpt2-xl":"gpt2-xl_constr.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B_constr.json", "EleutherAI/gpt-neox-20b":"EleutherAI_gpt-neox-20b_constr.json"}
-hparams_MEMIT = {"gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B_CF.json"}
+hparams_MEMIT = {"gpt2-xl":"gpt2-xl.json", "EleutherAI/gpt-j-6B":"EleutherAI_gpt-j-6B.json"}
 
 hparams_dict = {"ROME":hparams_ROME, "MEND":hparams_MEND, "IDENTITY":hparams_IDENTITY, "FT":hparams_FT, "MEMIT":hparams_MEMIT}
 
