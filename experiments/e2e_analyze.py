@@ -1,7 +1,7 @@
+import argparse
 import json
 from collections import defaultdict
-from pathlib import Path
-from typing import Optional, Callable
+from typing import Callable, Dict, Union, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +11,6 @@ import seedbank
 import torch
 from torch.nn.functional import kl_div
 from tqdm import tqdm
-import argparse
 
 from util.globals import *
 
@@ -27,7 +26,7 @@ seedbank.initialize(SEED)
 
 def get_case_df(
         case_id: int,
-        algo_to_run_dir,  #: dict[str, Path],
+        algo_to_run_dir: Dict[str, Path],
         model_name: str
 ) -> pd.DataFrame:
     """
@@ -98,7 +97,7 @@ def get_case_df(
     return df
 
 
-def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.DataFrame]:
+def compute_statistic(df: pd.DataFrame, statistic: Callable) -> Dict[str, pd.DataFrame]:
     # average over all prompts for a given test case and prompt type
     df2 = df.groupby(["Case", "Prompt Type"]).mean().copy()
     # compute statistic across all test cases for a given prompt type
@@ -147,7 +146,7 @@ def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 1000):# -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 1000) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
@@ -233,7 +232,7 @@ def main():
     args = parser.parse_args()
 
     # if combined results file exists, load it, otherwise, concatenate the results
-    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" /args.model_name)
+    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / args.model_name)
     results_file_name = results_dir / "results_combined.csv"
     if not results_file_name.exists():
         print("results_combined.csv does not exist, concatenating results.csv files...")
