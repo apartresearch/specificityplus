@@ -275,7 +275,7 @@ def main(model_name: str) -> None:
         print("Statistics files do not exist, computing statistics...")
         results_file_name = results_dir / "results_combined.csv"
         try:
-            df = pd.read_csv(results_file_name, header=[0, 1, 2], index_col=[0, 1, 2])
+            df = pd.read_csv(results_file_name, header=[0, 1], index_col=[0, 1, 2])
         except FileNotFoundError:
             print("results_combined.csv does not exist, concatenating results.csv files...")
             df = concat_results(results_dir)
