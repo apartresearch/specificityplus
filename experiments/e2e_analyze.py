@@ -1,6 +1,7 @@
 import argparse
 import json
 from collections import defaultdict
+from functools import partial
 from typing import Callable, Dict, Union, List
 
 import matplotlib.pyplot as plt
@@ -160,7 +161,7 @@ def get_statistics(df, n_bootstrap: int = 1000) -> Dict[str, Union[pd.DataFrame,
     return dfs
 
 
-def format_statistics(dfs: dict[str, pd.DataFrame]):
+def format_statistics(dfs: Dict[str, pd.DataFrame]):
     dfs = {
         # TODO: use scientific notation for KL divergence
         key: dfs[key].round(2).astype("str")
@@ -169,7 +170,7 @@ def format_statistics(dfs: dict[str, pd.DataFrame]):
     return dfs["mean"] + " (" + dfs["std"] + ")"
 
 
-def plot_statistics(dfs: dict[str, pd.DataFrame]):
+def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
     models = list(dfs["mean"].index)
     for metric in ["S", "M", "KL"]:
         if metric == "KL":
@@ -202,12 +203,35 @@ def plot_statistics(dfs: dict[str, pd.DataFrame]):
         handles, labels = ax.get_legend_handles_labels()
         ax.legend(handles[::-1], labels[::-1])
         plt.tight_layout()
-        plt.savefig(OUTPUT_DIR / f"{metric}.png")
+        path = results_dir / f"{metric}.png"
+        plt.savefig(path)
+        print(f"Exported plot for {metric} to {path}.")
 
 
-def export_statistics(dfs: dict[str, pd.DataFrame]):
+def export_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path) -> None:
     for key in ["mean", "std", "outliers"]:
-        dfs[key].to_csv(OUTPUT_DIR / f"{key}.csv")
+        path = results_dir / f"{key}.csv"
+        dfs[key].to_csv(path)
+        print(f"Exported {key} to {path}.")
+    for i, df in enumerate(dfs["bootstrap_means"]):
+        path = results_dir / f"bootstrap_means_{i}.csv"
+        df.to_csv(path)
+        print(f"Exported bootstrap sample {i} to {path}.")
+
+
+def load_statistics(results_dir: Path) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
+    bootstrap_files = sorted(results_dir.glob("bootstrap_means_*.csv"))
+    if not bootstrap_files:
+        raise ValueError("No bootstrap samples found.")
+
+    read_csv = partial(pd.read_csv, header=[0, 1], index_col=[0])
+    dfs = {
+        "mean": read_csv(results_dir / "mean.csv"),
+        "std": read_csv(results_dir / "std.csv"),
+        "outliers": read_csv(results_dir / "outliers.csv"),
+        "bootstrap_means": [read_csv(path) for path in bootstrap_files],
+    }
+    return dfs
 
 
 def concat_results(path) -> pd.DataFrame:
@@ -221,18 +245,22 @@ def concat_results(path) -> pd.DataFrame:
 
 
 def main(model_name: str) -> None:
-    # if combined results file exists, load it, otherwise, concatenate the results
     results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / model_name)
-    results_file_name = results_dir / "results_combined.csv"
-    if not results_file_name.exists():
-        print("results_combined.csv does not exist, concatenating results.csv files...")
-        df = concat_results(results_dir)
-        df.to_csv(results_file_name)
-    df = pd.read_csv(results_file_name, header=[0, 1], index_col=[0, 1, 2])
-    dfs = get_statistics(df)
+    try:
+        dfs = load_statistics(results_dir)
+    except (ValueError, FileNotFoundError):
+        print("Statistics files do not exist, computing statistics...")
+        results_file_name = results_dir / "results_combined.csv"
+        try:
+            df = pd.read_csv(results_file_name, header=[0, 1, 2], index_col=[0, 1, 2])
+        except FileNotFoundError:
+            print("results_combined.csv does not exist, concatenating results.csv files...")
+            df = concat_results(results_dir)
+            df.to_csv(results_file_name)
+        dfs = get_statistics(df)
+        export_statistics(dfs, results_dir)
     print(format_statistics(dfs))
-    plot_statistics(dfs)
-    export_statistics(dfs)
+    plot_statistics(dfs, results_dir)
 
 
 if __name__ == "__main__":
