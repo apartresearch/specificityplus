@@ -171,41 +171,64 @@ def format_statistics(dfs: Dict[str, pd.DataFrame]):
 
 
 def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
-    models = list(dfs["mean"].index)
-    for metric in ["S", "M", "KL"]:
+    model_aliases = {
+        "gpt2-medium": "GPT-2 M",
+        "gpt-xl": "GPT-2 XL",
+        "EleutherAI/gpt-j-6B": "GPT-J (6B)",
+        "FT": "FT-L",
+    }
+    mean_ = dfs["mean"]
+    mean_.rename(index=model_aliases, inplace=True)
+    bootstrap_means_ = dfs["bootstrap_means"]
+    bootstrap_means_ = [df.rename(index=model_aliases) for df in bootstrap_means_]
+    all_models = list(mean_.index)
+    edit_algos = [m for m in all_models if not m.lower().startswith("gpt")]
+    for metric, title, models, suffix in [
+        ("S", "Neighborhood Score (NS) ↑", all_models, ""),
+        ("M", "Neighborhood Magnitude (NM) ↑", all_models, ""),
+        ("KL", "Neighborh. KL divergence (NKL) ↓", edit_algos, ""),
+        ("S", "Neighborhood Score (NS) ↑", edit_algos, "simple"),
+    ]:
+        m, err_ints = prepare_data_for_plots(mean_, bootstrap_means_, metric, models)
         if metric == "KL":
             models = [m for m in models if not m.lower().startswith("gpt")]
-        m = pd.DataFrame()
-        m[f"{metric}+"] = dfs["mean"][("N+", metric)]
-        m[metric] = dfs["mean"][("N", metric)]
-
-        err_low, err_up = pd.DataFrame(), pd.DataFrame()
-        ci = pd.DataFrame([df[("N", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
-        cip = pd.DataFrame([df[("N+", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
-        err_low[metric] = ci.loc["0.5%"]
-        err_low[f"{metric}+"] = cip.loc["0.5%"]
-        err_up[metric] = ci.loc["99.5%"]
-        err_up[f"{metric}+"] = cip.loc["99.5%"]
-
-        # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
-        err_ints = []
-        for col in m:  # Iterate over bar groups (represented as columns)
-            err_ints.append([
-                m.loc[models, col].values - err_low.loc[models, col].values,
-                err_up.loc[models, col].values - m.loc[models, col].values,
-            ])
-
-        m.loc[models].plot.barh(xerr=err_ints)
-        if metric == "KL":
             plt.xscale("log")
-            plt.xlim([0.9 * 1E-7, 5 * 1E-5])
+            plt.xlim([0, 3 * 1E-5])
+        m.loc[models].plot.barh(xerr=err_ints)
         ax = plt.gca()
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles[::-1], labels[::-1])
+        relabel = lambda label: "CounterFact+" if "+" in label else "CounterFact"
+        ax.legend(handles[::-1], [relabel(l) for l in labels[::-1]])
+        plt.xlabel(title)
+        plt.ylabel("")
         plt.tight_layout()
-        path = results_dir / f"{metric}.png"
+        file_name = f"{metric}_{suffix}.png" if suffix else f"{metric}.png"
+        path = results_dir / file_name
         plt.savefig(path)
         print(f"Exported plot for {metric} to {path}.")
+
+
+def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
+    m = pd.DataFrame()
+    m[f"{metric}+"] = mean_[("N+", metric)]
+    m[metric] = mean_[("N", metric)]
+    err_low, err_up = pd.DataFrame(), pd.DataFrame()
+    ci = pd.DataFrame([df[("N", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
+    cip = pd.DataFrame([df[("N+", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
+    print(ci)
+    print(cip)
+    err_low[metric] = ci.loc["0.5%"]
+    err_low[f"{metric}+"] = cip.loc["0.5%"]
+    err_up[metric] = ci.loc["99.5%"]
+    err_up[f"{metric}+"] = cip.loc["99.5%"]
+    # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
+    err_ints = []
+    for col in m:  # Iterate over bar groups (represented as columns)
+        err_ints.append([
+            m.loc[models, col].values - err_low.loc[models, col].values,
+            err_up.loc[models, col].values - m.loc[models, col].values,
+        ])
+    return m, err_ints
 
 
 def export_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path) -> None:
