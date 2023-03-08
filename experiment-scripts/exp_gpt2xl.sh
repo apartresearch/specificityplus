@@ -11,7 +11,8 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl.txt -m 40
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl.txt -m 125
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2xl.sh -e git/memitpp/experiment-scripts/exp_gpt2xl_memit.txt -m 80
 # ```
 
 # ====================
@@ -30,7 +31,7 @@
 # Generic resources to use - typically you'll want gpu:n to get n gpus
 ##SBATCH --gpus-per-task=1
 ##SBATCH --gpu-bind=single:1
-#SBATCH --gres=gpu:titan-x:1
+#SBATCH --gres=gpu:a6000:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
 #SBATCH --mem=20000
@@ -39,7 +40,7 @@
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=2-16:00:00
+#SBATCH --time=12:00:00
 
 
 
@@ -167,7 +168,7 @@ echo "Moving output data back to DFS"
 
 export START_INDEX=$(echo $COMMAND | awk -F'--start_index ' '{print $2}' | awk '{print $1}')
 export START_INDEX=$(printf "%05d" $START_INDEX)
-export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size ' '{print $2}' | awk '{print $1}')
+export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size_limit ' '{print $2}' | awk '{print $1}')
 export DATASET_SIZE=$(printf "%05d" $DATASET_SIZE)
 
 #move results

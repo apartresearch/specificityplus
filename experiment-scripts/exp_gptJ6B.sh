@@ -11,7 +11,7 @@
 #
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
-# run_experiment -b git/memitpp/experiment-scripts/exp_gptJ6B.sh -e git/memitpp/experiment-scripts/exp_gptJ6B.txt -m 40
+# run_experiment -b git/memitpp/experiment-scripts/exp_gptJ6B.sh -e git/memitpp/experiment-scripts/exp_gptJ6B.txt -m 125
 # ```
 
 # ====================
@@ -33,13 +33,13 @@
 #SBATCH --gres=gpu:a6000:1
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=35000
+#SBATCH --mem=60000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=2-16:00:00
+#SBATCH --time=12:00:00
 
 
 
@@ -167,7 +167,7 @@ echo "Moving output data back to DFS"
 
 export START_INDEX=$(echo $COMMAND | awk -F'--start_index ' '{print $2}' | awk '{print $1}')
 export START_INDEX=$(printf "%05d" $START_INDEX)
-export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size ' '{print $2}' | awk '{print $1}')
+export DATASET_SIZE=$(echo $COMMAND | awk -F'--dataset_size_limit ' '{print $2}' | awk '{print $1}')
 export DATASET_SIZE=$(printf "%05d" $DATASET_SIZE)
 
 #move results

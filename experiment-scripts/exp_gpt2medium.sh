@@ -12,7 +12,7 @@
 # or, equivalently and as intended, with provided `run_experiement`:
 # ```
 # run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium.txt -m 40
-# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium_rerun.txt -m 1
+# run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/exp_gpt2medium_rerun3.txt -m 1
 # run_experiment -b git/memitpp/experiment-scripts/exp_gpt2medium.sh -e git/memitpp/experiment-scripts/testexp.txt -m 20
 # ```
 
@@ -32,16 +32,16 @@
 # Generic resources to use - typically you'll want gpu:n to get n gpus
 ##SBATCH --gpus-per-task=1
 #SBATCH --gpu-bind=single:1
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:a6000
 
 # Megabytes of RAM required. Check `cluster-status` for node configurations
-#SBATCH --mem=10000
+#SBATCH --mem=20000
 
 # Number of CPUs to use. Check `cluster-status` for node configurations
 #SBATCH --cpus-per-task=2
 
 # Maximum time for the job to run, format: days-hours:minutes:seconds
-#SBATCH --time=2-16:00:00
+#SBATCH --time=4:00:00
 
 ##parameters
 export MODEL=models--gpt2-medium
