@@ -220,19 +220,9 @@ def concat_results(path) -> pd.DataFrame:
     return pd.concat(dfs)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--model_name",
-        choices=["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"],
-        default="gpt2-medium",
-        help="Model to edit.",
-        required=True,
-    )
-    args = parser.parse_args()
-
+def main(model_name: str) -> None:
     # if combined results file exists, load it, otherwise, concatenate the results
-    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / args.model_name)
+    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / model_name)
     results_file_name = results_dir / "results_combined.csv"
     if not results_file_name.exists():
         print("results_combined.csv does not exist, concatenating results.csv files...")
@@ -246,4 +236,14 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--model_name",
+        choices=["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"],
+        default="gpt2-medium",
+        help="Model to edit.",
+        required=True,
+    )
+    args = parser.parse_args()
+
+    main(model_name=args.model_name)
