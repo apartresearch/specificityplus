@@ -232,14 +232,18 @@ def export_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path) -> None:
         path = results_dir / f"{key}.csv"
         dfs[key].to_csv(path)
         print(f"Exported {key} to {path}.")
+
+    bootstrap_means_dir = results_dir / "bootstrap_means"
+    bootstrap_means_dir.mkdir(exist_ok=True)
     for i, df in enumerate(dfs["bootstrap_means"]):
-        path = results_dir / f"bootstrap_means_{i:03d}.csv"
+        path = bootstrap_means_dir / f"bootstrap_means_{i:03d}.csv"
         df.to_csv(path)
         print(f"Exported bootstrap sample {i} to {path}.")
 
 
 def load_statistics(results_dir: Path) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
-    bootstrap_files = sorted(results_dir.glob("bootstrap_means_*.csv"))
+    bootstrap_means_dir = results_dir / "bootstrap_means"
+    bootstrap_files = sorted(bootstrap_means_dir.glob("bootstrap_means_*.csv"))
     if not bootstrap_files:
         raise ValueError("No bootstrap samples found.")
 
