@@ -237,7 +237,7 @@ def export_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path) -> None:
         dfs[key].to_csv(path)
         print(f"Exported {key} to {path}.")
     for i, df in enumerate(dfs["bootstrap_means"]):
-        path = results_dir / f"bootstrap_means_{i}.csv"
+        path = results_dir / f"bootstrap_means_{i:03d}.csv"
         df.to_csv(path)
         print(f"Exported bootstrap sample {i} to {path}.")
 
