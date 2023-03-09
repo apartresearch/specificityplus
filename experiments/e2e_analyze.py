@@ -1,7 +1,8 @@
+import argparse
 import json
 from collections import defaultdict
-from pathlib import Path
-from typing import Optional, Callable
+from functools import partial
+from typing import Callable, Dict, Union, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,7 +12,6 @@ import seedbank
 import torch
 from torch.nn.functional import kl_div
 from tqdm import tqdm
-import argparse
 
 from util.globals import *
 
@@ -27,7 +27,7 @@ seedbank.initialize(SEED)
 
 def get_case_df(
         case_id: int,
-        algo_to_run_dir,  #: dict[str, Path],
+        algo_to_run_dir: Dict[str, Path],
         model_name: str
 ) -> pd.DataFrame:
     """
@@ -98,7 +98,7 @@ def get_case_df(
     return df
 
 
-def compute_statistic(df: pd.DataFrame, statistic: Callable) -> dict[str, pd.DataFrame]:
+def compute_statistic(df: pd.DataFrame, statistic: Callable) -> Dict[str, pd.DataFrame]:
     # average over all prompts for a given test case and prompt type
     df2 = df.groupby(["Case", "Prompt Type"]).mean().copy()
     # compute statistic across all test cases for a given prompt type
@@ -147,7 +147,7 @@ def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 1000):# -> dict[str, pd.DataFrame | list[pd.DataFrame]]:
+def get_statistics(df, n_bootstrap: int = 1000) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
@@ -161,7 +161,7 @@ def get_statistics(df, n_bootstrap: int = 1000):# -> dict[str, pd.DataFrame | li
     return dfs
 
 
-def format_statistics(dfs: dict[str, pd.DataFrame]):
+def format_statistics(dfs: Dict[str, pd.DataFrame]):
     dfs = {
         # TODO: use scientific notation for KL divergence
         key: dfs[key].round(2).astype("str")
@@ -170,45 +170,91 @@ def format_statistics(dfs: dict[str, pd.DataFrame]):
     return dfs["mean"] + " (" + dfs["std"] + ")"
 
 
-def plot_statistics(dfs: dict[str, pd.DataFrame]):
-    models = list(dfs["mean"].index)
-    for metric in ["S", "M", "KL"]:
+def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
+    model_aliases = {
+        "gpt2-medium": "GPT-2 M",
+        "gpt-xl": "GPT-2 XL",
+        "EleutherAI/gpt-j-6B": "GPT-J (6B)",
+        "FT": "FT-L",
+    }
+    mean_ = dfs["mean"]
+    mean_.rename(index=model_aliases, inplace=True)
+    bootstrap_means_ = dfs["bootstrap_means"]
+    bootstrap_means_ = [df.rename(index=model_aliases) for df in bootstrap_means_]
+    all_models = list(mean_.index)
+    edit_algos = [m for m in all_models if not m.lower().startswith("gpt")]
+    for metric, title, models, suffix in [
+        ("S", "Neighborhood Score (NS) ↑", all_models, ""),
+        ("M", "Neighborhood Magnitude (NM) ↑", all_models, ""),
+        ("KL", "Neighborh. KL divergence (NKL) ↓", edit_algos, ""),
+        ("S", "Neighborhood Score (NS) ↑", edit_algos, "simple"),
+    ]:
+        m, err_ints = prepare_data_for_plots(mean_, bootstrap_means_, metric, models)
         if metric == "KL":
             models = [m for m in models if not m.lower().startswith("gpt")]
-        m = pd.DataFrame()
-        m[f"{metric}+"] = dfs["mean"][("N+", metric)]
-        m[metric] = dfs["mean"][("N", metric)]
-
-        err_low, err_up = pd.DataFrame(), pd.DataFrame()
-        ci = pd.DataFrame([df[("N", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
-        cip = pd.DataFrame([df[("N+", metric)] for df in dfs["bootstrap_means"]]).describe([0.005, 0.995])
-        err_low[metric] = ci.loc["0.5%"]
-        err_low[f"{metric}+"] = cip.loc["0.5%"]
-        err_up[metric] = ci.loc["99.5%"]
-        err_up[f"{metric}+"] = cip.loc["99.5%"]
-
-        # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
-        err_ints = []
-        for col in m:  # Iterate over bar groups (represented as columns)
-            err_ints.append([
-                m.loc[models, col].values - err_low.loc[models, col].values,
-                err_up.loc[models, col].values - m.loc[models, col].values,
-            ])
-
-        m.loc[models].plot.barh(xerr=err_ints)
-        if metric == "KL":
             plt.xscale("log")
-            plt.xlim([0.9 * 1E-7, 5 * 1E-5])
+            plt.xlim([0, 3 * 1E-5])
+        m.loc[models].plot.barh(xerr=err_ints)
         ax = plt.gca()
         handles, labels = ax.get_legend_handles_labels()
-        ax.legend(handles[::-1], labels[::-1])
+        relabel = lambda label: "CounterFact+" if "+" in label else "CounterFact"
+        ax.legend(handles[::-1], [relabel(l) for l in labels[::-1]])
+        plt.xlabel(title)
+        plt.ylabel("")
         plt.tight_layout()
-        plt.savefig(OUTPUT_DIR / f"{metric}.png")
+        file_name = f"{metric}_{suffix}.png" if suffix else f"{metric}.png"
+        path = results_dir / file_name
+        plt.savefig(path)
+        print(f"Exported plot for {metric} to {path}.")
 
 
-def export_statistics(dfs: dict[str, pd.DataFrame]):
+def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
+    m = pd.DataFrame()
+    m[f"{metric}+"] = mean_[("N+", metric)]
+    m[metric] = mean_[("N", metric)]
+    err_low, err_up = pd.DataFrame(), pd.DataFrame()
+    ci = pd.DataFrame([df[("N", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
+    cip = pd.DataFrame([df[("N+", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
+    print(ci)
+    print(cip)
+    err_low[metric] = ci.loc["0.5%"]
+    err_low[f"{metric}+"] = cip.loc["0.5%"]
+    err_up[metric] = ci.loc["99.5%"]
+    err_up[f"{metric}+"] = cip.loc["99.5%"]
+    # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
+    err_ints = []
+    for col in m:  # Iterate over bar groups (represented as columns)
+        err_ints.append([
+            m.loc[models, col].values - err_low.loc[models, col].values,
+            err_up.loc[models, col].values - m.loc[models, col].values,
+        ])
+    return m, err_ints
+
+
+def export_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path) -> None:
     for key in ["mean", "std", "outliers"]:
-        dfs[key].to_csv(OUTPUT_DIR / f"{key}.csv")
+        path = results_dir / f"{key}.csv"
+        dfs[key].to_csv(path)
+        print(f"Exported {key} to {path}.")
+    for i, df in enumerate(dfs["bootstrap_means"]):
+        path = results_dir / f"bootstrap_means_{i}.csv"
+        df.to_csv(path)
+        print(f"Exported bootstrap sample {i} to {path}.")
+
+
+def load_statistics(results_dir: Path) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
+    bootstrap_files = sorted(results_dir.glob("bootstrap_means_*.csv"))
+    if not bootstrap_files:
+        raise ValueError("No bootstrap samples found.")
+
+    read_csv = partial(pd.read_csv, header=[0, 1], index_col=[0])
+    dfs = {
+        "mean": read_csv(results_dir / "mean.csv"),
+        "std": read_csv(results_dir / "std.csv"),
+        "outliers": read_csv(results_dir / "outliers.csv"),
+        "bootstrap_means": [read_csv(path) for path in bootstrap_files],
+    }
+    return dfs
 
 
 def concat_results(path) -> pd.DataFrame:
@@ -221,7 +267,26 @@ def concat_results(path) -> pd.DataFrame:
     return pd.concat(dfs)
 
 
-def main():
+def main(model_name: str) -> None:
+    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / model_name)
+    try:
+        dfs = load_statistics(results_dir)
+    except (ValueError, FileNotFoundError):
+        print("Statistics files do not exist, computing statistics...")
+        results_file_name = results_dir / "results_combined.csv"
+        try:
+            df = pd.read_csv(results_file_name, header=[0, 1], index_col=[0, 1, 2])
+        except FileNotFoundError:
+            print("results_combined.csv does not exist, concatenating results.csv files...")
+            df = concat_results(results_dir)
+            df.to_csv(results_file_name)
+        dfs = get_statistics(df)
+        export_statistics(dfs, results_dir)
+    print(format_statistics(dfs))
+    plot_statistics(dfs, results_dir)
+
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model_name",
@@ -232,19 +297,4 @@ def main():
     )
     args = parser.parse_args()
 
-    # if combined results file exists, load it, otherwise, concatenate the results
-    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" /args.model_name)
-    results_file_name = results_dir / "results_combined.csv"
-    if not results_file_name.exists():
-        print("results_combined.csv does not exist, concatenating results.csv files...")
-        df = concat_results(results_dir)
-        df.to_csv(results_file_name)
-    df = pd.read_csv(results_file_name, header=[0, 1], index_col=[0, 1, 2])
-    dfs = get_statistics(df)
-    print(format_statistics(dfs))
-    plot_statistics(dfs)
-    export_statistics(dfs)
-
-
-if __name__ == "__main__":
-    main()
+    main(model_name=args.model_name)
