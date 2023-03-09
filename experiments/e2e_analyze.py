@@ -267,8 +267,7 @@ def concat_results(path) -> pd.DataFrame:
     return pd.concat(dfs)
 
 
-def main(model_name: str) -> None:
-    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / model_name)
+def main(results_dir: Path) -> None:
     try:
         dfs = load_statistics(results_dir)
     except (ValueError, FileNotFoundError):
@@ -289,12 +288,9 @@ def main(model_name: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_name",
-        choices=["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"],
-        default="gpt2-medium",
-        help="Model to edit.",
+        "--dir",
+        help="Directory to analyze.",
         required=True,
     )
     args = parser.parse_args()
-
-    main(model_name=args.model_name)
+    main(results_dir=Path(args.dir))
