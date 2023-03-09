@@ -15,10 +15,6 @@ from tqdm import tqdm
 
 from util.globals import *
 
-# TODO: create a proper CLI to replace the following global variables
-OUTPUT_DIR = Path(ROOT_DIR / RESULTS_DIR / "plots")
-OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
 sns.set_context("talk")
 sns.set_style("darkgrid")
 
@@ -236,14 +232,18 @@ def export_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path) -> None:
         path = results_dir / f"{key}.csv"
         dfs[key].to_csv(path)
         print(f"Exported {key} to {path}.")
+
+    bootstrap_means_dir = results_dir / "bootstrap_means"
+    bootstrap_means_dir.mkdir(exist_ok=True)
     for i, df in enumerate(dfs["bootstrap_means"]):
-        path = results_dir / f"bootstrap_means_{i}.csv"
+        path = bootstrap_means_dir / f"bootstrap_means_{i:03d}.csv"
         df.to_csv(path)
         print(f"Exported bootstrap sample {i} to {path}.")
 
 
 def load_statistics(results_dir: Path) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
-    bootstrap_files = sorted(results_dir.glob("bootstrap_means_*.csv"))
+    bootstrap_means_dir = results_dir / "bootstrap_means"
+    bootstrap_files = sorted(bootstrap_means_dir.glob("bootstrap_means_*.csv"))
     if not bootstrap_files:
         raise ValueError("No bootstrap samples found.")
 
@@ -267,8 +267,7 @@ def concat_results(path) -> pd.DataFrame:
     return pd.concat(dfs)
 
 
-def main(model_name: str) -> None:
-    results_dir = Path(ROOT_DIR / RESULTS_DIR / "combined" / model_name)
+def main(results_dir: Path) -> None:
     try:
         dfs = load_statistics(results_dir)
     except (ValueError, FileNotFoundError):
@@ -289,12 +288,9 @@ def main(model_name: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_name",
-        choices=["gpt2-medium", "gpt2-xl", "EleutherAI/gpt-j-6B", "EleutherAI/gpt-neox-20b"],
-        default="gpt2-medium",
-        help="Model to edit.",
+        "--dir",
+        help="Directory to analyze.",
         required=True,
     )
     args = parser.parse_args()
-
-    main(model_name=args.model_name)
+    main(results_dir=Path(args.dir))
