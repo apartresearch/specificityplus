@@ -215,6 +215,10 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
             m[[dataset]].plot.barh(xerr=err_ints[[dataset]].values)
             post_process_plots(metric=metric, dataset=dataset)
 
+        # also create barplots for CounterFact and CounterFact+ in same plot
+        m.T.plot.barh()
+        post_process_plots(metric=metric, dataset="both")
+
 
 def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
     m = pd.DataFrame()
