@@ -194,7 +194,7 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
         ("KL", "Neighborh. KL divergence (NKL) ↓", edit_algos, ""),
         ("S", "Neighborhood Score (NS) ↑", edit_algos, "simple"),
     ]:
-        def post_process_plots(dataset: str = "", metric: str=""):
+        def post_process_plots(dataset: str = "", metric: str = ""):
             ax = plt.gca()
             handles, labels = ax.get_legend_handles_labels()
             ax.legend(handles[::-1], labels[::-1])
@@ -337,10 +337,10 @@ def main_multi(results_dirs: List[Path]) -> None:
         means = pd.concat([means, means_])
 
     for metric, title, suffix in [
-        ("S", "Neighborhood Score (NS) ↑",  ""),
-        ("M", "Neighborhood Magnitude (NM) ↑",  ""),
-        ("KL", "Neighborh. KL divergence (NKL) ↓",  ""),
-        ("S", "Neighborhood Score (NS) ↑",  "simple"),
+        ("S", "Neighborhood Score (NS) ↑", ""),
+        ("M", "Neighborhood Magnitude (NM) ↑", ""),
+        ("KL", "Neighborh. KL divergence (NKL) ↓", ""),
+        ("S", "Neighborhood Score (NS) ↑", "simple"),
     ]:
         plt.figure()
         ax = plt.gca()
@@ -353,12 +353,13 @@ def main_multi(results_dirs: List[Path]) -> None:
         labels = [l.strip("()").split(", ") for l in labels]
         labels = [algo for _, __, algo in labels]
         ax.legend(handles[:3:-1], labels[:3:-1])
-        ax.set_ylabel(metric)
+        ax.set_ylabel("N" + metric)
         plt.title(title)
         suffix = "_" + suffix if suffix else ""
         path = common_parent_dir / f"means_{metric.lower()}{suffix}.png"
         plt.savefig(path, bbox_inches="tight")
         print(f"Exported plot for metric {metric} to {path}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
