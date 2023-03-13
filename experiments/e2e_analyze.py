@@ -177,37 +177,53 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
     mean_.rename(index=model_aliases, inplace=True)
     bootstrap_means_ = dfs["bootstrap_means"]
     bootstrap_means_ = [df.rename(index=model_aliases) for df in bootstrap_means_]
-    all_models = list(mean_.index)
-    edit_algos = [m for m in all_models if not m.lower().startswith("gpt")]
+    # list models in inverse order of desired appearance in barplot
+    edit_algos = ["MEMIT", "ROME", "FT-L"]
+    all_models = edit_algos + [m for m in mean_.index if m not in edit_algos]
     for metric, title, models, suffix in [
         ("S", "Neighborhood Score (NS) ↑", all_models, ""),
         ("M", "Neighborhood Magnitude (NM) ↑", all_models, ""),
         ("KL", "Neighborh. KL divergence (NKL) ↓", edit_algos, ""),
         ("S", "Neighborhood Score (NS) ↑", edit_algos, "simple"),
     ]:
+        def post_process_plots(dataset: str = "", metric: str=""):
+            ax = plt.gca()
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles[::-1], labels[::-1])
+            if metric == "KL":
+                plt.xscale("log")
+                plt.xlim([0, 3 * 1E-5])
+            plt.xlabel(title)
+            plt.ylabel("")
+            plt.tight_layout()
+            prefix = f"{metric}_{dataset}" if dataset else metric
+            file_name = f"{prefix}_{suffix}.png" if suffix else f"{prefix}.png"
+            path = results_dir / file_name
+            plt.savefig(path)
+            print(f"Exported plot for {metric} to {path}.")
+
         m, err_ints = prepare_data_for_plots(mean_, bootstrap_means_, metric, models)
-        if metric == "KL":
-            models = [m for m in models if not m.lower().startswith("gpt")]
-            plt.xscale("log")
-            plt.xlim([0, 3 * 1E-5])
-        m.loc[models].plot.barh(xerr=err_ints)
-        ax = plt.gca()
-        handles, labels = ax.get_legend_handles_labels()
-        relabel = lambda label: "CounterFact+" if "+" in label else "CounterFact"
-        ax.legend(handles[::-1], [relabel(l) for l in labels[::-1]])
-        plt.xlabel(title)
-        plt.ylabel("")
-        plt.tight_layout()
-        file_name = f"{metric}_{suffix}.png" if suffix else f"{metric}.png"
-        path = results_dir / file_name
-        plt.savefig(path)
-        print(f"Exported plot for {metric} to {path}.")
+        datasets = ["CounterFact", "CounterFact+"]
+        col_to_dataset = dict(zip(sorted(m.columns, key=lambda c: "+" in c), datasets))
+        m.rename(columns=col_to_dataset, inplace=True)
+        err_ints.rename(columns=col_to_dataset, inplace=True)
+        m.plot.barh(xerr=err_ints.values)
+        post_process_plots(metric=metric)
+
+        # also create barplots for CounterFact and CounterFact+ separately
+        for dataset in datasets:
+            m[[dataset]].plot.barh(xerr=err_ints[[dataset]].values)
+            post_process_plots(metric=metric, dataset=dataset)
+
+        # also create barplots for CounterFact and CounterFact+ in same plot
+        m.T.plot.barh()
+        post_process_plots(metric=metric, dataset="both")
 
 
 def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
     m = pd.DataFrame()
-    m[f"{metric}+"] = mean_[("N+", metric)]
-    m[metric] = mean_[("N", metric)]
+    m[f"{metric}+"] = mean_.loc[models][("N+", metric)]
+    m[metric] = mean_.loc[models][("N", metric)]
     err_low, err_up = pd.DataFrame(), pd.DataFrame()
     ci = pd.DataFrame([df[("N", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
     cip = pd.DataFrame([df[("N+", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
@@ -218,12 +234,12 @@ def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
     err_up[metric] = ci.loc["99.5%"]
     err_up[f"{metric}+"] = cip.loc["99.5%"]
     # prepare confidence intervals for use in pd.DataFrame.plot(xerr=...)
-    err_ints = []
+    err_ints = pd.DataFrame(index=["low", "high"])
     for col in m:  # Iterate over bar groups (represented as columns)
-        err_ints.append([
+        err_ints[col] = [
             m.loc[models, col].values - err_low.loc[models, col].values,
             err_up.loc[models, col].values - m.loc[models, col].values,
-        ])
+        ]
     return m, err_ints
 
 
