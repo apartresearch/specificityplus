@@ -1,2 +1,2 @@
 # specificityplus
-👩‍💻 Website for the ACL paper "Uncovering Limits of Memory Editing in Large Language Models: A New Specificity Benchmark"
+👩‍💻 Official Repository for "Uncovering Limits of Memory Editing in Large Language Models: A New Specificity Benchmark" Aceepted at Findings of ACL 2023. 
