@@ -4,6 +4,7 @@ from tqdm.auto import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from util.globals import *
+from util.globals import MODELS
 from util.nethook import Trace, set_requires_grad
 from util.runningstats import CombinedStat, Mean, NormMean, SecondMoment, tally
 from rome.tok_dataset import (
@@ -31,7 +32,7 @@ def main():
     def aa(*args, **kwargs):
         parser.add_argument(*args, **kwargs)
 
-    aa("--model_name", default="gpt2-xl", choices=["gpt2-xl", "EleutherAI/gpt-j-6B", "gpt2-medium", "EleutherAI/gpt-neox-20b"])
+    aa("--model_name", default="gpt2-xl", choices=MODELS)
     aa("--dataset", default="wikipedia", choices=["wikitext", "wikipedia"])
     aa("--layers", default=[17], type=lambda x: list(map(int, x.split(","))))
     aa("--to_collect", default=["mom2"], type=lambda x: x.split(","))
