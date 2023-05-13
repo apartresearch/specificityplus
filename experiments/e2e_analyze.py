@@ -187,6 +187,7 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
     bootstrap_means_ = [df.rename(index=ALIASES) for df in bootstrap_means_]
     # list models in inverse order of desired appearance in barplot
     edit_algos = ["MEMIT", "ROME", "FT-L"]
+    edit_algos = [m for m in edit_algos if m in mean_.index]
     all_models = edit_algos + [m for m in mean_.index if m not in edit_algos]
     for metric, title, models, suffix in [
         ("S", "Neighborhood Score (NS) ↑", all_models, ""),
