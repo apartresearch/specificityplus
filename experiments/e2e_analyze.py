@@ -1,4 +1,5 @@
 import argparse
+import os
 import json
 from collections import defaultdict
 from functools import partial
@@ -19,6 +20,20 @@ sns.set_context("talk")
 sns.set_style("darkgrid")
 
 seedbank.initialize(SEED)
+
+ALIASES = {
+    "gpt2-medium": "GPT-2 M",
+    "gpt-xl": "GPT-2 XL",
+    "gpt2-xl": "GPT-2 XL",
+    "EleutherAI/gpt-j-6B": "GPT-J (6B)",
+    "gpt-j-6B": "GPT-J (6B)",
+    "FT": "FT-L",
+}
+MODEL_SIZES = {  # according to https://huggingface.co/transformers/v2.2.0/pretrained_models.html
+    "gpt2-medium": 345_000_000,
+    "gpt2-xl": 1_558_000_000,
+    "gpt-j-6b": 6_000_000_000,
+}
 
 
 def get_case_df(
@@ -143,7 +158,7 @@ def get_bootstrap_sample(df: pd.DataFrame) -> pd.DataFrame:
     return df_by_prompt_type_and_index
 
 
-def get_statistics(df, n_bootstrap: int = 1000) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
+def compute_statistics(df, n_bootstrap: int = 1000) -> Dict[str, Union[pd.DataFrame, List[pd.DataFrame]]]:
     dfs = {
         "mean": compute_statistic(df, pd.Series.mean),
         "std": compute_statistic(df, pd.Series.std),
@@ -167,18 +182,13 @@ def format_statistics(dfs: Dict[str, pd.DataFrame]):
 
 
 def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
-    model_aliases = {
-        "gpt2-medium": "GPT-2 M",
-        "gpt-xl": "GPT-2 XL",
-        "EleutherAI/gpt-j-6B": "GPT-J (6B)",
-        "FT": "FT-L",
-    }
     mean_ = dfs["mean"]
-    mean_.rename(index=model_aliases, inplace=True)
+    mean_.rename(index=ALIASES, inplace=True)
     bootstrap_means_ = dfs["bootstrap_means"]
-    bootstrap_means_ = [df.rename(index=model_aliases) for df in bootstrap_means_]
+    bootstrap_means_ = [df.rename(index=ALIASES) for df in bootstrap_means_]
     # list models in inverse order of desired appearance in barplot
     edit_algos = ["MEMIT", "ROME", "FT-L"]
+    edit_algos = [m for m in edit_algos if m in mean_.index]
     all_models = edit_algos + [m for m in mean_.index if m not in edit_algos]
     for metric, title, models, suffix in [
         ("S", "Neighborhood Score (NS) ↑", all_models, ""),
@@ -186,7 +196,7 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
         ("KL", "Neighborh. KL divergence (NKL) ↓", edit_algos, ""),
         ("S", "Neighborhood Score (NS) ↑", edit_algos, "simple"),
     ]:
-        def post_process_plots(dataset: str = "", metric: str=""):
+        def post_process_plots(dataset: str = "", metric: str = ""):
             ax = plt.gca()
             handles, labels = ax.get_legend_handles_labels()
             ax.legend(handles[::-1], labels[::-1])
@@ -283,7 +293,14 @@ def concat_results(path) -> pd.DataFrame:
     return pd.concat(dfs)
 
 
-def main(results_dir: Path) -> None:
+def main_single(results_dir: Path) -> None:
+    """Analyze and plot results for a single model."""
+    dfs = get_statistics(results_dir)
+    print(format_statistics(dfs))
+    plot_statistics(dfs, results_dir)
+
+
+def get_statistics(results_dir):
     try:
         dfs = load_statistics(results_dir)
     except (ValueError, FileNotFoundError):
@@ -295,18 +312,59 @@ def main(results_dir: Path) -> None:
             print("results_combined.csv does not exist, concatenating results.csv files...")
             df = concat_results(results_dir)
             df.to_csv(results_file_name)
-        dfs = get_statistics(df)
+        dfs = compute_statistics(df)
         export_statistics(dfs, results_dir)
-    print(format_statistics(dfs))
-    plot_statistics(dfs, results_dir)
+    return dfs
+
+
+def main_multi(results_dirs: List[Path]) -> None:
+    """Analyze and plot results for multiple models."""
+    common_parent_dir = Path("/".join(os.path.commonprefix([str(p.resolve()) for p in results_dirs]).split("/")[:-1]))
+
+    model_to_dfs = {}
+    means = pd.DataFrame()
+    for result_dir in results_dirs:
+        dfs = get_statistics(result_dir)
+        model = ALIASES[next(alg for alg in dfs["mean"].index if "gpt" in alg)]
+        model_to_dfs[model] = dfs
+
+        means_ = dfs["mean"]
+        # add model name as an additional index level
+        means_.index = pd.MultiIndex.from_product([
+            [model],
+            [ALIASES.get(alg, alg) if "gpt" not in alg else "Unedited" for alg in means_.index]
+        ], names=["model", "algorithm"])
+        # sort algorithms by inverse desired order of appearance in the plots
+        means_ = means_.reindex(["MEMIT", "ROME", "FT-L", "Unedited"], level="algorithm")
+        means = pd.concat([means, means_])
+
+    for metric, title, suffix in [
+        ("S", "Neighborhood Score (NS,↑)", ""),
+        ("M", "Neighborhood Magnitude (NM,↑)", ""),
+        ("KL", "Neighborh. KL divergence (NKL,↓)", ""),
+        ("S", "Neighborhood Score (NS,↑)", "simple"),
+    ]:
+        (means[("N+", metric)] - means[("N", metric)]).unstack().plot.bar(rot=0)
+        plt.title("Δ " + title + "\n(CounterFact+ - CounterFact)")
+        plt.ylabel("ΔN" + metric)
+        suffix = "_" + suffix if suffix else ""
+        path = common_parent_dir / f"means_{metric.lower()}{suffix}.png"
+        plt.savefig(path, bbox_inches="tight")
+        print(f"Exported plot for metric {metric} to {path}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dir",
-        help="Directory to analyze.",
+        "--dirs",
+        help="Directories to analyze.",
         required=True,
+        nargs="+",
     )
     args = parser.parse_args()
-    main(results_dir=Path(args.dir))
+    dirs = [Path(d) for d in args.dirs]
+
+    for d in tqdm(dirs):
+        main_single(results_dir=d)
+
+    main_multi(dirs)
