@@ -1,3 +1,4 @@
+import argparse
 import os
 import json
 from collections import defaultdict
@@ -363,7 +364,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dirs = [Path(d) for d in args.dirs]
 
-    for dir in dirs:
-        main_single(results_dir=dir)
+    for d in tqdm(dirs):
+        main_single(results_dir=d)
 
     main_multi(dirs)
