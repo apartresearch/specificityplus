@@ -291,7 +291,7 @@ def concat_results(path) -> pd.DataFrame:
     return pd.concat(dfs)
 
 
-def main(results_dir: Path) -> None:
+def main_single(results_dir: Path) -> None:
     """Analyze and plot results for a single model."""
     dfs = get_statistics(results_dir)
     print(format_statistics(dfs))
