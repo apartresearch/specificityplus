@@ -3,7 +3,7 @@ import os
 import json
 from collections import defaultdict
 from functools import partial
-from typing import Callable, Dict, Union, List
+from typing import Callable, Dict, Union, List, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -212,7 +212,7 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
             plt.savefig(path)
             print(f"Exported plot for {metric} to {path}.")
 
-        m, err_ints = prepare_data_for_plots(mean_, bootstrap_means_, metric, models)
+        m, err_ints = prepare_data_for_plots(mean_, bootstrap_means_, metric, models, results_dir)
         datasets = ["CounterFact", "CounterFact+"]
         col_to_dataset = dict(zip(sorted(m.columns, key=lambda c: "+" in c), datasets))
         m.rename(columns=col_to_dataset, inplace=True)
@@ -230,7 +230,7 @@ def plot_statistics(dfs: Dict[str, pd.DataFrame], results_dir: Path):
         post_process_plots(metric=metric, dataset="both")
 
 
-def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
+def prepare_data_for_plots(mean_, bootstrap_means_, metric, models, results_dir: Optional[Path] = None):
     m = pd.DataFrame()
     m[f"{metric}+"] = mean_.loc[models][("N+", metric)]
     m[metric] = mean_.loc[models][("N", metric)]
@@ -239,6 +239,9 @@ def prepare_data_for_plots(mean_, bootstrap_means_, metric, models):
     cip = pd.DataFrame([df[("N+", metric)] for df in bootstrap_means_]).describe([0.005, 0.995])
     print(ci)
     print(cip)
+    if results_dir:
+        ci.to_csv(results_dir / f"{metric}_ci.csv")
+        cip.to_csv(results_dir / f"{metric}_ci+.csv")
     err_low[metric] = ci.loc["0.5%"]
     err_low[f"{metric}+"] = cip.loc["0.5%"]
     err_up[metric] = ci.loc["99.5%"]
