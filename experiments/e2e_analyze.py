@@ -341,15 +341,21 @@ def main_multi(results_dirs: List[Path]) -> None:
         means_ = means_.reindex(["MEMIT", "ROME", "FT-L", "Unedited"], level="algorithm")
         means = pd.concat([means, means_])
 
-    for metric, title, suffix in [
-        ("S", "Neighborhood Score (NS,↑)", ""),
-        ("M", "Neighborhood Magnitude (NM,↑)", ""),
-        ("KL", "Neighborh. KL divergence (NKL,↓)", ""),
-        ("S", "Neighborhood Score (NS,↑)", "simple"),
+    for direction, metric, title, suffix in [
+        ("↑", "S", "ΔNS (CounterFact+ - CounterFact)", ""),
+        ("↑", "M", "ΔNM (CounterFact+ - CounterFact)", ""),
+        ("↓", "KL", "ΔNKL (CounterFact+ - CounterFact)", ""),
+        ("↑", "S", "ΔNS (CounterFact+ - CounterFact)", "simple"),
     ]:
-        (means[("N+", metric)] - means[("N", metric)]).unstack().plot.bar(rot=0)
-        plt.title("Δ " + title + "\n(CounterFact+ - CounterFact)")
+        # here
+        unstacked = (means[("N+", metric)] - means[("N", metric)]).unstack()
+        if metric == "KL":
+            unstacked.drop("Unedited", axis=1, inplace=True)
+        unstacked.plot.bar(rot=0)
+        plt.title(title + f" ({direction})")
         plt.ylabel("ΔN" + metric)
+        if metric == "S":
+            plt.legend(loc="upper left")
         suffix = "_" + suffix if suffix else ""
         path = common_parent_dir / f"means_{metric.lower()}{suffix}.png"
         plt.savefig(path, bbox_inches="tight")
