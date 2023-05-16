@@ -341,21 +341,36 @@ def main_multi(results_dirs: List[Path]) -> None:
         means_ = means_.reindex(["MEMIT", "ROME", "FT-L", "Unedited"], level="algorithm")
         means = pd.concat([means, means_])
 
-    for direction, metric, title, suffix in [
-        ("↑", "S", "ΔNS (CounterFact+ - CounterFact)", ""),
-        ("↑", "M", "ΔNM (CounterFact+ - CounterFact)", ""),
-        ("↓", "KL", "ΔNKL (CounterFact+ - CounterFact)", ""),
-        ("↑", "S", "ΔNS (CounterFact+ - CounterFact)", "simple"),
+    for direction, metric, metric_long, suffix in [
+        ("↑", "S", "Neighborhood Score", ""),
+        ("↑", "M", "Neighborhood Magnitude", ""),
+        ("↓", "KL", "Neighborhood KL Divergence", ""),
+        ("↑", "S", "Neighborhood Score", "simple"),
     ]:
-        # here
+        for dataset in ["", "+"]:
+            unstacked = means[(f"N{dataset}", metric)].unstack()
+            subtract_unedited = False
+            if subtract_unedited:
+                unstacked = unstacked.sub(unstacked["Unedited"], axis=0)
+                unstacked.drop("Unedited", axis=1, inplace=True)
+            elif metric == "KL":
+                unstacked.drop("Unedited", axis=1, inplace=True)
+            unstacked.plot.bar(rot=0)
+            plt.title(f"{metric_long} ({direction}) on CounterFact{dataset}")
+            plt.ylabel("N" + metric)
+            plt.legend(loc="lower right" if metric == "S" else "best")
+            suffix = "_" + suffix if suffix else ""
+            path = common_parent_dir / f"means_{metric.lower()}{suffix}_cf{dataset}.png"
+            plt.savefig(path, bbox_inches="tight")
+            print(f"Exported plot for metric {metric} to {path}")
+
         unstacked = (means[("N+", metric)] - means[("N", metric)]).unstack()
         if metric == "KL":
             unstacked.drop("Unedited", axis=1, inplace=True)
         unstacked.plot.bar(rot=0)
-        plt.title(title + f" ({direction})")
+        plt.title(f"Difference in {metric_long}\nbetween CounterFact+ and CounterFact ({direction})")
         plt.ylabel("ΔN" + metric)
-        if metric == "S":
-            plt.legend(loc="upper left")
+        plt.legend(loc="upper left" if metric == "S" else "best")
         suffix = "_" + suffix if suffix else ""
         path = common_parent_dir / f"means_{metric.lower()}{suffix}.png"
         plt.savefig(path, bbox_inches="tight")
