@@ -79,8 +79,9 @@ python3 -m experiments.summarize --dir_name=MEMIT --runs=run_<run1>,run_<run2>
 Running `python3 -m experiments.evaluate -h` or `python3 -m experiments.summarize -h` provides details about command-line flags.
 
 ## How to Cite
+<details>
+<summary>Citation for MEMIT</summary>
 
-~~_c_ 
 ```bibtex
 @article{meng2022memit,
   title={Mass Editing Memory in a Transformer},
@@ -89,4 +90,5 @@ Running `python3 -m experiments.evaluate -h` or `python3 -m experiments.summariz
   year={2022}
 }
 ```
-~~
+
+</details>
