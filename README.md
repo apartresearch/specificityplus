@@ -1,4 +1,4 @@
-# MEMIT: Mass-Editing Memory in a Transformer
+# Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark
 
 Editing thousands of facts into a transformer memory at once.
 
@@ -80,6 +80,7 @@ Running `python3 -m experiments.evaluate -h` or `python3 -m experiments.summariz
 
 ## How to Cite
 
+~~
 ```bibtex
 @article{meng2022memit,
   title={Mass Editing Memory in a Transformer},
@@ -88,3 +89,4 @@ Running `python3 -m experiments.evaluate -h` or `python3 -m experiments.summariz
   year={2022}
 }
 ```
+~~
