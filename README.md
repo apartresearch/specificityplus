@@ -80,7 +80,7 @@ Running `python3 -m experiments.evaluate -h` or `python3 -m experiments.summariz
 
 ## How to Cite
 
-~~
+~~_c_ 
 ```bibtex
 @article{meng2022memit,
   title={Mass Editing Memory in a Transformer},
