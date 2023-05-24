@@ -149,8 +149,8 @@
                     Abstract
                 </h3>
                 <p class="text-justify">
-                    Recent memory editing techniques promise to mitigate the problem of memorizing false or outdated associations during <math display="inline">
-                        LLM</math> training. However, we show that these techniques can introduce large unwanted side effects which are not detected by existing specificity benchmarks. We extend the existing <ins>CounterFact</ins> benchmark to a more challenging, dynamic benchmark called <ins>CounterFact+</ins>. Additionally, we extend the metrics used for measuring specificity by a principled <math>KL</math> divergence-based metric. We use this improved benchmark to evaluate recent memory editing techniques and find that they suffer from low specificity. Our findings highlight the need for improved specificity benchmarks that identify and prevent unwanted side effects.
+                    Recent model editing techniques promise to mitigate the problem of memorizing false or outdated associations during <math display="inline">
+                        LLM</math> training. However, we show that these techniques can introduce large unwanted side effects which are not detected by existing specificity benchmarks. We extend the existing <ins>CounterFact</ins> to include a dynamic component and dub our benchmark <ins>CounterFact+</ins>. Additionally, we extend the metrics used for measuring specificity by a principled <math>KL</math> divergence-based metric. We use this improved benchmark to evaluate recent model editing techniques and find that they suffer from low specificity. Our findings highlight the need for improved specificity benchmarks that identify and prevent unwanted side effects.
                 </p>
             </div>
         </div>
@@ -175,9 +175,8 @@
 
 <p style="text-align:center;">
     <image src="img/fig-1.svg"  class="img-responsive" height="600px">
-        <i>Figure 1: Unintended side effects of model edits and how to measure them.
-        (a) GPT2 is edited using ROME to counter-factually associate the Louvre's location with Rome. However, this results in unintended associations ("loud facts") like the association of Obama with Rome, suggesting low specificity of the edit.
-            (b) Measuring specificity by the fraction of correctly completed test prompts (<ins>CounterFact</ins>) suggests a high specificity for ROME. Prepending the edit prompt (like "The Louvre is in Rome.") to each test prompt (<ins>CounterFact+</ins>) results in a significant drop in performance. </i>
+
+        Figure 1: Unintended side effects of model edits and how to measure them. (a) GPT-2-medium is edited using ROME to counter-factually associate the Louvre's location with Rome. However, this results in unintended associations ("loud facts") like the association of Obama with Rome, suggesting low specificity of the edit. The edit also significantly increases the maximum logit (shown in brackets), suggesting that the edit is not merely replacing "Paris" with "Rome" in the desired contexts. (b) Measuring specificity by the fraction of correctly completed test prompts (<ins>CounterFact</ins>) suggests a high specificity for ROME. Prepending the edit prompt (like "The Louvre is in Rome.") to each test prompt (<ins>CounterFact+</ins>) results in a significant drop in performance. A significant drop in measured specificity can also be observed if the model edit is implemented using constrained fine-tuning (FT-L). 
 
 </p>
 
