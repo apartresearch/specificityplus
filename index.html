@@ -87,7 +87,7 @@
                 <div class="col-md-4 col-md-offset-4 text-center">
                     <ul class="nav nav-pills nav-justified">
                         <li>
-                            <a href="/assets/SpecificityPlus.pdf">
+                            <a href="/assets/CounterFact.pdf">
                             <image src="img/paper-tb.png" height="60px" width="40px">
                                 <h4><strong>Article</strong></h4>
                             </a>
@@ -98,14 +98,14 @@
                                 <h4><strong>Video</strong></h4>
                             </a>
                         </li> -->
-                        <li>
-                            <a href="https://github.com/jas-ho/memitpp/">
+                        <!-- <li>
+                            <a href="https://github.com/jas-ho/specificityplus/">
                             <image src="img/hf-logo.png" height="60px">
                                 <h4><strong>Interactive</strong></h4>
                             </a>
-                        </li> 
+                        </li>  -->
                         <li>
-                            <a href="https://github.com/jas-ho/memitpp/">
+                            <a href="https://github.com/jas-ho/specificityplus/">
                                 <image src="img/github.png" height="60px">
                                 <h4><strong>Code</strong></h4>
                             </a>
@@ -120,24 +120,6 @@
                 </div>
         </div>
 
-         <!-- <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-           
-                <h3>
-                    What's New
-                </h3>
-                <p class="text-justify">
-
-                <ul>
-                    <li> <font color="#5a00b4">[8/16/2022]</font> We integrated SayCan with <a href="https://ai.googleblog.com/2022/04/pathways-language-model-palm-scaling-to.html">Pathways Language Model (PaLM)</a>, and updated the results. We also added <a href="#new-capability"> new capabilities</a> including drawer manipulation, chain of thought prompting and multilingual instructions. You can see all the new results in the updated <a href="assets/Neuron2Graph.pdf">paper</a>.</li>
-                    <li><font color="#5a00b4">[8/16/2022]</font> Our updated results show that SayCan combined with the improved language model (PaLM), which we refer to as PaLM-SayCan, improves the <b>robotics performance</b> of the entire system compared to a previous LLM (FLAN). PaLM-SayCan chooses the correct sequence of skills 84% of the time and executes them successfully 74% of the time, reducing errors by a half compared to FLAN.  This is particularly exciting because it represents the first time we can see how an improvement in language models translates to a similar improvement in robotics.  </li>
-                    <li><font color="#5a00b4">[8/16/2022]</font> We <a href="#open-source">open-sourced</a> a version of SayCan on a simulated tabletop environment. </li>
-                    <li> [4/4/2022] Initial release of SayCan. </li>
-                </ul>
-            </div>
-        </div> -->
-        
-
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
                 <!-- <p style="text-align:center;">
@@ -149,35 +131,19 @@
                     Abstract
                 </h3>
                 <p class="text-justify">
-                    Recent memory editing techniques promise to mitigate the problem of memorizing false or outdated associations during <math display="inline">
-                        LLM</math> training. However, we show that these techniques can introduce large unwanted side effects which are not detected by existing specificity benchmarks. We extend the existing <ins>CounterFact</ins> benchmark to a more challenging, dynamic benchmark called <ins>CounterFact+</ins>. Additionally, we extend the metrics used for measuring specificity by a principled <math>KL</math> divergence-based metric. We use this improved benchmark to evaluate recent memory editing techniques and find that they suffer from low specificity. Our findings highlight the need for improved specificity benchmarks that identify and prevent unwanted side effects.
+                    Recent model editing techniques promise to mitigate the problem of memorizing false or outdated associations during <math display="inline">
+                        LLM</math> training. However, we show that these techniques can introduce large unwanted side effects which are not detected by existing specificity benchmarks. We extend the existing <ins>CounterFact</ins> to include a dynamic component and dub our benchmark <ins>CounterFact+</ins>. Additionally, we extend the metrics used for measuring specificity by a principled <math>KL</math> divergence-based metric. We use this improved benchmark to evaluate recent model editing techniques and find that they suffer from low specificity. Our findings highlight the need for improved specificity benchmarks that identify and prevent unwanted side effects.
                 </p>
             </div>
         </div>
-
-
-	<!-- <div class="row">
-            <div class="col-md-8 col-md-offset-2">
-                <h3>
-                    Video
-                </h3>
-                <div class="text-center">
-                    <div style="position:relative;padding-top:56.25%;">
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/Th6vwOtUt3k" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
 
         <div class="row">
             <div class="col-md-8 col-md-offset-2">
 
 <p style="text-align:center;">
-    <image src="img/intro-fig.svg"  class="img-responsive" height="600px">
-        <i>Figure 1: Unintended side effects of model edits and how to measure them.
-        (a) GPT2 is edited using ROME to counter-factually associate the Louvre's location with Rome. However, this results in unintended associations ("loud facts") like the association of Obama with Rome, suggesting low specificity of the edit.
-            (b) Measuring specificity by the fraction of correctly completed test prompts (<ins>CounterFact</ins>) suggests a high specificity for ROME. Prepending the edit prompt (like "The Louvre is in Rome.") to each test prompt (<ins>CounterFact+</ins>) results in a significant drop in performance. </i>
+    <image src="img/fig-1.svg"  class="img-responsive" height="600px">
+<i>
+        Figure 1: Unintended side effects of model edits and how to measure them. (a) GPT-2-medium is edited using ROME to counter-factually associate the Louvre's location with Rome. However, this results in unintended associations ("loud facts") like the association of Obama with Rome, suggesting low specificity of the edit. The edit also significantly increases the maximum logit (shown in brackets), suggesting that the edit is not merely replacing "Paris" with "Rome" in the desired contexts. (b) Measuring specificity by the fraction of correctly completed test prompts (<ins>CounterFact</ins>) suggests a high specificity for ROME. Prepending the edit prompt (like "The Louvre is in Rome.") to each test prompt (<ins>CounterFact+</ins>) results in a significant drop in performance. A significant drop in measured specificity can also be observed if the model edit is implemented using constrained fine-tuning (FT-L). </i>
 
 </p>
 
