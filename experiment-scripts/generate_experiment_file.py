@@ -44,7 +44,7 @@ for model in models:
             f"--start_index {start_i} "
         )
 
-        call = "cd git/memitpp" + " && " + expt_call
+        call = "cd git/specificityplus" + " && " + expt_call
 
         print(call, file=output_file)
     output_file.close()
