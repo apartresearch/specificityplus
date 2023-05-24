@@ -4,8 +4,20 @@ This repository contains the code for the paper [Uncovering Limits of Memory Edi
 
 It extends previous work on model editing by Meng et al. #todo: add citations by introducing a new benchmark, called CounterFact+, for measuring the specificity of model edits. 
 
-## Attribution and Installation
+## Attribution
 The repository is a fork of https://github.com/kmeng01/memit, which implement the model editing algorithms MEMIT (Mass Editing Memory in a Transformer) and ROME (Rank-One Model Editing). Our fork extends this code by additional evaluation scripts implementing the CounterFact+ benchmark. For installation instructions see the original repository.
+
+## Installation
+We recommend `conda` for managing Python, CUDA, and PyTorch; `pip` is for everything else. To get started, simply install `conda` and run:
+```bash
+CONDA_HOME=$CONDA_HOME ./scripts/setup_conda.sh
+```
+
+`$CONDA_HOME` should be the path to your `conda` installation, e.g., `~/miniconda3`.
+
+
+## Running Experiments
+See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experiments and evaluations.
 
 ## How to Cite
 #todo: update citation 
