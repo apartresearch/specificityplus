@@ -17,9 +17,15 @@
       <text id="Edited_max_logit_" data-name="Edited
 [max logit]" transform="translate(655 54)" font-size="26" font-family="Lato-Bold, Lato" font-weight="700"><tspan x="-37.765" y="0">Edited</tspan><tspan x="-61.276" y="32">[max logit]</tspan></text>
       <text id="Paris_11_" data-name="Paris [11]" transform="translate(473 151)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-53.807" y="0">Paris [11]</tspan></text>
-      <text id="The_Louvre_is_in_..._" data-name="The Louvre is in [...]" transform="translate(157.5 125)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-213.902" y="26">The Louvre is in [...]</tspan></text>
-      <text id="The_Louvre_is_cool._Obama_was_born_in_..._" data-name="The Louvre is cool. Obama was born in [...]" transform="translate(143.5 185)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-208.858" y="26">The Louvre is cool. </tspan><tspan x="-217.464" y="58">Obama was born in </tspan><tspan x="-32.136" y="90">[...]</tspan></text>
-      <text id="The_Louvre_is_an_art_museum._His_holiness_Dalai_Lama_resides_in_..._" data-name="The Louvre is an art museum. His holiness, Dalai Lama, resides in [...]" transform="translate(157.5 315)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-183.274" y="26">The Louvre is an </tspan><tspan x="-183.014" y="58">art museum. His </tspan><tspan x="-162.656" y="90">holiness, Dalai </tspan><tspan x="-179.218" y="122">Lama, resides in </tspan><tspan x="-32.136" y="154">[...]</tspan></text>
+      <text id="The_Louvre_is_in_..._" data-name="The Louvre is in [...]" transform="translate(371.5 151)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-213.902" y="0">The Louvre is in [...]</tspan></text>
+      <text id="The_Louvre_is_cool._Obama_was_born_in_..._" data-name="The Louvre is cool. 
+Obama was born in 
+[...]" transform="translate(365.5 211)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-213.876" y="0">The Louvre is cool. </tspan><tspan x="-222.482" y="32">Obama was born in </tspan><tspan x="-32.136" y="64">[...]</tspan></text>
+      <text id="The_Louvre_is_an_art_museum._His_holiness_Dalai_Lama_resides_in_..._" data-name="The Louvre is an 
+art museum. His 
+holiness, Dalai 
+Lama, resides in 
+[...]" transform="translate(365.5 341)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-188.292" y="0">The Louvre is an </tspan><tspan x="-188.032" y="32">art museum. His </tspan><tspan x="-167.674" y="64">holiness, Dalai </tspan><tspan x="-184.236" y="96">Lama, resides in </tspan><tspan x="-32.136" y="128">[...]</tspan></text>
       <text id="Chicago_12_" data-name="Chicago [12]" transform="translate(473 243)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-71.383" y="0">Chicago [12]</tspan></text>
       <text id="Tibetan_8_" data-name="Tibetan [8]" transform="translate(473 396)" font-size="26" font-family="Lato-Regular, Lato"><tspan x="-61.594" y="0">Tibetan [8]</tspan></text>
       <line id="Line_27" data-name="Line 27" x2="615.5" transform="translate(135 300)" fill="none" stroke="#000" stroke-width="3" stroke-dasharray="10" opacity="0.4"/>
