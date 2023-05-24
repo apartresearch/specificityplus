@@ -3,16 +3,16 @@ message: "If you use this software, please cite it as below."
 preferred-citation:
   type: article
   authors:
-  - family-names: "Meng"
-    given-names: "Kevin"
-  - family-names: "Sen Sharma"
-    given-names: "Arnab"
-  - family-names: "Andonian"
-    given-names: "Alex"
-  - family-names: "Belinkov"
-    given-names: "Yonatan"
-  - family-names: "Bau"
-    given-names: "David"
-  journal: "arXiv preprint arXiv:2210.07229"
-  title: "Mass-Editing Memory in a Transformer"
-  year: 2022
+  - family-names: "Hoelscher-Obermaier"
+    given-names: "Jason"
+  - family-names: "Persson"
+    given-names: "Julia"
+  - family-names: "Kran"
+    given-names: "Esben"
+  - family-names: "Konstas"
+    given-names: "Ioannis"
+  - family-names: "Barez"
+    given-names: "Fazl"
+  journal: "arXiv preprint arXiv:..." # todo: add arxiv link
+  title: "Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark"
+  year: 2023
