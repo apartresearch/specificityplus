@@ -4,7 +4,7 @@ from transformers import AutoModelForCausalLM, AutoConfig, AutoTokenizer
 
 # load and print gpt neo model
 tokenizer = AutoTokenizer.from_pretrained("EleutherAI/gpt-neox-20b")
-cache_dir = "/disk/scratch/s1785649/memitpp/data/huggingface/hub"
+cache_dir = "/disk/scratch/s1785649/specificityplus/data/huggingface/hub"
 print("checkpoint 1")
 config = AutoConfig.from_pretrained(cache_dir + "/" + "gpt-neox-20b/config.json")
 print("checkpoint 2")

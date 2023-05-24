@@ -318,5 +318,5 @@ if __name__ == "__main__":
 
 
 # helper:
-# export PYTHONPATH=${PYTHONPATH}:~/git/memitpp
+# export PYTHONPATH=${PYTHONPATH}:~/git/specificityplus
 # python experiments/evaluate.py --model_name=gpt2-xl --hparams_fname gpt2-xl_constr.json --alg_name IDENTITY --ds_name cf --start_index 20 --dataset_size_limit 10 --use_cache

@@ -1,19 +1,13 @@
 # Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark
 
-Editing thousands of facts into a transformer memory at once.
+This repository contains the code for the paper [Uncovering Limits of Memory Editing in Large Language Models: A New Specificity Benchmark]() (ACL Findings 2023). # todo: add link
 
-<!-- [![Colab MEMIT Demo](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/kmeng01/memit/blob/main/notebooks/memit.ipynb) -->
+It extends previous work on model editing by Meng et al. #todo: add citations by introducing a new benchmark, called CounterFact+, for measuring the specificity of model edits. 
 
-## Table of Contents
+### Attribution
+The repository is a fork of https://github.com/kmeng01/memit, which implement the model editing algorithms MEMIT (Mass Editing Memory in a Transformer) and ROME (Rank-One Model Editing). Our fork extends this code by additional evaluation scripts implementing the CounterFact+ benchmark. For installation instructions see the original repository.
 
-- [Installation](#installation)
-- [MEMIT Algorithm Demo](#memit-algorithm-demo)
-- [Running the Full Evaluation Suite](#running-the-full-evaluation-suite)
-- [Generating Scaling Curves](#generating-scaling-curves)
-- [How to Cite](#how-to-cite)
-
-## Installation
-
+### Installation
 We recommend `conda` for managing Python, CUDA, and PyTorch; `pip` is for everything else. To get started, simply install `conda` and run:
 ```bash
 CONDA_HOME=$CONDA_HOME ./scripts/setup_conda.sh
@@ -21,74 +15,20 @@ CONDA_HOME=$CONDA_HOME ./scripts/setup_conda.sh
 
 `$CONDA_HOME` should be the path to your `conda` installation, e.g., `~/miniconda3`.
 
-## MEMIT Algorithm Demo
 
-[`notebooks/memit.ipynb`](notebooks/memit.ipynb) demonstrates MEMIT. The API is simple; simply specify a *requested rewrite* of the following form:
+### Running Experiments
+See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experiments and evaluations.
 
-```python
-request = [
-    {
-        "prompt": "{} plays the sport of",
-        "subject": "LeBron James",
-        "target_new": {
-            "str": "football"
-        }
-    },
-    {
-        "prompt": "{} plays the sport of",
-        "subject": "Michael Jordan",
-        "target_new": {
-            "str": "baseball"
-        }
-    },
-]
-```
-
-Other similar example(s) are included in the notebook.
-
-## Running the Full Evaluation Suite
-
-[`experiments/evaluate.py`](experiments/evaluate.py) can be used to evaluate any method in [`baselines/`](baselines/).
-
-For example:
-```
-python3 -m experiments.evaluate \
-    --alg_name=MEMIT \
-    --model_name=EleutherAI/gpt-j-6B \
-    --hparams_fname=EleutherAI_gpt-j-6B.json \
-    --num_edits=10000 \
-    --use_cache
-```
-Results from each run are stored at `results/<method_name>/run_<run_id>` in a specific format:
-```bash
-results/
-|__ MEMIT/
-    |__ run_<run_id>/
-        |__ params.json
-        |__ case_0.json
-        |__ case_1.json
-        |__ ...
-        |__ case_10000.json
-```
-
-To summarize the results, you can use [`experiments/summarize.py`](experiments/summarize.py):
-```bash
-python3 -m experiments.summarize --dir_name=MEMIT --runs=run_<run1>,run_<run2>
-```
-
-Running `python3 -m experiments.evaluate -h` or `python3 -m experiments.summarize -h` provides details about command-line flags.
-
-## How to Cite
-<details>
-<summary>Citation for MEMIT</summary>
-
+### How to Cite
+#todo: update citation 
 ```bibtex
-@article{meng2022memit,
-  title={Mass Editing Memory in a Transformer},
-  author={Kevin Meng and Sen Sharma, Arnab and Alex Andonian and Yonatan Belinkov and David Bau},
-  journal={arXiv preprint arXiv:2210.07229},
-  year={2022}
+@article{hoelscher2023specificityplus,
+  title={Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark},
+  author={Jason Hoelscher-Obermaier and Persson, Julia, and Kran, Esben and Konstas, Ioannis and Barez, Fazl},
+  journal={}, # todo: add link
+  year={2023}
 }
 ```
 
-</details>
+### Paper homepage
+Find more information at https://specificityplus.apartresearch.com/.
