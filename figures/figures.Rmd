@@ -1,5 +1,5 @@
 ---
-title: "results_combined"
+title: "Figures"
 output: html_document
 date: "2023-05-23"
 ---
@@ -21,7 +21,7 @@ df_fil <- df %>%
   filter(method %in% c("mean", "std")) %>% 
   pivot_wider(names_from = "method", values_from = "value") %>% 
   mutate(xmin = mean - std, xmax = mean + std)
-df
+
 # Generate plot
 ggplot(data = df_fil, aes(y=model, x=mean, fill=experiment, grouping=model)) +
   geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
@@ -89,11 +89,12 @@ df %>%
   ) +
   scale_fill_manual(values=c("CounterFact"="#EF7F0F", "CounterFact+"="#1D78B4")) +
   labs(
-    y = NULL, x = "Neighborhood Score (NS)", fill= NULL
+    y = NULL, x = "Neighborhood Score (NS)↑", fill= NULL
   ) +
   coord_cartesian(xlim=c(0,1), expand=F)
 
-ggsave("specificityplus/figures/ns.pdf", width=4, height=1.8)
+ggsave("ns.pdf", width=4, height=1.8)
+ggsave("ns.png", width=4, height=1.8)
 ```
 
 
@@ -119,12 +120,13 @@ df %>%
   ) +
   scale_fill_manual(values=c("CounterFact"="#EF7F0F", "CounterFact+"="#1D78B4")) +
   labs(
-    y = NULL, x = "Neighborh. KL divergence (NKL)", fill= NULL
+    y = NULL, x = "Neighborh. KL divergence (NKL)↓", fill= NULL
   ) +
   scale_x_continuous(trans = pseudo_log_trans(base=10, sigma=1e-6), breaks = c(1e-6, 1e-5), labels = c(expression(10^-6), expression(10^-5)))+
   coord_cartesian(expand=F)
 
-ggsave("specificityplus/figures/nkl.pdf", width=4, height=2)
+ggsave("nkl.pdf", width=4, height=2)
+ggsave("nkl.png", width=4, height=2)
 
 ```
 
