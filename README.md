@@ -1,6 +1,6 @@
-# Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark
+# Detecting Edit Failures in LLMs: An Improved Specificity Benchmark
 
-This repository contains the code for the paper [Uncovering Limits of Memory Editing in Large Language Models: A New Specificity Benchmark]() (ACL Findings 2023). # todo: add link
+This repository contains the code for the paper [Detecting Edit Failures in LLMs: An Improved Specificity Benchmark]() (ACL Findings 2023). # todo: add link
 
 It extends previous work on model editing by Meng et al. #todo: add citations by introducing a new benchmark, called CounterFact+, for measuring the specificity of model edits. 
 
@@ -23,7 +23,7 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experi
 #todo: update citation 
 ```bibtex
 @article{hoelscher2023specificityplus,
-  title={Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark},
+  title={Detecting Edit Failures in LLMs: An Improved Specificity Benchmark},
   author={Jason Hoelscher-Obermaier and Persson, Julia, and Kran, Esben and Konstas, Ioannis and Barez, Fazl},
   journal={}, # todo: add link
   year={2023}
