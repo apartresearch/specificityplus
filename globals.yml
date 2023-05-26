@@ -1,0 +1,24 @@
+---
+  # Root directory; note: adapt this to your needs
+  # set ROOT_DIR: "." for local runs
+  # set ROOT_DIR: "/disk/scratch/s1785649/memitpp/" or similar for runs on cluster
+  # all paths below are assumed to be relative to ROOT_DIR
+  ROOT_DIR: "."
+
+  # Result files
+  RESULTS_DIR: "results"
+
+  # Data files
+  DATA_DIR: "data"
+  STATS_DIR: "data/stats"
+  KV_DIR: "data/kvs"
+
+  # Hyperparameters
+  HPARAMS_DIR: "hparams"
+
+  # Remote URLs
+  REMOTE_ROOT_URL: "https://memit.baulab.info"
+
+  # global random number seed
+  SEED: 42
+  

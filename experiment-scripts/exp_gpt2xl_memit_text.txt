@@ -1,0 +1,1 @@
+cd git/memitpp && python experiments/e2e.py --model_name gpt2-xl --alg_names MEMIT IDENTITY --hparams_fnames gpt2-xl.json identity_hparams.json --ds_name cf --verbose --dataset_size_limit 50 --start_index 0

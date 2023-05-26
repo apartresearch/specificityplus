@@ -1,0 +1,135 @@
+---
+title: "results_combined"
+output: html_document
+date: "2023-05-23"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+pacman::p_load(tidyverse, ggplot2, reshape2)
+```
+
+```{r fig.width=1.5, fig.height=1.5}
+# Define your data
+df <- read_csv("output.csv")
+
+df_fil <- df %>% 
+  filter(model %in% c("FT-L","ROME")) %>% 
+  filter(method %in% c("mean", "std")) %>% 
+  pivot_wider(names_from = "method", values_from = "value") %>% 
+  mutate(xmin = mean - std, xmax = mean + std)
+df
+# Generate plot
+ggplot(data = df_fil, aes(y=model, x=mean, fill=experiment, grouping=model)) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  geom_errorbar(aes(xmin=xmin, xmax=xmax), width=0.01, position = position_dodge(0.6)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14, face = "bold", margin = margin(t = 10)),
+    axis.text = element_text(size = 12),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "bottom"
+  ) +
+  scale_fill_manual(values=c("CounterFact"="#EF7F0F", "CounterFact+"="#1D78B4")) +
+  coord_cartesian(xlim = c(0, 1), ylim=c(1.1,1.9)) +
+  labs(
+    y = NULL, x = "Neighbourhood Score (NS) ↑", fill= NULL
+  )
+```
+
+```{r}
+means <- read_csv("mean.csv")
+ci <- read_csv("output.csv")
+
+means <- means %>% 
+  mutate(model = if_else(str_detect(model, "FT"), "FT-L", model),
+         model = if_else(str_detect(model, "gpt"), "GPT-J (6B)", model),
+         model = factor(model, levels = rev(c("GPT-J (6B)", "FT-L", "ROME", "MEMIT")))) %>% 
+  select(type, metric, model, value) %>% 
+  filter(metric %in% c("S", "KL")) %>% 
+  mutate(metric = if_else(str_detect(metric, "S"), "NS", "NKL")) %>% 
+  rename(mean = value)
+
+ci <- ci %>% 
+  mutate(type = if_else(str_detect(experiment, "[+]"), "N+", "N"),
+         metric = if_else(str_detect(experiment, "[S]"), "NS", "NKL"),
+         model = if_else(str_detect(model, "GPT"), "GPT-J (6B)", model),
+         model = factor(model, levels = rev(c("GPT-J (6B)", "FT-L", "ROME", "MEMIT"))))  %>% 
+  select(type, model, value, method, metric) %>% 
+  pivot_wider(names_from = method, values_from = value) %>% 
+  rename(xmin = `0.5%`, xmax = `99.5%`)
+
+df <- ci %>% inner_join(means) %>% 
+  mutate(type = as.factor(type), model = as.factor(model), metric = as.factor(metric))
+
+```
+
+
+```{r}
+df %>% 
+  filter(metric=="NS") %>% 
+  mutate(type = if_else(str_detect(type, "N\\+"), "CounterFact+", "CounterFact")) %>% 
+  ggplot() +
+  aes(y=model, x=mean, fill=type, grouping=model) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  geom_errorbar(aes(xmin=xmin, xmax=xmax), width=0.01, position = position_dodge(0.6)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14,  margin = margin(t = 10)),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "none",
+    plot.margin = margin(r=0.2, unit="in")
+  ) +
+  scale_fill_manual(values=c("CounterFact"="#EF7F0F", "CounterFact+"="#1D78B4")) +
+  labs(
+    y = NULL, x = "Neighborhood Score (NS)", fill= NULL
+  ) +
+  coord_cartesian(xlim=c(0,1), expand=F)
+
+ggsave("specificityplus/figures/ns.pdf", width=4, height=1.8)
+```
+
+
+```{r}
+pacman::p_load(scales)
+df %>% 
+  filter(metric=="NKL") %>% 
+  filter(model != "GPT-J (6B)") %>% 
+  mutate(type = if_else(str_detect(type, "N\\+"), "CounterFact+", "CounterFact")) %>% 
+  ggplot() +
+  aes(y=model, x=mean, fill=type, grouping=model) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  geom_errorbar(aes(xmin=xmin, xmax=xmax), width=0.01, position = position_dodge(0.6)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14, margin = margin(t = 10)),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "bottom",
+    plot.margin = margin(l=0.28, r=0.2, unit="in")
+  ) +
+  scale_fill_manual(values=c("CounterFact"="#EF7F0F", "CounterFact+"="#1D78B4")) +
+  labs(
+    y = NULL, x = "Neighborh. KL divergence (NKL)", fill= NULL
+  ) +
+  scale_x_continuous(trans = pseudo_log_trans(base=10, sigma=1e-6), breaks = c(1e-6, 1e-5), labels = c(expression(10^-6), expression(10^-5)))+
+  coord_cartesian(expand=F)
+
+ggsave("specificityplus/figures/nkl.pdf", width=4, height=2)
+
+```
+
+```{r}
+
+```
+
+

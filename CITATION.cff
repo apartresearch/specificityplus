@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+preferred-citation:
+  type: article
+  authors:
+  - family-names: "Hoelscher-Obermaier"
+    given-names: "Jason"
+  - family-names: "Persson"
+    given-names: "Julia"
+  - family-names: "Kran"
+    given-names: "Esben"
+  - family-names: "Konstas"
+    given-names: "Ioannis"
+  - family-names: "Barez"
+    given-names: "Fazl"
+  journal: "arXiv preprint arXiv:..." # todo: add arxiv link
+  title: "Uncovering Failures of Model Editing in Large Language Models: An Improved Specificity Benchmark"
+  year: 2023
