@@ -27,13 +27,12 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experi
 #todo: update citation
 
 ```bibtex
-@article{hoelscher2023specificityplus,
-  title={Detecting Edit Failures in LLMs: An Improved Specificity Benchmark},
-  author={Hoelscher-Obermaier, Jason and Persson, Julia and Kran, Esben and Konstas, Ioannis and Barez, Fazl},
-  year={2023},
-  month={may},
-  journal={Association for Computational Linguistics},
-  url={https://aclanthology.org/2023.findings-acl.0}
+@inproceedings{jason2023detecting,
+title         = {Detecting Edit Failures In Large Language Models: An Improved Specificity Benchmark},
+author        = {Hoelscher-Obermaier, Jason and Persson, Julia and Kran, Esben and Konstas, Ionnis and Barez, Fazl},
+booktitle     = {Findings of ACL},
+year          = {2023},
+organization  = {Association for Computational Linguistics}
 }
 ```
 
