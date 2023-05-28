@@ -29,9 +29,11 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experi
 ```bibtex
 @article{hoelscher2023specificityplus,
   title={Detecting Edit Failures in LLMs: An Improved Specificity Benchmark},
-  author={Jason Hoelscher-Obermaier and Persson, Julia, and Kran, Esben and Konstas, Ioannis and Barez, Fazl},
-  journal={}, # todo: add link
-  year={2023}
+  author={Hoelscher-Obermaier, Jason and Persson, Julia and Kran, Esben and Konstas, Ioannis and Barez, Fazl},
+  year={2023},
+  month={may},
+  journal={Association for Computational Linguistics},
+  url={https://aclanthology.org/2023.findings-acl.0}
 }
 ```
 
