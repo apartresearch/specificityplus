@@ -1,33 +1,31 @@
-<<<<<<< HEAD
-# Specificity Plus
+# Detecting Edit Failures in LLMs: An Improved Specificity Benchmark ([website](https://specificityplus.apartresearch.com/))
 
-👩‍💻 Official Website for "Uncovering Limits of Memory Editing in Large Language Models: A New Specificity Benchmark" Aceepted at Findings of ACL 2023.
+This repository contains the code for the paper [Detecting Edit Failures in LLMs: An Improved Specificity Benchmark](https://specificityplus.apartresearch.com/assets/CounterFact.pdf) (ACL Findings 2023).
 
-## [Visit the web page](https://specificityplus.apartresearch.com)
-=======
-# Detecting Edit Failures in LLMs: An Improved Specificity Benchmark
-
-This repository contains the code for the paper [Detecting Edit Failures in LLMs: An Improved Specificity Benchmark]() (ACL Findings 2023). # todo: add link
-
-It extends previous work on model editing by Meng et al. #todo: add citations by introducing a new benchmark, called CounterFact+, for measuring the specificity of model edits. 
+It extends previous work on model editing by Meng et al. [[1]](#1) by introducing a new benchmark, called CounterFact+, for measuring the specificity of model edits.
 
 ### Attribution
-The repository is a fork of https://github.com/kmeng01/memit, which implement the model editing algorithms MEMIT (Mass Editing Memory in a Transformer) and ROME (Rank-One Model Editing). Our fork extends this code by additional evaluation scripts implementing the CounterFact+ benchmark. For installation instructions see the original repository.
+
+The repository is a fork of [MEMIT](https://github.com/kmeng01/memit), which implements the model editing algorithms MEMIT (Mass Editing Memory in a Transformer) and ROME (Rank-One Model Editing). Our fork extends this code by additional evaluation scripts implementing the CounterFact+ benchmark. For installation instructions see the [original repository](https://github.com/kmeng01/memit).
 
 ### Installation
+
 We recommend `conda` for managing Python, CUDA, and PyTorch; `pip` is for everything else. To get started, simply install `conda` and run:
+
 ```bash
 CONDA_HOME=$CONDA_HOME ./scripts/setup_conda.sh
 ```
 
 `$CONDA_HOME` should be the path to your `conda` installation, e.g., `~/miniconda3`.
 
-
 ### Running Experiments
+
 See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experiments and evaluations.
 
 ### How to Cite
-#todo: update citation 
+
+#todo: update citation
+
 ```bibtex
 @article{hoelscher2023specificityplus,
   title={Detecting Edit Failures in LLMs: An Improved Specificity Benchmark},
@@ -38,5 +36,10 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experi
 ```
 
 ### Paper homepage
+
 Find more information at https://specificityplus.apartresearch.com/.
->>>>>>> 1e853ecc4fd7e39e27b97d33a22e6741d2eae8bf
+
+### References
+
+<a id="1">[1]</a>
+Meng, Kevin, et al. "Mass-editing memory in a transformer." arXiv preprint arXiv:2210.07229 (2022).
