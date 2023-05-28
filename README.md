@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Specificity Plus
 
 👩‍💻 Official Website for "Uncovering Limits of Memory Editing in Large Language Models: A New Specificity Benchmark" Aceepted at Findings of ACL 2023.
@@ -32,11 +32,15 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experi
 @article{hoelscher2023specificityplus,
   title={Detecting Edit Failures in LLMs: An Improved Specificity Benchmark},
   author={Jason Hoelscher-Obermaier and Persson, Julia, and Kran, Esben and Konstas, Ioannis and Barez, Fazl},
-  journal={}, # todo: add link
-  year={2023}
+   month = may,
+   year = "2023",
+   address = "Toronto, canada",
+  journal={Association for Computational Linguistics},
+  url = "https://aclanthology.org/2023.findings-acl.0",
+  
 }
 ```
 
 ### Paper homepage
 Find more information at https://specificityplus.apartresearch.com/.
->>>>>>> 1e853ecc4fd7e39e27b97d33a22e6741d2eae8bf
+
