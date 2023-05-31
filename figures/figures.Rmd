@@ -129,7 +129,160 @@ ggsave("specificityplus/figures/nkl.pdf", width=4, height=2)
 ```
 
 ```{r}
+df_sd <- read_csv("fig3.csv")
 
+df_sd <- df_sd %>% 
+  pivot_longer(cols=c('GPT-J (6B)', 'FT-L', 'MEMIT','ROME')) %>% 
+  pivot_wider(names_from='...1') %>% 
+  pivot_longer(
+    cols = -name, # Exclude the 'name' column
+    names_to = c(".value", "plus"),
+    names_pattern = "(.*?)(-plus)?$", # Make '-plus' optional
+    names_transform = list(plus = ~replace_na(.x, "non-plus")) # Fill NAs with 'non-plus'
+  ) %>% 
+  mutate(plus = if_else(plus=="-plus", "CounterFact+", "CounterFact")) %>% 
+  rename(type = plus)
+
+df_mean_m <- read_csv("mean.csv") %>% 
+  filter(metric == "M") %>% 
+  mutate(type = if_else(type=="N", "CounterFact", "CounterFact+"),
+         metric = "Magnitude",
+         model = if_else(model=="EleutherAI/gpt-j-6B", "GPT-J (6B)", model),
+         model = if_else(model=="FT", "FT-L", model),
+         model = factor(model, levels = rev(c("GPT-J (6B)", "FT-L", "ROME", "MEMIT"))))
+
+df_mean_m
 ```
+
+```{r}
+df_mean_m %>% 
+  ggplot() +
+  aes(y=model, x=value, fill=type, grouping=model) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  #geom_errorbar(aes(xmin=xmin, xmax=xmax), width=0.01, position = position_dodge(0.6)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14, margin = margin(t = 10)),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "bottom",
+    plot.margin = margin(l=0.28, r=0.2, unit="in")
+  ) +
+  scale_fill_manual(values=c("CounterFact"="#EF7F0F", "CounterFact+"="#1D78B4")) +
+  labs(
+    y = NULL, x = "Neighborhood Magnitude (NM) ↑", fill= NULL
+  ) +
+  coord_cartesian(expand=F)
+
+h = 5
+w = 5
+ggsave("fig3.pdf", width=w, height=h)
+ggsave("fig3.png", width=w, height=h)
+```
+
+```{r}
+gptj <- read_csv("gptj_m.csv", name_repair = "none", col_names = FALSE) %>% transpose() %>% as_tibble(.name_repair=c("universal")) %>%  mutate(across(everything(), ~ unlist(.)))
+colnames(gptj) <- as.character(gptj[1, ])
+gptj <- gptj[-1,] %>% rename("Unedited" = "EleutherAI/gpt-j-6B") %>% mutate(Algorithm = "GPT-J 6B")
+
+gpt2 <- read_csv("gpt2m_m.csv", name_repair = "none", col_names = FALSE) %>% transpose() %>% as_tibble(.name_repair=c("universal")) %>%  mutate(across(everything(), ~ unlist(.)))
+colnames(gpt2) <- as.character(gpt2[1, ])
+gpt2 <- gpt2[-1,] %>% rename("Unedited" = "gpt2-medium") %>% mutate(Algorithm = "GPT-2 M", "MEMIT" = NA)
+
+
+gpt2xl <- read_csv("gpt2xl_m.csv", name_repair = "none", col_names = FALSE) %>% transpose() %>% as_tibble(.name_repair=c("universal")) %>%  mutate(across(everything(), ~ unlist(.)))
+colnames(gpt2xl) <- as.character(gpt2xl[1, ])
+gpt2xl <- gpt2xl[-1,] %>% rename("Unedited" = "gpt2-xl") %>% mutate(Algorithm = "GPT-2 XL")
+
+df <- rbind(gptj, gpt2, gpt2xl) %>% 
+  rename("FT-L" = "FT") %>% 
+  mutate(
+    across(all_of(c("Prompt Type", "Metric", "Algorithm")), as.factor),
+    across(all_of(c("FT-L", "MEMIT", "ROME", "Unedited")), as.numeric)
+  ) %>% 
+  pivot_longer(cols=c("Unedited","FT-L", "ROME", "MEMIT"), names_to = "Method")
+
+# Plot figure 4  
+df %>% filter(Metric == "S", `Prompt Type` == "Nplus") %>%  
+  ggplot() +
+  aes(y=Algorithm, x=value, fill=Method) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14, margin = margin(t = 10)),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "bottom",
+    plot.margin = margin(l=0.28, r=0.2, unit="in")
+  ) +
+  labs(
+    y = NULL, x = "Neighborhood Score (NS) ↑", fill= NULL
+  ) +
+  coord_cartesian(expand=F) +
+  scale_fill_manual(values = c("#1D78B4", "#EF7F0F", "#238B45", "#D83333"))
+
+h = 4
+w = 5
+ggsave("fig4.pdf", width=w, height=h)
+ggsave("fig4.png", width=w, height=h)
+```
+```{r}
+
+# Plot figure 4  
+df %>% filter(Metric == "M", `Prompt Type` == "Nplus") %>%  
+  ggplot() +
+  aes(y=Algorithm, x=value, fill=Method) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14, margin = margin(t = 10)),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "bottom",
+    plot.margin = margin(l=0.28, r=0.2, unit="in")
+  ) +
+  labs(
+    y = NULL, x = "Neighborhood Magnitude (NM) ↑", fill= NULL
+  ) +
+  coord_cartesian(expand=F) +
+  scale_fill_manual(values = c("#1D78B4", "#EF7F0F", "#238B45", "#D83333"))
+
+ggsave("fig5.pdf", width=w, height=h)
+ggsave("fig5.png", width=w, height=h)
+```
+```{r}
+
+# Plot figure 6
+df %>% filter(Metric == "KL", `Prompt Type` == "Nplus", Method != "Unedited") %>%  
+  ggplot() +
+  aes(y=Algorithm, x=value, fill=Method) +
+  geom_bar(stat = "identity", position = "dodge", width=0.6, color="black") +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", margin = margin(b = 10)),
+    axis.title = element_text(size = 14, margin = margin(t = 10)),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    panel.grid.major = element_line(color = "gray", linetype = "dashed"),
+    legend.position = "bottom",
+    plot.margin = margin(l=0.28, r=0.2, unit="in")
+  ) +
+  labs(
+    y = NULL, x = "Neighborh. KL divergence (NKL) ↓", fill= NULL
+  ) +
+  coord_cartesian(expand=F) +
+  scale_fill_manual(values = c("#1D78B4", "#EF7F0F", "#238B45", "#D83333"))
+
+ggsave("fig6.pdf", width=w, height=h)
+ggsave("fig6.png", width=w, height=h)
+```
+
+
 
 
