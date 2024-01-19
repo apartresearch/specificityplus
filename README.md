@@ -22,9 +22,9 @@ CONDA_HOME=$CONDA_HOME ./scripts/setup_conda.sh
 
 See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experiments and evaluations.
 
-### How to Cite
 
-#todo: update citation
+### How to Cite
+If you find our paper useful, please consider citing as:
 
 ```bibtex
 
@@ -36,12 +36,3 @@ year          = {2023},
 organization  = {Association for Computational Linguistics}
 }
 
-
-### Paper homepage
-
-Find more information at https://specificityplus.apartresearch.com/.
-
-### References
-
-<a id="1">[1]</a>
-Meng, Kevin, et al. "Mass-editing memory in a transformer." arXiv preprint arXiv:2210.07229 (2022).
