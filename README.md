@@ -27,6 +27,7 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for instructions on how to run the experi
 #todo: update citation
 
 ```bibtex
+
 @inproceedings{jason2023detecting,
 title         = {Detecting Edit Failures In Large Language Models: An Improved Specificity Benchmark},
 author        = {Hoelscher-Obermaier, Jason and Persson, Julia and Kran, Esben and Konstas, Ionnis and Barez, Fazl},
@@ -34,7 +35,7 @@ booktitle     = {Findings of ACL},
 year          = {2023},
 organization  = {Association for Computational Linguistics}
 }
-```
+
 
 ### Paper homepage
 
